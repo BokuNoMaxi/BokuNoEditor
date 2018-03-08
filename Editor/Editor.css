@@ -8,6 +8,42 @@ and open the template in the editor.
     Author     : Markus
 */
 #bokunoeditorIframe {
-  background: white; }
+  background: white;
+  border: solid 1px grey;
+  height: 100%; }
+  #bokunoeditorIframe #bokunoeditorMenue {
+    height: 30px; }
+    #bokunoeditorIframe #bokunoeditorMenue button {
+      padding: 4px 8px;
+      font-size: 14px;
+      line-height: 20px;
+      cursor: pointer;
+      color: #333;
+      text-align: center;
+      overflow: visible;
+      background: white;
+      border-top: none;
+      border-left: none;
+      border-right: solid 1px grey;
+      border-bottom: solid 1px grey; }
+  #bokunoeditorIframe #bokunoeditorToolbar {
+    height: 30px; }
+    #bokunoeditorIframe #bokunoeditorToolbar button {
+      padding: 4px 8px;
+      font-size: 14px;
+      line-height: 20px;
+      cursor: pointer;
+      color: #333;
+      text-align: center;
+      overflow: visible;
+      background: white;
+      border-top: none;
+      border-left: none;
+      border-bottom: none;
+      border-right: solid 1px grey; }
+  #bokunoeditorIframe #bokunoeditorContent {
+    border-top: solid 1px grey;
+    height: calc(100% - 60px);
+    overflow: auto; }
 
 /*# sourceMappingURL=Editor.css.map */
