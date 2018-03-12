@@ -45,6 +45,27 @@ and open the template in the editor.
       border-left: none;
       border-right: solid 1px grey;
       border-bottom: solid 1px grey; }
+  #bokunoeditorIframe #bokuenoeditorMenuDateiContextmenu {
+    display: none;
+    position: absolute;
+    top: 30px;
+    background: white;
+    font-size: 14px;
+    border-right: solid 1px black;
+    border-bottom: solid 1px black;
+    line-height: 20px;
+    cursor: pointer; }
+    #bokunoeditorIframe #bokuenoeditorMenuDateiContextmenu div button {
+      border: none;
+      background: white;
+      width: 100%;
+      padding: 4px 8px;
+      cursor: pointer; }
+    #bokunoeditorIframe #bokuenoeditorMenuDateiContextmenu .bneMenueTrennlinie {
+      border-bottom: solid 1px black;
+      padding: 0px; }
+    #bokunoeditorIframe #bokuenoeditorMenuDateiContextmenu.bneOpen {
+      display: block; }
   #bokunoeditorIframe #bokunoeditorToolbar {
     height: 30px; }
     #bokunoeditorIframe #bokunoeditorToolbar button {
@@ -71,4 +92,4 @@ and open the template in the editor.
       min-height: 24px;
       margin: 0px 10px; }
 
-/*# sourceMappingURL=Editor.css.map */
+/*# sourceMappingURL=BokuNoEditor.css.map */
