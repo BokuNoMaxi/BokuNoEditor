@@ -7,6 +7,25 @@ and open the template in the editor.
     Created on : 07.03.2018, 15:59:02
     Author     : Markus
 */
+.bneItalic {
+  font-style: italic; }
+
+.bneBold {
+  font-weight: bold; }
+
+.bneAlignLeft {
+  text-align: left; }
+
+.bneAlignCenter {
+  text-align: center; }
+
+.bneAlignRight {
+  text-align: right; }
+
+.bneActive {
+  background: black !important;
+  color: white !important; }
+
 #bokunoeditorIframe {
   background: white;
   border: solid 1px grey;
@@ -44,6 +63,12 @@ and open the template in the editor.
   #bokunoeditorIframe #bokunoeditorContent {
     border-top: solid 1px grey;
     height: calc(100% - 60px);
-    overflow: auto; }
+    overflow: auto;
+    padding-bottom: 10px; }
+    #bokunoeditorIframe #bokunoeditorContent div {
+      font-family: Arial;
+      font-size: 11pt;
+      min-height: 24px;
+      margin: 0px 10px; }
 
 /*# sourceMappingURL=Editor.css.map */
