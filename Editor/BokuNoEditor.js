@@ -2,7 +2,6 @@
     var scripts = document.getElementsByTagName("script"),
         kursiv=document.createElement('em'),
         fett=document.createElement('strong'),
-        schrift=document.createElement('span'),
         src = scripts[scripts.length-1].src,
         absolutPath=src.slice(0,src.slice(0,src.lastIndexOf('/')).lastIndexOf('/')),
         lastFocus,
@@ -71,27 +70,27 @@
                         }
                     }
                     //Formatiere den ganzen Absatz oder Ab den Punkt des Klickens
-                    switch(Button[0]){//Text Ausrichtung
-                        case bokunoeditorToolbarLinks:
+                    switch(Button[0].id){//Text Ausrichtung
+                        case 'bokunoeditorToolbarLinks':
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                             Button.addClass('bneActive');
                             $(Markierung.startContainer.parentElement).css('text-align','left');
                         break;
-                        case bokunoeditorToolbarMitte:
+                        case 'bokunoeditorToolbarMitte':
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                             Button.addClass('bneActive');
                             $(Markierung.startContainer.parentElement).css('text-align','center');
                         break;
-                        case bokunoeditorToolbarRechts:
+                        case 'bokunoeditorToolbarRechts':
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                             Button.addClass('bneActive');
                             $(Markierung.startContainer.parentElement).css('text-align','right');
                         break;
-                        case bokunoeditorToolbarKursiv:
+                        case 'bokunoeditorToolbarKursiv':
                             Markierung.insertNode(kursiv);
                             $(Markierung.startContainer.nextSibling).html('&#65279;');
                         break;
-                        case bokunoeditorToolbarFett:
+                        case 'bokunoeditorToolbarFett':
                             Markierung.insertNode(fett);
                             $(Markierung.startContainer.nextSibling).html('&#65279;');
                         break;    
@@ -100,6 +99,31 @@
                 sel.removeAllRanges();
                 sel.addRange(Markierung);
                 
+                }, 10);
+            }
+        });
+        $('.bokunoeditorToolbarSelect').change(function(e){
+            var Select=$(this);
+            if(lastFocus){
+                setTimeout(function() {
+                    lastFocus.focus();
+                    var sel = window.getSelection(),
+                        Zeile = sel.focusNode.data,
+                        Markierung=sel.getRangeAt(0).cloneRange(),
+                        referenceNode,
+                        schriftFormatierung=document.createElement('span');
+                    switch (Select[0].id) {
+                        case 'bokunoeditorSchriftgroesse':
+                            schriftFormatierung.style.cssText='font-size:'+Select.val()+'pt;';
+                            Markierung.surroundContents(schriftFormatierung);
+                        break;
+                        case 'bokunoeditorSchriftart':
+                            schriftFormatierung.style.cssText='font-family:'+Select.val()+';';
+                            Markierung.surroundContents(schriftFormatierung);
+                        break;
+                    }
+                sel.removeAllRanges();
+                sel.addRange(Markierung);    
                 }, 10);
             }
         });
