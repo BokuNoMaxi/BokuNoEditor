@@ -23,15 +23,18 @@ and open the template in the editor.
   text-align: right; }
 
 .bneActive {
-  background: black !important;
-  color: white !important; }
+  background: #C2DEF5 !important; }
 
 #bokunoeditorIframe {
   background: white;
-  border: solid 1px grey;
+  border-left: solid 1px grey;
+  border-right: solid 1px grey;
+  border-bottom: solid 1px grey;
   height: 100%; }
   #bokunoeditorIframe #bokunoeditorMenue {
-    height: 30px; }
+    height: 30px;
+    border-bottom: solid 1px grey;
+    border-top: solid 1px grey; }
     #bokunoeditorIframe #bokunoeditorMenue button {
       padding: 4px 8px;
       font-size: 14px;
@@ -43,8 +46,8 @@ and open the template in the editor.
       background: white;
       border-top: none;
       border-left: none;
-      border-right: solid 1px grey;
-      border-bottom: solid 1px grey; }
+      border-bottom: none;
+      border-right: solid 1px grey; }
   #bokunoeditorIframe #bokuenoeditorMenuDateiContextmenu {
     display: none;
     position: absolute;
@@ -67,7 +70,7 @@ and open the template in the editor.
     #bokunoeditorIframe #bokuenoeditorMenuDateiContextmenu.bneOpen {
       display: block; }
   #bokunoeditorIframe #bokunoeditorToolbar {
-    height: 30px; }
+    height: 28px; }
     #bokunoeditorIframe #bokunoeditorToolbar button {
       padding: 4px 8px;
       font-size: 14px;
@@ -83,7 +86,7 @@ and open the template in the editor.
       border-right: solid 1px grey; }
   #bokunoeditorIframe #bokunoeditorContent {
     border-top: solid 1px grey;
-    height: calc(100% - 60px);
+    height: calc(100% - 58px);
     overflow: auto;
     padding-bottom: 10px; }
     #bokunoeditorIframe #bokunoeditorContent div {

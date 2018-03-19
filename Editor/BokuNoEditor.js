@@ -1,7 +1,5 @@
 (function($){
     var scripts = document.getElementsByTagName("script"),
-        kursiv=document.createElement('em'),
-        fett=document.createElement('strong'),
         src = scripts[scripts.length-1].src,
         absolutPath=src.slice(0,src.slice(0,src.lastIndexOf('/')).lastIndexOf('/')),
         lastFocus,
@@ -55,7 +53,8 @@
                     var sel = window.getSelection(),
                         Zeile = sel.focusNode.data,
                         Markierung=sel.getRangeAt(0).cloneRange(),
-                        referenceNode;
+                        referenceNode,
+                        format=document.createElement('span');
                     
                     //Formatiere ab jetzt
                     
@@ -63,10 +62,33 @@
                     //Formatiere Markiertes
                     if(Markierung.startOffset != Markierung.endOffset){//Text Formatierung
                         if(Button[0].id=='bokunoeditorToolbarKursiv'){
-                            Markierung.surroundContents(kursiv);
+                            if(Button.hasClass('bneActive')){
+                                format.style.cssText='font-style:italic;';
+                            }else{
+                                format.style.cssText='font-style:normal;';
+                            }
+                            Markierung.surroundContents(format);
                         }
                         if(Button[0].id=='bokunoeditorToolbarFett'){
-                            Markierung.surroundContents(fett);
+                            if(Button.hasClass('bneActive')){
+                                format.style.cssText='font-weight:bold;';
+                            }else{
+                                format.style.cssText='font-weight:normal;';
+                            }
+                            Markierung.surroundContents(format);
+                        }
+                    }else{
+                        switch(Button[0].id){
+                            case 'bokunoeditorToolbarKursiv':
+                                format.style.cssText='font-style:italic;';
+                                Markierung.insertNode(format);
+                                $(Markierung.startContainer.nextSibling).html('&#65279;');
+                            break;
+                            case 'bokunoeditorToolbarFett':
+                                format.style.cssText='font-weight:bold;';
+                                Markierung.insertNode(format);
+                                $(Markierung.startContainer.nextSibling).html('&#65279;');
+                            break;   
                         }
                     }
                     //Formatiere den ganzen Absatz oder Ab den Punkt des Klickens
@@ -86,14 +108,6 @@
                             Button.addClass('bneActive');
                             $(Markierung.startContainer.parentElement).css('text-align','right');
                         break;
-                        case 'bokunoeditorToolbarKursiv':
-                            Markierung.insertNode(kursiv);
-                            $(Markierung.startContainer.nextSibling).html('&#65279;');
-                        break;
-                        case 'bokunoeditorToolbarFett':
-                            Markierung.insertNode(fett);
-                            $(Markierung.startContainer.nextSibling).html('&#65279;');
-                        break;    
                     }
                         
                 sel.removeAllRanges();
@@ -111,15 +125,15 @@
                         Zeile = sel.focusNode.data,
                         Markierung=sel.getRangeAt(0).cloneRange(),
                         referenceNode,
-                        schriftFormatierung=document.createElement('span');
+                        format=document.createElement('span');
                     switch (Select[0].id) {
                         case 'bokunoeditorSchriftgroesse':
-                            schriftFormatierung.style.cssText='font-size:'+Select.val()+'pt;';
-                            Markierung.surroundContents(schriftFormatierung);
+                            format.style.cssText='font-size:'+Select.val()+'pt;';
+                            Markierung.surroundContents(format);
                         break;
                         case 'bokunoeditorSchriftart':
-                            schriftFormatierung.style.cssText='font-family:'+Select.val()+';';
-                            Markierung.surroundContents(schriftFormatierung);
+                            format.style.cssText='font-family:'+Select.val()+';';
+                            Markierung.surroundContents(format);
                         break;
                     }
                 sel.removeAllRanges();

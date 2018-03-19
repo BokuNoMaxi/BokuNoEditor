@@ -25,14 +25,26 @@ function setColors($Color){
     return '{\colortbl;'.$Farben.'}';
 }
 function setInformationen($Info){
-    $Info['Datum']=DateTime::createFromFormat('Y.m.d h:i', $Info['Datum']);
+    $Info['Datum']=DateTime::createFromFormat('Y.m.d H:i', $Info['Datum']);
     return '{\info{\title '.$Info['Titel'].'}{\author '.$Info['Author'].'}{\company '.$Info['Company'].'}{\creatim\yr'.$Info['Datum']->format('Y').'\mo'.$Info['Datum']->format('m').'\dy'.$Info['Datum']->format('d').'\hr'.$Info['Datum']->format('H').'\min'.$Info['Datum']->format('i').'}{\doccomm '.$Info['Kommentar'].'}}';
 }
 function setStandardformatierung($Text){
     return '\plain '.$Text;
 }
+function startKursiv(){
+    return '\i ';
+}
+function stopKursiv(){
+    return '\i0';
+}
 function setKursiv($Text){
     return '\i '.$Text.'\i0';
+}
+function startFett(){
+    return '\b ';
+}
+function stopFett(){
+    return '\b0';
 }
 function setFett($Text){
     return '\b '.$Text.'\b0';

@@ -14,6 +14,9 @@ foreach ($HTMLSplit as $P){
     $Paragraph=substr($P,strpos($P, '>')+1);
     $Stylings=array();
     $StylingBefehlWert=array();
+    $FormatReihenfolge=array();
+    $RTFParagraph='';
+    //Absatzformatierung
     if(strpos($Format, 'style=')){
         $Beginn=strpos($Format,'style="')+7;
         $Laenge=strpos($Format,'"',$Beginn)-$Beginn;
@@ -31,20 +34,87 @@ foreach ($HTMLSplit as $P){
                 case 'text-align':
                     switch ($Wert) {
                         case 'left':
-                            $Paragraph=setLinksbuendig($Paragraph);
+                            $RTFParagraph=setLinksbuendig($RTFParagraph);
                         break;
                         case 'center':
-                            $Paragraph=setZentriert($Paragraph);
+                            $RTFParagraph=setZentriert($RTFParagraph);
                         break;
                         case 'right':
-                            $Paragraph=setRechtssbuendig($Paragraph);
+                            $RTFParagraph=setRechtssbuendig($RTFParagraph);
                         break;
                     }
                 break;
             }
         }
     }
-    $Paragraph=makeParagraph($Paragraph);
+    //Im Text formatierung
+    $Stylings= array_filter(explode('<span', $Paragraph));
+    foreach ($Stylings as $S){
+        $ParagraphFormats=array();
+        $Ende= substr($S, strpos($S, '>')+1);
+        $AnzEndTag= substr_count($Ende,'</span>');
+        if(strpos($S, 'style=')){
+            $Beginn=strpos($S,'style="')+7;
+            $Laenge=strpos($S,'"',$Beginn)-$Beginn;
+            $Styling= substr($S, $Beginn, $Laenge);
+            foreach (array_filter(explode(';', $Styling)) as $ST){
+                $ParagraphFormats[]=explode(':', $ST) ;
+            }
+        }
+        foreach($ParagraphFormats as $PF){
+            switch ($PF[0]){
+                case 'font-style':
+                    switch (trim($PF[1])){
+                        case 'italic':
+                            $FormatReihenfolge[]='i';
+                            $RTFParagraph.=startKursiv();
+                            break;
+                        case 'normal':
+                            $FormatReihenfolge[]='n';
+                            $RTFParagraph.=stopKursiv();
+                            break;
+                            
+                    }
+                break;
+                case 'font-weight':
+                    switch (trim($PF[1])){
+                        case 'bold':
+                            $FormatReihenfolge[]='b';
+                            $RTFParagraph.=startFett();
+                            break;
+                        case 'normal':
+                            $FormatReihenfolge[]='n';
+                            $RTFParagraph.=stopFett();
+                            break;
+                    }
+                break;
+                case 'font-size':
+                    $FormatReihenfolge[]='fs';
+                break;
+                case 'font-family':
+                    $FormatReihenfolge[]='ff';
+                break;
+            }
+        }
+        if($AnzEndTag>0){
+            $SplitSpan= explode('</span>',$Ende );
+            foreach ($SplitSpan as $SS){
+                switch (array_pop($FormatReihenfolge)){
+                    case 'i':
+                        $RTFParagraph.=$SS.stopKursiv();
+                    break;
+                    case 'b':
+                        $RTFParagraph.=$SS.stopFett();
+                    break;
+                }
+            }
+        }
+    }
+   
+    
+    
+    $Paragraph=makeParagraph(html_entity_decode ($RTFParagraph));
+    var_dump($Paragraph);
     $RTF[]=iconv('UTF-8//IGNORE', 'CP1252//IGNORE',$Paragraph);
 }
 $RTF=implode('', $RTF);
