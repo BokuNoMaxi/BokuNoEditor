@@ -38,7 +38,7 @@ function stopKursiv(){
     return '\i0';
 }
 function setKursiv($Text){
-    return '\i '.$Text.'\i0';
+    return '\i '.$Text.'\i0 ';
 }
 function startFett(){
     return '\b ';
@@ -47,7 +47,7 @@ function stopFett(){
     return '\b0';
 }
 function setFett($Text){
-    return '\b '.$Text.'\b0';
+    return '\b '.$Text.'\b0 ';
 }
 function setUnderline($Text){
     return '\ul '.$Text.'\ul0';
@@ -76,9 +76,21 @@ function setRechtssbuendig($Text){
 function setBlocksatz($Text){
     return '\qj '.$Text;
 }
+function startGroup(){
+    return '{';
+}
+function stopGroup(){
+    return '}';
+}
 function makeGroup($Text){
     return '{'.$Text.'}';
 }
 function makeParagraph($Text){
     return'\pard '.$Text.'\par';
+}
+function setFontSize($dblPt){
+    return '\fs'.$dblPt.' ';
+}
+function setFontFamily($FamilyPosition){
+    return '\f'.$FamilyPosition.' ';
 }
