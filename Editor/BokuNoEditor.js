@@ -20,7 +20,7 @@
     $.fn.bokunoeditor=function($Info){
         var Textarea=$(this);
         $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContent"></div></div>');
-        $('#bokunoeditorIframe').append('<div id="bokuenoeditorMenuDateiContextmenu"><div id="bokuenoeditorMenuDateiContextmenuNeu"><button type="Button" class="bneMenuButton">Neu</button></div><div class="bneMenueTrennlinie"></div><div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div></div>')
+        $('#bokunoeditorIframe').append('<div id="bokuenoeditorMenuDateiContextmenu"><div id="bokuenoeditorMenuDateiContextmenuNeu"><button type="Button" class="bneMenuButton">Neu</button></div><div class="bneMenueTrennlinie"></div><div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div></div>');
         lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val());
         $('#bokunoeditorMenue').html('<button type="button" class="bokunoeditorMenueButton" id="bokunoeditorDatei">Datei</button><button type="button" class="bokunoeditorMenueButton">Schriftart</button><button type="button" class="bokunoeditorMenueButton">Format</button>');
         $('#bokunoeditorToolbar').html('<button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button><button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftart"></select><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftgroesse"></select><button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button>');
@@ -96,17 +96,17 @@
                         case 'bokunoeditorToolbarLinks':
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                             Button.addClass('bneActive');
-                            $('.bokunoeditorParagraph').css('text-align','left');
+                            $(Markierung.startContainer).closest('.bokunoeditorParagraph').css('text-align','left');
                         break;
                         case 'bokunoeditorToolbarMitte':
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                             Button.addClass('bneActive');
-                            $('.bokunoeditorParagraph').css('text-align','center');
+                            $(Markierung.startContainer).closest('.bokunoeditorParagraph').css('text-align','center');
                         break;
                         case 'bokunoeditorToolbarRechts':
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                             Button.addClass('bneActive');
-                            $('.bokunoeditorParagraph').css('text-align','right');
+                            $(Markierung.startContainer).closest('.bokunoeditorParagraph').css('text-align','right');
                         break;
                     }
                         
