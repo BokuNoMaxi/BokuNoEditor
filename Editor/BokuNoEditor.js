@@ -141,10 +141,20 @@
                 }, 10);
             }
         });
-        $('#bokunoeditorContent div').on('input',function(e){
-            
+        $('#bokunoeditorContent').on({'touchend':function(e){
+                e.preventDefault();
+                if($(e.target).css('font-style')=='italic')$('#bokunoeditorToolbarKursiv').addClass('bneActive');
+                if($(e.target).css('font-style')=='normal')$('#bokunoeditorToolbarKursiv').removeClass('bneActive');
+                if($(e.target).css('font-weight')=='700')$('#bokunoeditorToolbarFett').addClass('bneActive');
+                if($(e.target).css('font-weight')=='400')$('#bokunoeditorToolbarFett').removeClass('bneActive');
+            },'mouseup':function(e){
+                if($(e.target).css('font-style')=='italic')$('#bokunoeditorToolbarKursiv').addClass('bneActive');
+                if($(e.target).css('font-style')=='normal')$('#bokunoeditorToolbarKursiv').removeClass('bneActive');
+                if($(e.target).css('font-weight')=='700')$('#bokunoeditorToolbarFett').addClass('bneActive');
+                if($(e.target).css('font-weight')=='400')$('#bokunoeditorToolbarFett').removeClass('bneActive');
+            }
         });
-        $('#bokunoeditorContent').on('blur',function(){
+        $('#bokunoeditorContent').on('blur',function(){//damit der Cursor wieder im Editor ist
             lastFocus=this;
         });
         

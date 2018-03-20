@@ -96,7 +96,7 @@ foreach ($HTMLSplit as $P){
                 case 'font-family':
                     $FormatReihenfolge[]='ff';
                     if($i=array_search(trim($PF[1]), $Schriftarten)){
-                        $RTFParagraph.=startGroup().setFontFamily($i);
+                        $RTFParagraph.=startGroup().setFontFamily($i-1);
                     }else{
                         $Schriftarten[]= trim(str_replace('"','',$PF[1]));
                         $RTFParagraph.=startGroup().setFontFamily(count($Schriftarten)-1);
