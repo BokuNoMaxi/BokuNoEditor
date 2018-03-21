@@ -134,8 +134,8 @@ foreach ($HTMLSplit as $P){
     
     
     $Paragraph=makeParagraph($RTFParagraph);
+    $RTF[]=str_replace(array('$nbsp;','&#65279;','\ufeff'), ' ',iconv('UTF-8//IGNORE', 'CP1252//IGNORE',$Paragraph));
     var_dump($Paragraph);
-    $RTF[]=iconv('UTF-8//IGNORE', 'CP1252//IGNORE',$Paragraph);
 }
 $RTF=implode('', $RTF);
 createRTFFile(makeRTF($Info,$Schriftarten,null,$RTF));

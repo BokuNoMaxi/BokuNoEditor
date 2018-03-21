@@ -88,10 +88,10 @@ and open the template in the editor.
     border-top: solid 1px grey;
     height: calc(100% - 58px);
     overflow: auto;
-    padding-bottom: 10px; }
+    padding-bottom: 10px;
+    font-size: 11pt; }
     #bokunoeditorIframe #bokunoeditorContent div {
       font-family: Arial;
-      font-size: 11pt;
       min-height: 24px;
       margin: 0px 10px; }
 

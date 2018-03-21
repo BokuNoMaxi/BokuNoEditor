@@ -33,13 +33,17 @@
                 
             });
         });
+        //Kontextmenü
         $('#bokunoeditorDatei').click(function(){
             $('#bokuenoeditorMenuDateiContextmenu').toggleClass('bneOpen');
         });
+        //wenn nichts importiert wird dann gib DIV vor
         (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<div class="bokunoeditorParagraph"></div>'):'');
+        //Lade Schriftarten
         $.each(Schriftart,function(index,value){
             $('#bokunoeditorSchriftart').append('<option value="'+value+'">'+value+'</option>');
         });
+        //Lade Schriftgröße
         $.each(Schriftgroesse,function(index,value){
             $('#bokunoeditorSchriftgroesse').append('<option value="'+value+'" '+((value=='11')?'selected="selected"':'')+'>'+value+' pt</option>');
         });
@@ -51,41 +55,28 @@
                     lastFocus.focus();
                     Button.toggleClass('bneActive'); 
                     var sel = window.getSelection(),
-                        Zeile = sel.focusNode.data,
-                        Markierung=sel.getRangeAt(0).cloneRange(),
-                        referenceNode,
+                        Markierung=sel.getRangeAt(0),
                         format=document.createElement('span');
-                    
-                    //Formatiere ab jetzt
-                    
-                    
+                        console.log($(Markierung.startContainer).children());
                     //Formatiere Markiertes
                     if(Markierung.startOffset != Markierung.endOffset){//Text Formatierung
                         if(Button[0].id=='bokunoeditorToolbarKursiv'){
-                            if(Button.hasClass('bneActive')){
-                                format.style.cssText='font-style:italic;';
-                            }else{
-                                format.style.cssText='font-style:normal;';
-                            }
+                            format.style.cssText=((Button.hasClass('bneActive'))?'font-style:italic;':'font-style:normal;');
                             Markierung.surroundContents(format);
                         }
                         if(Button[0].id=='bokunoeditorToolbarFett'){
-                            if(Button.hasClass('bneActive')){
-                                format.style.cssText='font-weight:bold;';
-                            }else{
-                                format.style.cssText='font-weight:normal;';
-                            }
+                            format.style.cssText=((Button.hasClass('bneActive'))?'font-weight:bold;':'font-weight:normal;');
                             Markierung.surroundContents(format);
                         }
                     }else{
                         switch(Button[0].id){
                             case 'bokunoeditorToolbarKursiv':
-                                format.style.cssText='font-style:italic;';
+                                format.style.cssText=((Button.hasClass('bneActive'))?'font-style:italic;':'font-style:normal');
                                 Markierung.insertNode(format);
                                 $(Markierung.startContainer.nextSibling).html('&#65279;');
                             break;
                             case 'bokunoeditorToolbarFett':
-                                format.style.cssText='font-weight:bold;';
+                                format.style.cssText=((Button.hasClass('bneActive'))?'font-weight:bold;':'font-weight:normal');
                                 Markierung.insertNode(format);
                                 $(Markierung.startContainer.nextSibling).html('&#65279;');
                             break;   
@@ -109,10 +100,8 @@
                             $(Markierung.startContainer).closest('.bokunoeditorParagraph').css('text-align','right');
                         break;
                     }
-                        
-                sel.removeAllRanges();
-                sel.addRange(Markierung);
-                
+                    sel.removeAllRanges();
+                    sel.addRange(Markierung);
                 }, 10);
             }
         });
@@ -122,36 +111,79 @@
                 setTimeout(function() {
                     lastFocus.focus();
                     var sel = window.getSelection(),
-                        Zeile = sel.focusNode.data,
                         Markierung=sel.getRangeAt(0).cloneRange(),
-                        referenceNode,
                         format=document.createElement('span');
-                    switch (Select[0].id) {
-                        case 'bokunoeditorSchriftgroesse':
-                            format.style.cssText='font-size:'+Select.val()+'pt;';
-                            Markierung.surroundContents(format);
-                        break;
-                        case 'bokunoeditorSchriftart':
-                            format.style.cssText='font-family:'+Select.val()+';';
-                            Markierung.surroundContents(format);
-                        break;
+                    if(Markierung.startOffset != Markierung.endOffset){
+                        switch (Select[0].id) {
+                            case 'bokunoeditorSchriftgroesse':
+                                format.style.cssText='font-size:'+Select.val()+'pt;';
+                                Markierung.surroundContents(format);
+                            break;
+                            case 'bokunoeditorSchriftart':
+                                format.style.cssText='font-family:'+Select.val()+';';
+                                Markierung.surroundContents(format);
+                            break;
+                        }
+                    }else{
+                        switch (Select[0].id) {
+                            case 'bokunoeditorSchriftgroesse':
+                                format.style.cssText='font-size:'+Select.val()+'pt;';
+                                Markierung.insertNode(format);
+                                $(Markierung.startContainer.nextSibling).html('&#65279;');
+                            break;
+                            case 'bokunoeditorSchriftart':
+                                format.style.cssText='font-family:'+Select.val()+';';
+                                Markierung.insertNode(format);
+                                $(Markierung.startContainer.nextSibling).html('&#65279;');
+                            break;
+                        }
                     }
-                sel.removeAllRanges();
-                sel.addRange(Markierung);    
+                    sel.removeAllRanges();
+                    sel.addRange(Markierung);    
                 }, 10);
             }
         });
         $('#bokunoeditorContent').on({'touchend':function(e){
                 e.preventDefault();
+                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='center'){
+                    $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                    $('#bokunoeditorToolbarMitte').addClass('bneActive');
+                }
+                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='right'){
+                    $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                    $('#bokunoeditorToolbarRechts').addClass('bneActive');
+                }
+                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='left'){
+                    $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                    $('#bokunoeditorToolbarLinks').addClass('bneActive');
+                }
                 if($(e.target).css('font-style')=='italic')$('#bokunoeditorToolbarKursiv').addClass('bneActive');
                 if($(e.target).css('font-style')=='normal')$('#bokunoeditorToolbarKursiv').removeClass('bneActive');
                 if($(e.target).css('font-weight')=='700')$('#bokunoeditorToolbarFett').addClass('bneActive');
                 if($(e.target).css('font-weight')=='400')$('#bokunoeditorToolbarFett').removeClass('bneActive');
+                $('#bokunoeditorSchriftart option[value="'+$(e.target).css('font-family').replace(/\"/g,'')+'"]').prop('selected',true);
+                $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+']').prop('selected',true);
+                
             },'mouseup':function(e){
+                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='center'){
+                    $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                    $('#bokunoeditorToolbarMitte').addClass('bneActive');
+                }
+                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='right'){
+                    $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                    $('#bokunoeditorToolbarRechts').addClass('bneActive');
+                }
+                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='left'){
+                    $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                    $('#bokunoeditorToolbarLinks').addClass('bneActive');
+                }
                 if($(e.target).css('font-style')=='italic')$('#bokunoeditorToolbarKursiv').addClass('bneActive');
                 if($(e.target).css('font-style')=='normal')$('#bokunoeditorToolbarKursiv').removeClass('bneActive');
                 if($(e.target).css('font-weight')=='700')$('#bokunoeditorToolbarFett').addClass('bneActive');
                 if($(e.target).css('font-weight')=='400')$('#bokunoeditorToolbarFett').removeClass('bneActive');
+                $('#bokunoeditorSchriftart option[value="'+$(e.target).css('font-family').replace(/\"/g,'')+'"]').prop('selected',true);
+                $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+']').prop('selected',true);
+                
             }
         });
         $('#bokunoeditorContent').on('blur',function(){//damit der Cursor wieder im Editor ist
