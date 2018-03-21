@@ -17,14 +17,16 @@
         '6','7','8','9','10','10.5','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
     ];
     
-    $.fn.bokunoeditor=function($Info){
+    $.fn.bokunoeditor=function($Info){//Initialisiere BokuNoEditor
         var Textarea=$(this);
+        //Vorbereitung des Editors
         $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContent"></div></div>');
         $('#bokunoeditorIframe').append('<div id="bokuenoeditorMenuDateiContextmenu"><div id="bokuenoeditorMenuDateiContextmenuNeu"><button type="Button" class="bneMenuButton">Neu</button></div><div class="bneMenueTrennlinie"></div><div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div></div>');
         lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val());
         $('#bokunoeditorMenue').html('<button type="button" class="bokunoeditorMenueButton" id="bokunoeditorDatei">Datei</button><button type="button" class="bokunoeditorMenueButton">Schriftart</button><button type="button" class="bokunoeditorMenueButton">Format</button>');
         $('#bokunoeditorToolbar').html('<button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button><button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftart"></select><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftgroesse"></select><button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button>');
         
+        //Speichern als RTF File
         $('#bokuenoeditorMenuDateiContextmenuAbsenden button').click(function(){
             $.post(absolutPath+'/Converter/HTML2RTF-Converter.php',{
                 Content:$('#bokunoeditorContent').html(),
@@ -47,7 +49,7 @@
         $.each(Schriftgroesse,function(index,value){
             $('#bokunoeditorSchriftgroesse').append('<option value="'+value+'" '+((value=='11')?'selected="selected"':'')+'>'+value+' pt</option>');
         });
-        
+        //Formatierung bei Knöpfen
         $('.bokunoeditorToolbarButton').click(function(){
             var Button=$(this);
             if(lastFocus){
@@ -57,7 +59,6 @@
                     var sel = window.getSelection(),
                         Markierung=sel.getRangeAt(0),
                         format=document.createElement('span');
-                        console.log($(Markierung.startContainer).children());
                     //Formatiere Markiertes
                     if(Markierung.startOffset != Markierung.endOffset){//Text Formatierung
                         if(Button[0].id=='bokunoeditorToolbarKursiv'){
@@ -105,6 +106,7 @@
                 }, 10);
             }
         });
+        //Formatierung bei Select Feldern
         $('.bokunoeditorToolbarSelect').change(function(e){
             var Select=$(this);
             if(lastFocus){
@@ -134,6 +136,7 @@
                             case 'bokunoeditorSchriftart':
                                 format.style.cssText='font-family:'+Select.val()+';';
                                 Markierung.insertNode(format);
+//                                $(Markierung.startContainer);
                                 $(Markierung.startContainer.nextSibling).html('&#65279;');
                             break;
                         }
@@ -143,6 +146,7 @@
                 }, 10);
             }
         });
+        // welche Formatierungen momentan aktiv sind im Dokument
         $('#bokunoeditorContent').on({'touchend':function(e){
                 e.preventDefault();
                 if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='center'){
