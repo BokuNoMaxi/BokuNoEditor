@@ -1,0 +1,115 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 07.03.2018, 15:59:02
+    Author     : Markus
+*/
+$borderColor:grey;
+$buttonActive:#C2DEF5;
+$buttonBorder:#91C9F7;
+
+.bneItalic{
+    font-style: italic;
+}
+.bneBold{
+    font-weight: bold;
+}
+.bneAlignLeft{
+    text-align:left;
+}
+.bneAlignCenter{
+    text-align:center;
+}
+.bneAlignRight{
+    text-align:right;
+}
+.bneActive{
+    background:$buttonActive !important;
+}
+
+
+#bokunoeditorIframe{
+    background:white;
+    border-left:solid 1px grey;
+    border-right:solid 1px grey;
+    border-bottom:solid 1px grey;
+    height:100%;
+    #bokunoeditorMenue{
+        height:30px;
+        border-bottom:solid 1px $borderColor;
+        border-top:solid 1px $borderColor;
+        button{
+            padding: 4px 8px;
+            font-size: 14px;
+            line-height: 20px;
+            cursor: pointer;
+            color: #333;
+            text-align: center;
+            overflow: visible;
+            background: white;
+            border-top: none;
+            border-left: none;
+            border-bottom: none;
+            border-right: solid 1px $borderColor;
+        }
+    }
+    #bokuenoeditorMenuDateiContextmenu{
+        display:none;
+        position:absolute;
+        top: 30px;
+        background: white;
+        font-size: 14px;
+        border-right: solid 1px black;
+        border-bottom: solid 1px black;
+        line-height: 20px;
+        cursor: pointer;
+        div {
+            button{
+                border: none;
+                background: white;
+                width: 100%;
+                padding: 4px 8px;
+                cursor: pointer;
+            }
+        }
+        .bneMenueTrennlinie{
+            border-bottom: solid 1px black;
+            padding:0px;
+        }
+        &.bneOpen{
+            display:block;
+        }
+    }
+    #bokunoeditorToolbar{
+        height:28px;
+        button{
+            padding: 4px 8px;
+            font-size: 14px;
+            line-height: 20px;
+            cursor: pointer;
+            color: #333;
+            text-align: center;
+            overflow: visible;
+            background: white;
+            border-top: none;
+            border-left: none;
+            border-bottom: none;
+            border-right: solid 1px $borderColor;
+        }
+    }
+    #bokunoeditorContent{
+        border-top: solid 1px $borderColor;
+        height:calc(100% - 58px);
+        overflow: auto;
+        padding-bottom: 10px;
+        font-size: 11pt;
+        p{
+            font-family: Arial;
+            min-height:24px;
+            margin: 0px 10px;
+        }
+    }
+}

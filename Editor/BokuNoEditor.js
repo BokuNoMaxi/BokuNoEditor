@@ -40,7 +40,7 @@
             $('#bokuenoeditorMenuDateiContextmenu').toggleClass('bneOpen');
         });
         //wenn nichts importiert wird dann gib DIV vor
-        (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<div class="bokunoeditorParagraph"></div>'):'');
+        (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<p class="bokunoeditorParagraph"><br></p>'):'');
         //Lade Schriftarten
         $.each(Schriftart,function(index,value){
             $('#bokunoeditorSchriftart').append('<option value="'+value+'">'+value+'</option>');
@@ -115,6 +115,9 @@
                     var sel = window.getSelection(),
                         Markierung=sel.getRangeAt(0).cloneRange(),
                         format=document.createElement('span');
+                        ersetzeSelectedText(getSelectionText());
+                        
+                        
                     if(Markierung.startOffset != Markierung.endOffset){
                         switch (Select[0].id) {
                             case 'bokunoeditorSchriftgroesse':
@@ -123,6 +126,7 @@
                             break;
                             case 'bokunoeditorSchriftart':
                                 format.style.cssText='font-family:'+Select.val()+';';
+                                console.log($(Markierung.startContainer).siblings());
                                 Markierung.surroundContents(format);
                             break;
                         }
@@ -136,7 +140,6 @@
                             case 'bokunoeditorSchriftart':
                                 format.style.cssText='font-family:'+Select.val()+';';
                                 Markierung.insertNode(format);
-//                                $(Markierung.startContainer);
                                 $(Markierung.startContainer.nextSibling).html('&#65279;');
                             break;
                         }
@@ -190,10 +193,42 @@
                 
             }
         });
+        //Fokus zurück zum Editor
         $('#bokunoeditorContent').on('blur',function(){//damit der Cursor wieder im Editor ist
             lastFocus=this;
         });
-        
+        //Text ersetzungs Funktion
+        function getSelectionText() {
+            var text = "";
+            if (window.getSelection) {
+                text = window.getSelection().toString();
+            } else if (document.selection && document.selection.type != "Control") {
+                text = document.selection.createRange().text;
+            }
+            return text;
+        }
+        function ersetzeSelectedText($Text){
+            var sel, range,
+                format=document.createElement('span'),
+                text=$Text.split(/\n\r|\n|\r/g);
+                console.log(text);
+                $.each(text,function(index,value){
+                    format.appendChild(document.createTextNode(value));
+                    format.appendChild(document.createElement('br'));
+                });
+                console.log(format);
+            if (window.getSelection) {
+                sel = window.getSelection();
+                if (sel.rangeCount) {
+                    range = sel.getRangeAt(0);
+                    range.deleteContents();
+                    range.insertNode(format);
+                }
+            } else if (document.selection && document.selection.createRange) {
+                range = document.selection.createRange();
+                range.text = $Text;
+            }
+        }
     };
     
 }(jQuery));

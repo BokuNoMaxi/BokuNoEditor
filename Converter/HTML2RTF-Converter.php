@@ -5,7 +5,7 @@ include('Sonderzeichen.php');
 include('Bilder.php');
 
 $HTML=trim(html_entity_decode ($_POST['Content']));
-$HTMLSplit= array_filter(explode('</div>', $HTML));
+$HTMLSplit= array_filter(explode('</p>', $HTML));
 $RTF=array();
 $Paragraph="";
 $Info= json_decode($_POST['Info'],TRUE);

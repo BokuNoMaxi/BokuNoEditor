@@ -90,7 +90,7 @@ and open the template in the editor.
     overflow: auto;
     padding-bottom: 10px;
     font-size: 11pt; }
-    #bokunoeditorIframe #bokunoeditorContent div {
+    #bokunoeditorIframe #bokunoeditorContent p {
       font-family: Arial;
       min-height: 24px;
       margin: 0px 10px; }
