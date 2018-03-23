@@ -7,6 +7,11 @@ and open the template in the editor.
     Created on : 07.03.2018, 15:59:02
     Author     : Markus
 */
+*, ::after, ::before {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box; }
+
 .bneItalic {
   font-style: italic; }
 
@@ -27,14 +32,13 @@ and open the template in the editor.
 
 #bokunoeditorIframe {
   background: white;
-  border-left: solid 1px grey;
-  border-right: solid 1px grey;
-  border-bottom: solid 1px grey;
   height: 100%; }
   #bokunoeditorIframe #bokunoeditorMenue {
     height: 30px;
     border-bottom: solid 1px grey;
-    border-top: solid 1px grey; }
+    border-top: solid 1px grey;
+    border-left: solid 1px grey;
+    border-right: solid 1px grey; }
     #bokunoeditorIframe #bokunoeditorMenue button {
       padding: 4px 8px;
       font-size: 14px;
@@ -51,11 +55,11 @@ and open the template in the editor.
   #bokunoeditorIframe #bokuenoeditorMenuDateiContextmenu {
     display: none;
     position: absolute;
-    top: 30px;
+    top: 28px;
     background: white;
     font-size: 14px;
-    border-right: solid 1px black;
-    border-bottom: solid 1px black;
+    border-right: solid 1px grey;
+    border-bottom: solid 1px grey;
     line-height: 20px;
     cursor: pointer; }
     #bokunoeditorIframe #bokuenoeditorMenuDateiContextmenu div button {
@@ -65,12 +69,15 @@ and open the template in the editor.
       padding: 4px 8px;
       cursor: pointer; }
     #bokunoeditorIframe #bokuenoeditorMenuDateiContextmenu .bneMenueTrennlinie {
-      border-bottom: solid 1px black;
+      border-bottom: solid 1px grey;
       padding: 0px; }
     #bokunoeditorIframe #bokuenoeditorMenuDateiContextmenu.bneOpen {
       display: block; }
   #bokunoeditorIframe #bokunoeditorToolbar {
-    height: 28px; }
+    height: 29px;
+    border-bottom: solid 1px grey;
+    border-left: solid 1px grey;
+    border-right: solid 1px grey; }
     #bokunoeditorIframe #bokunoeditorToolbar button {
       padding: 4px 8px;
       font-size: 14px;
@@ -85,13 +92,16 @@ and open the template in the editor.
       border-bottom: none;
       border-right: solid 1px grey; }
   #bokunoeditorIframe #bokunoeditorContent {
-    border-top: solid 1px grey;
-    height: calc(100% - 58px);
-    overflow: auto;
-    padding-bottom: 10px;
-    font-size: 11pt; }
+    border-bottom: solid 1px grey;
+    border-left: solid 1px grey;
+    border-right: solid 1px grey;
+    height: calc(100% - 56px);
+    overflow-x: auto;
+    overflow-y: scroll;
+    padding-top: 10px;
+    font-size: 11pt;
+    font-family: Arial; }
     #bokunoeditorIframe #bokunoeditorContent p {
-      font-family: Arial;
       min-height: 24px;
       margin: 0px 10px; }
 

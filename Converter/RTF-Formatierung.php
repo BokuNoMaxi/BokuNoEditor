@@ -25,7 +25,8 @@ function setColors($Color){
     return '{\colortbl;'.$Farben.'}';
 }
 function setInformationen($Info){
-    $Info['Datum']=DateTime::createFromFormat('Y.m.d H:i', $Info['Datum']);
+    if($Info['Datum'] != null)$Info['Datum']=DateTime::createFromFormat('Y.m.d H:i', $Info['Datum']);
+    else $Info['Datum']= new DateTime (time ());
     return '{\info{\title '.$Info['Titel'].'}{\author '.$Info['Author'].'}{\company '.$Info['Company'].'}{\creatim\yr'.$Info['Datum']->format('Y').'\mo'.$Info['Datum']->format('m').'\dy'.$Info['Datum']->format('d').'\hr'.$Info['Datum']->format('H').'\min'.$Info['Datum']->format('i').'}{\doccomm '.$Info['Kommentar'].'}}';
 }
 function setStandardformatierung($Text){

@@ -10,7 +10,11 @@ and open the template in the editor.
 $borderColor:grey;
 $buttonActive:#C2DEF5;
 $buttonBorder:#91C9F7;
-
+* , ::after , ::before{
+    margin:0px;
+    padding:0px;
+    box-sizing: border-box;
+}
 .bneItalic{
     font-style: italic;
 }
@@ -33,14 +37,13 @@ $buttonBorder:#91C9F7;
 
 #bokunoeditorIframe{
     background:white;
-    border-left:solid 1px grey;
-    border-right:solid 1px grey;
-    border-bottom:solid 1px grey;
     height:100%;
     #bokunoeditorMenue{
         height:30px;
         border-bottom:solid 1px $borderColor;
         border-top:solid 1px $borderColor;
+        border-left:solid 1px $borderColor;
+        border-right:solid 1px $borderColor;
         button{
             padding: 4px 8px;
             font-size: 14px;
@@ -59,11 +62,11 @@ $buttonBorder:#91C9F7;
     #bokuenoeditorMenuDateiContextmenu{
         display:none;
         position:absolute;
-        top: 30px;
+        top: 28px;
         background: white;
         font-size: 14px;
-        border-right: solid 1px black;
-        border-bottom: solid 1px black;
+        border-right: solid 1px $borderColor;
+        border-bottom: solid 1px $borderColor;
         line-height: 20px;
         cursor: pointer;
         div {
@@ -76,7 +79,7 @@ $buttonBorder:#91C9F7;
             }
         }
         .bneMenueTrennlinie{
-            border-bottom: solid 1px black;
+            border-bottom: solid 1px $borderColor;
             padding:0px;
         }
         &.bneOpen{
@@ -84,7 +87,10 @@ $buttonBorder:#91C9F7;
         }
     }
     #bokunoeditorToolbar{
-        height:28px;
+        height:29px;
+        border-bottom:solid 1px $borderColor;
+        border-left:solid 1px $borderColor;
+        border-right:solid 1px $borderColor;
         button{
             padding: 4px 8px;
             font-size: 14px;
@@ -101,13 +107,16 @@ $buttonBorder:#91C9F7;
         }
     }
     #bokunoeditorContent{
-        border-top: solid 1px $borderColor;
-        height:calc(100% - 58px);
-        overflow: auto;
-        padding-bottom: 10px;
+        border-bottom:solid 1px $borderColor;
+        border-left:solid 1px $borderColor;
+        border-right:solid 1px $borderColor;
+        height:calc(100% - 56px);
+        overflow-x: auto;
+        overflow-y: scroll;
+        padding-top:10px;
         font-size: 11pt;
+        font-family: Arial;
         p{
-            font-family: Arial;
             min-height:24px;
             margin: 0px 10px;
         }
