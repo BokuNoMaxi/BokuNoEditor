@@ -13,9 +13,9 @@
         'Palatino Linotype',
         'Tahoma','Times New Roman','Trebuchet MS',
         'Verdana',
-    ],Schriftgroesse=[
-        '6','7','8','9','10','10.5','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
-    ];
+        ],Schriftgroesse=[
+            '6','7','8','9','10','10.5','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
+        ];
     
     $.fn.bokunoeditor=function($Info){//Initialisiere BokuNoEditor
         var Textarea=$(this);
@@ -54,32 +54,25 @@
             var Button=$(this);
             if(lastFocus){
                 setTimeout(function() {
+                    var sel = window.getSelection(),
+                        Markierung=sel.getRangeAt(0);
                     lastFocus.focus();
                     Button.toggleClass('bneActive'); 
-                    var sel = window.getSelection(),
-                        Markierung=sel.getRangeAt(0),
-                        format=document.createElement('span');
                     //Formatiere Markiertes
                     if(Markierung.startOffset != Markierung.endOffset){//Text Formatierung
                         if(Button[0].id=='bokunoeditorToolbarKursiv'){
-                            format.style.cssText=((Button.hasClass('bneActive'))?'font-style:italic;':'font-style:normal;');
-                            Markierung.surroundContents(format);
+                            ((Button.hasClass('bneActive'))?ersetzeSelectedText(getSelectionText(),[{'formatierung':'kkursiv','value':null}]):ersetzeSelectedText(getSelectionText(),[{'formatierung':'knormal','value':null}]));
                         }
                         if(Button[0].id=='bokunoeditorToolbarFett'){
-                            format.style.cssText=((Button.hasClass('bneActive'))?'font-weight:bold;':'font-weight:normal;');
-                            Markierung.surroundContents(format);
+                            ((Button.hasClass('bneActive'))?ersetzeSelectedText(getSelectionText(),[{'formatierung':'wbold','value':null}]):ersetzeSelectedText(getSelectionText(),[{'formatierung':'wnormal','value':null}]));
                         }
                     }else{
                         switch(Button[0].id){
                             case 'bokunoeditorToolbarKursiv':
-                                format.style.cssText=((Button.hasClass('bneActive'))?'font-style:italic;':'font-style:normal');
-                                Markierung.insertNode(format);
-                                $(Markierung.startContainer.nextSibling).html('&#65279;');
+                                ((Button.hasClass('bneActive'))?beginneNeueFormatierung([{'formatierung':'kkursiv','value':null}]):beginneNeueFormatierung([{'formatierung':'knormal','value':null}]));
                             break;
                             case 'bokunoeditorToolbarFett':
-                                format.style.cssText=((Button.hasClass('bneActive'))?'font-weight:bold;':'font-weight:normal');
-                                Markierung.insertNode(format);
-                                $(Markierung.startContainer.nextSibling).html('&#65279;');
+                                ((Button.hasClass('bneActive'))?beginneNeueFormatierung([{'formatierung':'wbold','value':null}]):beginneNeueFormatierung([{'formatierung':'wnormal','value':null}]));
                             break;   
                         }
                     }
@@ -101,8 +94,6 @@
                             $(Markierung.startContainer).closest('.bokunoeditorParagraph').css('text-align','right');
                         break;
                     }
-                    sel.removeAllRanges();
-                    sel.addRange(Markierung);
                 }, 10);
             }
         });
@@ -113,45 +104,31 @@
                 setTimeout(function() {
                     lastFocus.focus();
                     var sel = window.getSelection(),
-                        Markierung=sel.getRangeAt(0).cloneRange(),
-                        format=document.createElement('span');
-                        ersetzeSelectedText(getSelectionText());
-                        
-                        
+                        Markierung=sel.getRangeAt(0).cloneRange();
                     if(Markierung.startOffset != Markierung.endOffset){
                         switch (Select[0].id) {
                             case 'bokunoeditorSchriftgroesse':
-                                format.style.cssText='font-size:'+Select.val()+'pt;';
-                                Markierung.surroundContents(format);
+                                ersetzeSelectedText(getSelectionText(),[{'formatierung':'font-size','value':Select.val()}]);
                             break;
                             case 'bokunoeditorSchriftart':
-                                format.style.cssText='font-family:'+Select.val()+';';
-                                console.log($(Markierung.startContainer).siblings());
-                                Markierung.surroundContents(format);
+                                ersetzeSelectedText(getSelectionText(),[{'formatierung':'font-family','value':Select.val()}]);
                             break;
                         }
                     }else{
                         switch (Select[0].id) {
                             case 'bokunoeditorSchriftgroesse':
-                                format.style.cssText='font-size:'+Select.val()+'pt;';
-                                Markierung.insertNode(format);
-                                $(Markierung.startContainer.nextSibling).html('&#65279;');
+                                beginneNeueFormatierung([{'formatierung':'font-size','value':Select.val()}]);
                             break;
                             case 'bokunoeditorSchriftart':
-                                format.style.cssText='font-family:'+Select.val()+';';
-                                Markierung.insertNode(format);
-                                $(Markierung.startContainer.nextSibling).html('&#65279;');
+                                beginneNeueFormatierung([{'formatierung':'font-family','value':Select.val()}]);
                             break;
                         }
                     }
-                    sel.removeAllRanges();
-                    sel.addRange(Markierung);    
                 }, 10);
             }
         });
         // welche Formatierungen momentan aktiv sind im Dokument
-        $('#bokunoeditorContent').on({'touchend':function(e){
-                e.preventDefault();
+        $('#bokunoeditorContent').on({'touchstart':function(e){
                 if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='center'){
                     $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarMitte').addClass('bneActive');
@@ -171,7 +148,7 @@
                 $('#bokunoeditorSchriftart option[value="'+$(e.target).css('font-family').replace(/\"/g,'')+'"]').prop('selected',true);
                 $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+']').prop('selected',true);
                 
-            },'mouseup':function(e){
+            },'mousedown':function(e){
                 if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='center'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarMitte').addClass('bneActive');
@@ -207,27 +184,67 @@
             }
             return text;
         }
-        function ersetzeSelectedText($Text){
-            var sel, range,
-                format=document.createElement('span'),
-                text=$Text.split(/\n\r|\n|\r/g);
-                console.log(text);
-                $.each(text,function(index,value){
-                    format.appendChild(document.createTextNode(value));
-                    format.appendChild(document.createElement('br'));
-                });
-                console.log(format);
+        function ersetzeSelectedText($Text,$format){
+            var sel, range, startOffset, endOffset,
+                format=setFormatierung($format),
+                text=$Text.split(/(\n\n)/gm);
             if (window.getSelection) {
                 sel = window.getSelection();
                 if (sel.rangeCount) {
                     range = sel.getRangeAt(0);
+                    startOffset=range.startOffset;
+                    endOffset=range.endOffset;
                     range.deleteContents();
-                    range.insertNode(format);
+                    if(text.length==1){
+                        format.appendChild(document.createTextNode(text[0]));
+                        range.insertNode(format);
+                    }else{
+                        $.each(text,function(index,value){
+                            if(value!='\n\n'){
+                                format.appendChild(document.createTextNode(value));
+                            }
+                        });
+                    }
                 }
             } else if (document.selection && document.selection.createRange) {
                 range = document.selection.createRange();
                 range.text = $Text;
             }
+        }
+        //Formatierung startet ab jetzt
+        function beginneNeueFormatierung($format){
+            var sel = window.getSelection(),
+                Markierung=sel.getRangeAt(0),
+                format=setFormatierung($format);
+            Markierung.insertNode(format);
+            $(Markierung.startContainer.nextSibling).html('&#65279;');
+        }
+        //setze Formatierung für den aktuellen
+        function setFormatierung($format){
+            var format=document.createElement('span');
+            $.each($format,function(index,value){
+                switch(value['formatierung']){
+                    case 'kkursiv':
+                        format.style.cssText='font-style:italic;';
+                        break;
+                    case 'knormal':
+                        format.style.cssText='font-style:normal;';
+                    break;
+                    case 'wbold':
+                        format.style.cssText='font-weight:700;';
+                    break;
+                    case 'wnormal':
+                        format.style.cssText='font-weight:400;';
+                    break;
+                    case 'font-size':
+                        format.style.cssText='font-size:'+value['value']+'pt;';
+                        break;
+                    case 'font-family':
+                        format.style.cssText='font-family:'+value['value']+'pt;';
+                    break;
+                }
+            });
+            return format;
         }
     };
     

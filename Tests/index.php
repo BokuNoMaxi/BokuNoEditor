@@ -1,6 +1,7 @@
 <!Doctype html>
 <html>
     <head>
+        <meta name="viewport" content="initial-scale=1.0">
         <title>BokuNoEditor</title>
         <script src="../../jquery-3.1.1.js" type="text/javascript"></script>
         <link href="../Editor/BokuNoEditor.css" rel="stylesheet" type="text/css"/>

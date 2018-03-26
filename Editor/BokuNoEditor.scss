@@ -91,6 +91,13 @@ $buttonBorder:#91C9F7;
         border-bottom:solid 1px $borderColor;
         border-left:solid 1px $borderColor;
         border-right:solid 1px $borderColor;
+        select{
+            border: none;
+            border-radius: 0px !important;
+            padding: 5px 8px;
+            border-right: solid 1px black;
+            font-size: 14px;
+        }
         button{
             padding: 4px 8px;
             font-size: 14px;
