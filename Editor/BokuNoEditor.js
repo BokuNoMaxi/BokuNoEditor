@@ -175,7 +175,8 @@
             lastFocus=this;
         });
         //Text ersetzungs Funktion
-        function getSelectionText() {
+    };
+    function getSelectionText() {
             var text = "";
             if (window.getSelection) {
                 text = window.getSelection().toString();
@@ -184,68 +185,80 @@
             }
             return text;
         }
-        function ersetzeSelectedText($Text,$format){
-            var sel, range, startOffset, endOffset,
-                format=setFormatierung($format),
-                text=$Text.split(/(\n\n)/gm);
-            if (window.getSelection) {
-                sel = window.getSelection();
-                if (sel.rangeCount) {
-                    range = sel.getRangeAt(0);
-                    startOffset=range.startOffset;
-                    endOffset=range.endOffset;
-                    range.deleteContents();
-                    if(text.length==1){
-                        format.appendChild(document.createTextNode(text[0]));
-                        range.insertNode(format);
-                    }else{
-                        $.each(text,function(index,value){
-                            if(value!='\n\n'){
-                                format.appendChild(document.createTextNode(value));
-                            }
-                        });
-                    }
+    function ersetzeSelectedText($Text,$format){
+        var sel, range, startOffset,
+            text=$Text.split(/(\n\n)/gm).filter(filterArrayCR);
+        if (window.getSelection) {
+            sel = window.getSelection();
+            if (sel.rangeCount) {
+                range = sel.getRangeAt(0);
+//                range.extractContents();
+                range.deleteContents();
+                startOffset=sel.anchorOffset;
+                if(text.length==1){
+                    var format=setFormatierung($format);
+                    format.appendChild(document.createTextNode(text[0]));
+                    range.insertNode(format);
+                }else{
+//                    text.push('');
+                    $.each(text,function(index,value){
+                        var format=setFormatierung($format),
+                            paragraph=document.createElement('p'),
+                            Childposition=(startOffset-1+index);
+                            paragraph.className='bokunoeditorParagraph';
+                            format.appendChild(document.createTextNode(value));
+                            paragraph.appendChild(format);
+                        if(index==0){
+                            $('.bokunoeditorParagraph').eq(Childposition).append(format);
+                        }else if(index==text.length-1){
+                            $('.bokunoeditorParagraph').eq(Childposition).prepend(format);
+                        }else{
+                            $('.bokunoeditorParagraph').eq(Childposition).before(paragraph);
+                        }
+                    });
                 }
-            } else if (document.selection && document.selection.createRange) {
-                range = document.selection.createRange();
-                range.text = $Text;
             }
+        } else if (document.selection && document.selection.createRange) {
+            range = document.selection.createRange();
+            range.text = $Text;
         }
-        //Formatierung startet ab jetzt
-        function beginneNeueFormatierung($format){
-            var sel = window.getSelection(),
-                Markierung=sel.getRangeAt(0),
-                format=setFormatierung($format);
-            Markierung.insertNode(format);
-            $(Markierung.startContainer.nextSibling).html('&#65279;');
-        }
-        //setze Formatierung für den aktuellen
-        function setFormatierung($format){
-            var format=document.createElement('span');
-            $.each($format,function(index,value){
-                switch(value['formatierung']){
-                    case 'kkursiv':
-                        format.style.cssText='font-style:italic;';
-                        break;
-                    case 'knormal':
-                        format.style.cssText='font-style:normal;';
+    }
+    //Formatierung startet ab jetzt
+    function beginneNeueFormatierung($format){
+        var sel = window.getSelection(),
+            Markierung=sel.getRangeAt(0),
+            format=setFormatierung($format);
+        Markierung.insertNode(format);
+        $(Markierung.startContainer.nextSibling).html('&#65279;');
+    }
+    //setze Formatierung
+    function setFormatierung($format){
+        var format=document.createElement('span');
+        $.each($format,function(index,value){
+            switch(value['formatierung']){
+                case 'kkursiv':
+                    format.style.cssText='font-style:italic;';
                     break;
-                    case 'wbold':
-                        format.style.cssText='font-weight:700;';
+                case 'knormal':
+                    format.style.cssText='font-style:normal;';
+                break;
+                case 'wbold':
+                    format.style.cssText='font-weight:700;';
+                break;
+                case 'wnormal':
+                    format.style.cssText='font-weight:400;';
+                break;
+                case 'font-size':
+                    format.style.cssText='font-size:'+value['value']+'pt;';
                     break;
-                    case 'wnormal':
-                        format.style.cssText='font-weight:400;';
-                    break;
-                    case 'font-size':
-                        format.style.cssText='font-size:'+value['value']+'pt;';
-                        break;
-                    case 'font-family':
-                        format.style.cssText='font-family:'+value['value']+'pt;';
-                    break;
-                }
-            });
-            return format;
-        }
-    };
-    
+                case 'font-family':
+                    format.style.cssText='font-family:'+value['value']+'pt;';
+                break;
+            }
+        });
+        return format;
+    }
+    function filterArrayCR(text){
+        return text !='\n\n';
+    }
 }(jQuery));
