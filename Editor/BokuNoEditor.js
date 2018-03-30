@@ -21,7 +21,7 @@
         var Textarea=$(this);
         //Vorbereitung des Editors
         $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContent"></div></div>');
-        $('#bokunoeditorIframe').append('<div id="bokuenoeditorMenuDateiContextmenu"><div id="bokuenoeditorMenuDateiContextmenuNeu"><button type="Button" class="bneMenuButton">Neu</button></div><div class="bneMenueTrennlinie"></div><div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div></div>');
+        $('#bokunoeditorIframe').append('<div id="bokuenoeditorMenuDateiContextmenu"><div id="bokuenoeditorMenuDateiContextmenuNeu"><button type="Button" class="bneMenuButton">Neu</button></div><div class="bneMenueTrennlinie"></div><div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div><div id="bokuenoeditorMenuDateiContextmenuDrucken"><button type="Button" class="bneMenuButton">Drucken</button></div></div>');
         lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val());
         $('#bokunoeditorMenue').html('<button type="button" class="bokunoeditorMenueButton" id="bokunoeditorDatei">Datei</button><button type="button" class="bokunoeditorMenueButton">Schriftart</button><button type="button" class="bokunoeditorMenueButton">Format</button>');
         $('#bokunoeditorToolbar').html('<button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button><button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftart"></select><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftgroesse"></select><button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button>');
@@ -38,6 +38,10 @@
         //Kontextmenü
         $('#bokunoeditorDatei').click(function(){
             $('#bokuenoeditorMenuDateiContextmenu').toggleClass('bneOpen');
+        });
+        //Drucken
+        $('#bokuenoeditorMenuDateiContextmenuDrucken').click(function(){
+            drucken();
         });
         //wenn nichts importiert wird dann gib DIV vor
         (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<p class="bokunoeditorParagraph"><br></p>'):'');
@@ -166,57 +170,58 @@
                 if($(e.target).css('font-weight')=='700')$('#bokunoeditorToolbarFett').addClass('bneActive');
                 if($(e.target).css('font-weight')=='400')$('#bokunoeditorToolbarFett').removeClass('bneActive');
                 $('#bokunoeditorSchriftart option[value="'+$(e.target).css('font-family').replace(/\"/g,'')+'"]').prop('selected',true);
-                $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+']').prop('selected',true);
+                $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+'"]').prop('selected',true);
                 
+            },'blur':function(){//Fokus zurück zum Editor
+                lastFocus=this;
+            },'keydown':function(e){
+                if (e.keyCode === 13) {
+                    e.preventDefault;
+                    document.execCommand("defaultParagraphSeparator", false, "p");
+//                    document.execCommand("insertHTML", false, "<div class='bokunoeditorParagraph'>ok</div>");
+                    
+                }
             }
         });
-        //Fokus zurück zum Editor
-        $('#bokunoeditorContent').on('blur',function(){//damit der Cursor wieder im Editor ist
-            lastFocus=this;
-        });
-        //Text ersetzungs Funktion
     };
-    function getSelectionText() {
-            var text = "";
-            if (window.getSelection) {
-                text = window.getSelection().toString();
-            } else if (document.selection && document.selection.type != "Control") {
-                text = document.selection.createRange().text;
-            }
-            return text;
+    //Text ersetzungs Funktion
+    function getSelectionText() {//return den selected text
+        var text = "";
+        if (window.getSelection) {
+            text = window.getSelection().toString();
+        } else if (document.selection && document.selection.type != "Control") {
+            text = document.selection.createRange().text;
         }
-    function ersetzeSelectedText($Text,$format){
-        var sel, range, startOffset,
+        return text;
+    }
+    function ersetzeSelectedText($Text,$format){//ersetzen des Textes durch Formatierungen
+        var sel, range, startOffset,oldContent,startContent,endContent,
             text=$Text.split(/(\n\n)/gm).filter(filterArrayCR);
         if (window.getSelection) {
             sel = window.getSelection();
             if (sel.rangeCount) {
                 range = sel.getRangeAt(0);
-//                range.extractContents();
-                range.deleteContents();
-                startOffset=sel.anchorOffset;
-                if(text.length==1){
-                    var format=setFormatierung($format);
-                    format.appendChild(document.createTextNode(text[0]));
+                oldContent=$(range.extractContents());
+                var format=setFormatierung($format,oldContent);
+                if(oldContent.children().length>0){//Mehrzeilige Formatierung
+                    oldContent.find('.bokunoeditorParagraph').wrapInner(format);//umschließe den selected Text mit der Formatierung
+                    //kombiniere die zeile vorher und nachher 
+                    startContent=$('.bokunoeditorParagraph').eq(range.startOffset-1).html()+oldContent.find('.bokunoeditorParagraph').first().html();
+                    endContent=oldContent.find('.bokunoeditorParagraph').last().html()+$('.bokunoeditorParagraph').eq(range.startOffset).html();
+                    //Die kombinierte Zeile als erstes und Letztes Objekt im document fragment  
+                    oldContent.find('.bokunoeditorParagraph').first().html(startContent);
+                    oldContent.find('.bokunoeditorParagraph').last().html(endContent);
+                    //entferne nicht benötigte Objekte
+                    $('.bokunoeditorParagraph').eq(range.startOffset).prev().remove();
+                    $('.bokunoeditorParagraph').eq(range.startOffset).remove();
+                    oldContent.find('.bokunoeditorParagraph span:empty').remove();
+                    
+                    range.insertNode(oldContent[0]);
+                }else{//Single Line Formatierung
+                    format.append(oldContent.text());
                     range.insertNode(format);
-                }else{
-//                    text.push('');
-                    $.each(text,function(index,value){
-                        var format=setFormatierung($format),
-                            paragraph=document.createElement('p'),
-                            Childposition=(startOffset-1+index);
-                            paragraph.className='bokunoeditorParagraph';
-                            format.appendChild(document.createTextNode(value));
-                            paragraph.appendChild(format);
-                        if(index==0){
-                            $('.bokunoeditorParagraph').eq(Childposition).append(format);
-                        }else if(index==text.length-1){
-                            $('.bokunoeditorParagraph').eq(Childposition).prepend(format);
-                        }else{
-                            $('.bokunoeditorParagraph').eq(Childposition).before(paragraph);
-                        }
-                    });
                 }
+//                range.insertNode(oldContent[0]);
             }
         } else if (document.selection && document.selection.createRange) {
             range = document.selection.createRange();
@@ -227,31 +232,45 @@
     function beginneNeueFormatierung($format){
         var sel = window.getSelection(),
             Markierung=sel.getRangeAt(0),
-            format=setFormatierung($format);
+            format=setFormatierung($format,null);
         Markierung.insertNode(format);
         $(Markierung.startContainer.nextSibling).html('&#65279;');
     }
     //setze Formatierung
-    function setFormatierung($format){
+    function setFormatierung($format,$documentFragment){
         var format=document.createElement('span');
         $.each($format,function(index,value){
             switch(value['formatierung']){
                 case 'kkursiv':
+                    if($documentFragment!==null){
+                        $.each($documentFragment.find('span[style^="font-style"]'),function(index,value){
+                            $(value).css('font-style','');
+                        });
+                    }
                     format.style.cssText='font-style:italic;';
                     break;
                 case 'knormal':
+                    if($documentFragment!==null){
+                        $.each($documentFragment.find('span[style^="font-style"]'),function(index,value){
+                            $(value).css('font-style','');
+                        });
+                    }
                     format.style.cssText='font-style:normal;';
                 break;
                 case 'wbold':
+                    if($documentFragment!==null)$documentFragment.find('span[style^="font-weight:400"]').css('font-weight','');
                     format.style.cssText='font-weight:700;';
                 break;
                 case 'wnormal':
+                    if($documentFragment!==null)$documentFragment.find('span[style^="font-weight:700"]').css('font-weight','');
                     format.style.cssText='font-weight:400;';
                 break;
                 case 'font-size':
+                    if($documentFragment!==null)$documentFragment.find('span[style^="font-size:"]').css('font-size','');
                     format.style.cssText='font-size:'+value['value']+'pt;';
                     break;
                 case 'font-family':
+                    if($documentFragment!==null)$documentFragment.find('span[style^="font-family:"]').css('font-family','');
                     format.style.cssText='font-family:'+value['value']+'pt;';
                 break;
             }
@@ -260,5 +279,11 @@
     }
     function filterArrayCR(text){
         return text !='\n\n';
+    }
+    function drucken(){
+        var w=window.open();
+        w.document.write($('#bokunoeditorContent').html());
+        w.print();
+        w.close();
     }
 }(jQuery));

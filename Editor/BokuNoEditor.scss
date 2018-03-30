@@ -124,8 +124,11 @@ $buttonBorder:#91C9F7;
         font-size: 11pt;
         font-family: Arial;
         p{
-            min-height:24px;
             margin: 0px 10px;
+        }
+        span{
+            display:inline-block;
+            height:100%;
         }
     }
 }

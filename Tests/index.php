@@ -21,7 +21,10 @@
     </head>
     <body style="height: 100vh;margin: 5px;overflow:hidden;">
         <div style="height: calc(100% - 30px);">
-            <input type="text" id="editor" value='<p class="bokunoeditorParagraph">erste zeile</p><p class="bokunoeditorParagraph">zweite zeile</p><p class="bokunoeditorParagraph">dritte zeile</p><p class="bokunoeditorParagraph">vierte zeile</p><p class="bokunoeditorParagraph">fünfte zeile</p><p class="bokunoeditorParagraph">sechste zeile</p><p class="bokunoeditorParagraph">siebte zeile</p><p class="bokunoeditorParagraph">achte zeile</p><p class="bokunoeditorParagraph">neunte zeile</p><p class="bokunoeditorParagraph">zehnte zeile</p><p class="bokunoeditorParagraph">elfte zeile</p><p class="bokunoeditorParagraph">zwölfte zeile</p><p class="bokunoeditorParagraph">dreizehnte zeile</p><p class="bokunoeditorParagraph">vierzehnte zeile</p><p class="bokunoeditorParagraph">fünfzehne zeile</p><p class="bokunoeditorParagraph">sechszehnte zeile</p><p class="bokunoeditorParagraph">siebzehnte zeile</p>'>
+            <input type="text" id="editor" 
+                 value='<p class="bokunoeditorParagraph">erste zeile</p><p class="bokunoeditorParagraph">zweite zeile</p><p class="bokunoeditorParagraph">dritte zeile</p><p class="bokunoeditorParagraph">vi<span style="font-style:italic;">erte zei</span>le</p><p class="bokunoeditorParagraph">fünfte zeile</p><p class="bokunoeditorParagraph">sechste zeile</p><p class="bokunoeditorParagraph">siebte zeile</p><p class="bokunoeditorParagraph">achte zeile</p><p class="bokunoeditorParagraph">neunte zeile</p><p class="bokunoeditorParagraph">zehnte zeile</p><p class="bokunoeditorParagraph">elfte zeile</p><p class="bokunoeditorParagraph">zwölfte zeile</p><p class="bokunoeditorParagraph">dreizehnte zeile</p><p class="bokunoeditorParagraph">vierzehnte zeile</p><p class="bokunoeditorParagraph">fünfzehne zeile</p><p class="bokunoeditorParagraph">sechszehnte zeile</p><p class="bokunoeditorParagraph">siebzehnte zeile</p>'
+            >
+               
         </div>
     </body>
 </html>
