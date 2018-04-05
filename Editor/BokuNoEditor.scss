@@ -34,7 +34,6 @@ $buttonBorder:#91C9F7;
     background:$buttonActive !important;
 }
 
-
 #bokunoeditorIframe{
     background:white;
     height:100%;
@@ -62,7 +61,8 @@ $buttonBorder:#91C9F7;
     #bokuenoeditorMenuDateiContextmenu{
         display:none;
         position:absolute;
-        top: 28px;
+        top: 35px;
+        left: 6px;
         background: white;
         font-size: 14px;
         border-right: solid 1px $borderColor;

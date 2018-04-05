@@ -1,6 +1,10 @@
 <?php
-function makeRTF($Info,$Schriftarten,$Color,$Content){
-    $Deff= setDefinition($Info, $Schriftarten, $Color);
+include('Sonderzeichen.php');
+function makeRTF($Info,$pArr){
+    $pArr= makeFormatierungHTML2RTFParagraph($pArr);
+    $Content= implode('', $pArr['Content']);
+    $Schriftarten=$pArr['Schriftarten'];
+    $Deff= setDefinition($Info, $Schriftarten, null);
     $Standards='\deflang1031\plain\fs26\widowctrl\hyphauto\ftnbj';
     return '{\rtf1\ansi'.$Deff.$Standards.$Content.'}';
 }
@@ -26,9 +30,132 @@ function setColors($Color){
 }
 function setInformationen($Info){
     if($Info['Datum'] != null)$Info['Datum']=DateTime::createFromFormat('Y.m.d H:i', $Info['Datum']);
-    else $Info['Datum']= new DateTime (time ());
-    return '{\info{\title '.$Info['Titel'].'}{\author '.$Info['Author'].'}{\company '.$Info['Company'].'}{\creatim\yr'.$Info['Datum']->format('Y').'\mo'.$Info['Datum']->format('m').'\dy'.$Info['Datum']->format('d').'\hr'.$Info['Datum']->format('H').'\min'.$Info['Datum']->format('i').'}{\doccomm '.$Info['Kommentar'].'}}';
+    else $Info['Datum']= new DateTime ();
+    return '{\info{\title '.$Info['Title'].'}{\author '.$Info['Author'].'}{\company '.$Info['Company'].'}{\creatim\yr'.$Info['Datum']->format('Y').'\mo'.$Info['Datum']->format('m').'\dy'.$Info['Datum']->format('d').'\hr'.$Info['Datum']->format('H').'\min'.$Info['Datum']->format('i').'}{\doccomm '.$Info['Kommentar'].'}}';
 }
+function makeFormatierungHTML2RTFParagraph($pArr){
+    $Schriftarten=array('Arial');
+    $RTF=array();
+    foreach ($pArr as $p){//arbeite das Array Paragraph für Paragraph ab
+        $RTFPraefix="";
+        $p= str_replace('<p ', '', $p);//strip p tag vom Anfang
+        //strip p - tag vom Content
+        $pStyles= substr($p, 0, strpos($p, '>'));
+        $pContent= substr($p, strpos($p, '>')+1);
+        //wenn der p - tag formatiert wurde konvertiere HTML2RTF
+        if(strstr($pStyles,'style')!=false){
+            $Styles= str_replace('style=', '', $pStyles);//strip style= vom String
+            $Stylings= array_filter(explode(';', substr($Styles, 1,strpos($Styles, '"',2)-1)));//liefere mir nur die CSS Attribute:value;
+            foreach ($Stylings as $S){
+                $a = explode(':', $S);
+                $Tag=trim($a[0]);
+                $Value=trim($a[1]);
+                switch ($Tag){
+                    case 'font-size':
+                        if(strstr($Value, 'px')){
+                            $Value= Pixel2Point(str_replace('px', '', $Value));
+                        }
+                        $RTFPraefix=setFontSize(trim(str_replace('pt', '', $Value))*2);
+                        break;
+                    case 'text-align':
+                        switch ($Value){
+                            case 'left':
+                                $RTFPraefix= setLinksbuendig($RTFPraefix);
+                                break;
+                            case 'center':
+                                $RTFPraefix= setZentriert($RTFPraefix);
+                                break;
+                            case 'right':
+                                $RTFPraefix= setRechtssbuendig($RTFPraefix);
+                                break;
+                        }
+                        break;
+                }
+            }
+        }
+        //lass den Content formatieren
+        $RTFContent= makeFormatierungHTML2RTFContent($pContent, $Schriftarten);
+        $Schriftarten=$RTFContent['Schriftarten'];
+        $RTFParagraph= makeGroup(makeParagraph($RTFPraefix.$RTFContent['RTF']));
+        $RTF[]=str_replace(array('$nbsp;','&#65279;','\ufeff'), ' ',iconv('UTF-8//IGNORE', 'CP1252//IGNORE',$RTFParagraph));
+    }
+    return array('Content'=>$RTF,'Schriftarten'=>$Schriftarten);
+    
+}
+function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten){
+    $SpanFormatedContent='';
+    $FontFormatedContent='';
+    $Ausgabe=array('RTF'=>'','Schriftarten'=>array());
+    //Fett
+    $HTMLline=preg_replace("/<b>/", "\b ", $HTMLline);
+    $HTMLline=preg_replace("/<\/b>/", "\b0 ", $HTMLline);
+    //Kursiv
+    $HTMLline=preg_replace("/<i>/", "\i ", $HTMLline);
+    $HTMLline=preg_replace("/<\/i>/", "\i0 ", $HTMLline);
+    //Formatierung SPAN tag
+    $HTMLline=preg_replace("/<\/span>/", stopGroup(), $HTMLline);
+    $HTMLline=preg_replace("/<\/font>/", stopGroup(), $HTMLline);
+    //Sonderzeichen
+    $HTMLline=preg_replace("/<br>/", br, $HTMLline);
+    $HTMLline=preg_replace("/".chr(160)."/", ' ', $HTMLline);
+    
+    //Span-Styles Formatierung
+    if(strstr($HTMLline ,'<span')){
+        $SPAN= array_filter(explode('<span ', $HTMLline));
+        foreach ($SPAN as $s) {
+            if(strstr($s, 'style')){
+                $s= str_replace('style=', '', $s);//strip style attr von span
+                $Styles= explode(';',substr($s, 1, strpos($s, '"',2)-2));//splitter alle Style attribute auf
+                $Endpunkt= strpos($s, '>');//endposition des span tags
+                $SpanUnformatedContent= substr($s, $Endpunkt+1);//restlicher content innerhalb des spans
+                foreach($Styles as $ST){//geh die stylings die am span hängen durch
+                    //trenne Tag und Value
+                    $a = explode(':', $ST);
+                    $Tag= trim($a[0]);
+                    $Value= trim($a[1]); 
+                    //füge Stylings an
+                    switch ($Tag){
+                        case 'font-size':
+                                $SpanFormatedContent.= startGroup().setFontSize(trim(str_replace('pt', '', $Value))*2).$SpanUnformatedContent;
+                        break;
+                    }
+                }
+            }else{
+                $SpanFormatedContent.=$s;
+            }
+        }
+        $HTMLline=$SpanFormatedContent;
+    }
+    //Font-Formatierung
+    if(strstr($HTMLline,'<font')){
+        $FONT= array_filter(explode('<font ',$HTMLline));
+        foreach ($FONT as $f){
+            if (strstr($f,'face')){
+                $f= str_replace('face=', '', $f);//strip face attr von font
+                $fontParagraph= substr($f,1, strpos($f, '"',2)-1);//die Schriftart die verwendet wird
+                $Endpunkt=strpos($f,'>');//endposition des Fonts
+                $FontUnformatedContent= substr($f, $Endpunkt+1);//restlicher content innerhalb des fonts
+                //wenn die Schriftart nicht gefunden wurde dann Trag sie in das array ein
+                if(array_search($fontParagraph, $Schriftarten)===false){
+                    $Schriftarten[]=$fontParagraph;
+                }
+                $FontFormatedContent.= startGroup().setFontFamily(array_search($fontParagraph, $Schriftarten)).$FontUnformatedContent;
+            }else{
+                $FontFormatedContent.=$f;
+            }
+        }
+        $HTMLline=$FontFormatedContent;
+    }
+    
+    //Ende der Formatierung und ausgabe der Line
+    $Ausgabe['RTF']=$HTMLline;
+    $Ausgabe['Schriftarten']=$Schriftarten;
+    return $Ausgabe;
+}
+function Pixel2Point($Pixel){
+    return intval($Pixel*0.75);
+}
+//RTF - Formatierung 
 function setStandardformatierung($Text){
     return '\plain '.$Text;
 }

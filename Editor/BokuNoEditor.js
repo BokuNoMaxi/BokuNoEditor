@@ -14,7 +14,7 @@
         'Tahoma','Times New Roman','Trebuchet MS',
         'Verdana',
         ],Schriftgroesse=[
-            '6','7','8','9','10','10.5','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
+            '6','7','8','9','10','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
         ];
     
     $.fn.bokunoeditor=function($Info){//Initialisiere BokuNoEditor
@@ -28,6 +28,7 @@
         
         //Speichern als RTF File
         $('#bokuenoeditorMenuDateiContextmenuAbsenden button').click(function(){
+            $('b,i').removeAttr('style');
             $.post(absolutPath+'/Converter/HTML2RTF-Converter.php',{
                 Content:$('#bokunoeditorContent').html(),
                 Info:JSON.stringify($Info),
@@ -44,7 +45,7 @@
             drucken();
         });
         //wenn nichts importiert wird dann gib DIV vor
-        (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<p class="bokunoeditorParagraph"><br></p>'):'');
+        (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<p><br></p>'):'');
         //Lade Schriftarten
         $.each(Schriftart,function(index,value){
             $('#bokunoeditorSchriftart').append('<option value="'+value+'">'+value+'</option>');
@@ -61,42 +62,30 @@
                     var sel = window.getSelection(),
                         Markierung=sel.getRangeAt(0);
                     lastFocus.focus();
-                    Button.toggleClass('bneActive'); 
-                    //Formatiere Markiertes
-                    if(Markierung.startOffset != Markierung.endOffset){//Text Formatierung
-                        if(Button[0].id=='bokunoeditorToolbarKursiv'){
-                            ((Button.hasClass('bneActive'))?ersetzeSelectedText(getSelectionText(),[{'formatierung':'kkursiv','value':null}]):ersetzeSelectedText(getSelectionText(),[{'formatierung':'knormal','value':null}]));
-                        }
-                        if(Button[0].id=='bokunoeditorToolbarFett'){
-                            ((Button.hasClass('bneActive'))?ersetzeSelectedText(getSelectionText(),[{'formatierung':'wbold','value':null}]):ersetzeSelectedText(getSelectionText(),[{'formatierung':'wnormal','value':null}]));
-                        }
-                    }else{
-                        switch(Button[0].id){
-                            case 'bokunoeditorToolbarKursiv':
-                                ((Button.hasClass('bneActive'))?beginneNeueFormatierung([{'formatierung':'kkursiv','value':null}]):beginneNeueFormatierung([{'formatierung':'knormal','value':null}]));
+                    switch(Button[0].id){
+                        case 'bokunoeditorToolbarKursiv':
+                            Button.toggleClass('bneActive');
+                            document.execCommand('italic',false,null);
                             break;
-                            case 'bokunoeditorToolbarFett':
-                                ((Button.hasClass('bneActive'))?beginneNeueFormatierung([{'formatierung':'wbold','value':null}]):beginneNeueFormatierung([{'formatierung':'wnormal','value':null}]));
-                            break;   
-                        }
-                    }
-                    //Formatiere den ganzen Absatz oder Ab den Punkt des Klickens
-                    switch(Button[0].id){//Text Ausrichtung
+                        case 'bokunoeditorToolbarFett':
+                            Button.toggleClass('bneActive');
+                            document.execCommand('bold',false,null);
+                            break;
                         case 'bokunoeditorToolbarLinks':
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
-                            Button.addClass('bneActive');
-                            $(Markierung.startContainer).closest('.bokunoeditorParagraph').css('text-align','left');
-                        break;
+                            Button.toggleClass('bneActive');
+                            document.execCommand('justifyLeft',false,null);
+                            break;
                         case 'bokunoeditorToolbarMitte':
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
-                            Button.addClass('bneActive');
-                            $(Markierung.startContainer).closest('.bokunoeditorParagraph').css('text-align','center');
-                        break;
+                            Button.toggleClass('bneActive');
+                            document.execCommand('justifyCenter',false,null);
+                            break;
                         case 'bokunoeditorToolbarRechts':
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
-                            Button.addClass('bneActive');
-                            $(Markierung.startContainer).closest('.bokunoeditorParagraph').css('text-align','right');
-                        break;
+                            Button.toggleClass('bneActive');
+                            document.execCommand('justifyRight',false,null);
+                            break;
                     }
                 }, 10);
             }
@@ -109,39 +98,32 @@
                     lastFocus.focus();
                     var sel = window.getSelection(),
                         Markierung=sel.getRangeAt(0).cloneRange();
-                    if(Markierung.startOffset != Markierung.endOffset){
-                        switch (Select[0].id) {
-                            case 'bokunoeditorSchriftgroesse':
+                    switch (Select[0].id) {
+                        case 'bokunoeditorSchriftgroesse':
+                            if(Markierung.startOffset != Markierung.endOffset){
                                 ersetzeSelectedText(getSelectionText(),[{'formatierung':'font-size','value':Select.val()}]);
-                            break;
-                            case 'bokunoeditorSchriftart':
-                                ersetzeSelectedText(getSelectionText(),[{'formatierung':'font-family','value':Select.val()}]);
-                            break;
-                        }
-                    }else{
-                        switch (Select[0].id) {
-                            case 'bokunoeditorSchriftgroesse':
+                            }else{
                                 beginneNeueFormatierung([{'formatierung':'font-size','value':Select.val()}]);
-                            break;
-                            case 'bokunoeditorSchriftart':
-                                beginneNeueFormatierung([{'formatierung':'font-family','value':Select.val()}]);
-                            break;
-                        }
+                            }
+                        break;
+                        case 'bokunoeditorSchriftart':
+                            document.execCommand('fontName',false,Select.val());
+                        break;
                     }
                 }, 10);
             }
         });
         // welche Formatierungen momentan aktiv sind im Dokument
         $('#bokunoeditorContent').on({'touchstart':function(e){
-                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='center'){
+                if($(e.target).closest('p').css('text-align')=='center'){
                     $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarMitte').addClass('bneActive');
                 }
-                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='right'){
+                if($(e.target).closest('p').css('text-align')=='right'){
                     $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarRechts').addClass('bneActive');
                 }
-                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='left'){
+                if($(e.target).closest('p').css('text-align')=='left'||$(e.target).closest('p').css('text-align')=='start'){
                     $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarLinks').addClass('bneActive');
                 }
@@ -153,15 +135,15 @@
                 $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+']').prop('selected',true);
                 
             },'mousedown':function(e){
-                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='center'){
+                if($(e.target).closest('p').css('text-align')=='center'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarMitte').addClass('bneActive');
                 }
-                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='right'){
+                if($(e.target).closest('p').css('text-align')=='right'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarRechts').addClass('bneActive');
                 }
-                if($(e.target).closest('.bokunoeditorParagraph').css('text-align')=='left'){
+                if($(e.target).closest('p').css('text-align')=='left'||$(e.target).closest('p').css('text-align')=='start'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarLinks').addClass('bneActive');
                 }
@@ -178,8 +160,6 @@
                 if (e.keyCode === 13) {
                     e.preventDefault;
                     document.execCommand("defaultParagraphSeparator", false, "p");
-//                    document.execCommand("insertHTML", false, "<div class='bokunoeditorParagraph'>ok</div>");
-                    
                 }
             }
         });
@@ -204,17 +184,17 @@
                 oldContent=$(range.extractContents());
                 var format=setFormatierung($format,oldContent);
                 if(oldContent.children().length>0){//Mehrzeilige Formatierung
-                    oldContent.find('.bokunoeditorParagraph').wrapInner(format);//umschließe den selected Text mit der Formatierung
+                    oldContent.find('p').wrapInner(format);//umschließe den selected Text mit der Formatierung
                     //kombiniere die zeile vorher und nachher 
-                    startContent=$('.bokunoeditorParagraph').eq(range.startOffset-1).html()+oldContent.find('.bokunoeditorParagraph').first().html();
-                    endContent=oldContent.find('.bokunoeditorParagraph').last().html()+$('.bokunoeditorParagraph').eq(range.startOffset).html();
+                    startContent=$('p').eq(range.startOffset-1).html()+oldContent.find('p').first().html();
+                    endContent=oldContent.find('p').last().html()+$('p').eq(range.startOffset).html();
                     //Die kombinierte Zeile als erstes und Letztes Objekt im document fragment  
-                    oldContent.find('.bokunoeditorParagraph').first().html(startContent);
-                    oldContent.find('.bokunoeditorParagraph').last().html(endContent);
+                    oldContent.find('p').first().html(startContent);
+                    oldContent.find('p').last().html(endContent);
                     //entferne nicht benötigte Objekte
-                    $('.bokunoeditorParagraph').eq(range.startOffset).prev().remove();
-                    $('.bokunoeditorParagraph').eq(range.startOffset).remove();
-                    oldContent.find('.bokunoeditorParagraph span:empty').remove();
+                    $('p').eq(range.startOffset).prev().remove();
+                    $('p').eq(range.startOffset).remove();
+                    oldContent.find('p span:empty').remove();
                     
                     range.insertNode(oldContent[0]);
                 }else{//Single Line Formatierung
@@ -233,46 +213,26 @@
         var sel = window.getSelection(),
             Markierung=sel.getRangeAt(0),
             format=setFormatierung($format,null);
-        Markierung.insertNode(format);
-        $(Markierung.startContainer.nextSibling).html('&#65279;');
+        if(Markierung.startContainer.nodeName!='P'){
+            Markierung.insertNode(format);
+            $(Markierung.startContainer.nextSibling).html('&#65279;');
+        }
     }
     //setze Formatierung
     function setFormatierung($format,$documentFragment){
-        var format=document.createElement('span');
+        var format=document.createElement('span'),
+            sel = window.getSelection(),
+            Markierung=sel.getRangeAt(0);
         $.each($format,function(index,value){
             switch(value['formatierung']){
-                case 'kkursiv':
-                    if($documentFragment!==null){
-                        $.each($documentFragment.find('span[style^="font-style"]'),function(index,value){
-                            $(value).css('font-style','');
-                        });
-                    }
-                    format.style.cssText='font-style:italic;';
-                    break;
-                case 'knormal':
-                    if($documentFragment!==null){
-                        $.each($documentFragment.find('span[style^="font-style"]'),function(index,value){
-                            $(value).css('font-style','');
-                        });
-                    }
-                    format.style.cssText='font-style:normal;';
-                break;
-                case 'wbold':
-                    if($documentFragment!==null)$documentFragment.find('span[style^="font-weight:400"]').css('font-weight','');
-                    format.style.cssText='font-weight:700;';
-                break;
-                case 'wnormal':
-                    if($documentFragment!==null)$documentFragment.find('span[style^="font-weight:700"]').css('font-weight','');
-                    format.style.cssText='font-weight:400;';
-                break;
                 case 'font-size':
-                    if($documentFragment!==null)$documentFragment.find('span[style^="font-size:"]').css('font-size','');
-                    format.style.cssText='font-size:'+value['value']+'pt;';
+                    if(Markierung.startContainer.nodeName=='P'){
+                        $(Markierung.startContainer).css('font-size',value['value']+'pt');
+                    }else{
+                        if($documentFragment!==null)$documentFragment.find('span[style^="font-size:"]').css('font-size','');
+                        format.style.cssText='font-size:'+value['value']+'pt;';
+                    }
                     break;
-                case 'font-family':
-                    if($documentFragment!==null)$documentFragment.find('span[style^="font-family:"]').css('font-family','');
-                    format.style.cssText='font-family:'+value['value']+'pt;';
-                break;
             }
         });
         return format;

@@ -22,7 +22,7 @@
     <body style="height: 100vh;margin: 5px;overflow:hidden;">
         <div style="height: calc(100% - 30px);">
             <input type="text" id="editor" 
-                 value='<p class="bokunoeditorParagraph">erste zeile</p><p class="bokunoeditorParagraph">zweite zeile</p><p class="bokunoeditorParagraph">dritte zeile</p><p class="bokunoeditorParagraph">vi<span style="font-style:italic;">erte zei</span>le</p><p class="bokunoeditorParagraph">fünfte zeile</p><p class="bokunoeditorParagraph">sechste zeile</p><p class="bokunoeditorParagraph">siebte zeile</p><p class="bokunoeditorParagraph">achte zeile</p><p class="bokunoeditorParagraph">neunte zeile</p><p class="bokunoeditorParagraph">zehnte zeile</p><p class="bokunoeditorParagraph">elfte zeile</p><p class="bokunoeditorParagraph">zwölfte zeile</p><p class="bokunoeditorParagraph">dreizehnte zeile</p><p class="bokunoeditorParagraph">vierzehnte zeile</p><p class="bokunoeditorParagraph">fünfzehne zeile</p><p class="bokunoeditorParagraph">sechszehnte zeile</p><p class="bokunoeditorParagraph">siebzehnte zeile</p>'
+                 value='<p>erste zeile</p><p>zweite zeile</p><p>dritte zeile</p><p>vi<i>erte zei</i>le</p><p>fünfte zeile</p><p>sechste zeile</p><p>siebte zeile</p><p>achte zeile</p><p>neunte zeile</p><p>zehnte zeile</p><p>elfte zeile</p><p>zwölfte zeile</p><p>dreizehnte zeile</p><p>vierzehnte zeile</p><p>fünfzehne zeile</p><p>sechszehnte zeile</p><p>siebzehnte zeile</p>'
             >
                
         </div>
