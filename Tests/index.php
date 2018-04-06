@@ -22,7 +22,7 @@
     <body style="height: 100vh;margin: 5px;overflow:hidden;">
         <div style="height: calc(100% - 30px);">
             <input type="text" id="editor" 
-                 value='<p>erste zeile</p><p>zweite zeile</p><p>dritte zeile</p><p>vi<i>erte zei</i>le</p><p>fünfte zeile</p><p>sechste zeile</p><p>siebte zeile</p><p>achte zeile</p><p>neunte zeile</p><p>zehnte zeile</p><p>elfte zeile</p><p>zwölfte zeile</p><p>dreizehnte zeile</p><p>vierzehnte zeile</p><p>fünfzehne zeile</p><p>sechszehnte zeile</p><p>siebzehnte zeile</p>'
+                 value='<div>erste zeile</div><div>zweite zeile</div><div>dritte zeile</div><div>vi<i>erte zei</i>le</div><div>fünfte zeile</div><div>sechste zeile</div><div>siebte zeile</div><div>achte zeile</div><div>neunte zeile</div><div>zehnte zeile</div><div>elfte zeile</div><div>zwölfte zeile</div><div>dreizehnte zeile</div><div>vierzehnte zeile</div><div>fünfzehne zeile</div><div>sechszehnte zeile</div><div>siebzehnte zeile</div>'
             >
                
         </div>

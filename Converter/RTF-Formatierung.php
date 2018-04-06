@@ -38,7 +38,7 @@ function makeFormatierungHTML2RTFParagraph($pArr){
     $RTF=array();
     foreach ($pArr as $p){//arbeite das Array Paragraph für Paragraph ab
         $RTFPraefix="";
-        $p= str_replace('<p ', '', $p);//strip p tag vom Anfang
+        $p= str_replace('<div ', '', $p);//strip p tag vom Anfang
         //strip p - tag vom Content
         $pStyles= substr($p, 0, strpos($p, '>'));
         $pContent= substr($p, strpos($p, '>')+1);

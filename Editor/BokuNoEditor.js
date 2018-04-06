@@ -24,7 +24,7 @@
         $('#bokunoeditorIframe').append('<div id="bokuenoeditorMenuDateiContextmenu"><div id="bokuenoeditorMenuDateiContextmenuNeu"><button type="Button" class="bneMenuButton">Neu</button></div><div class="bneMenueTrennlinie"></div><div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div><div id="bokuenoeditorMenuDateiContextmenuDrucken"><button type="Button" class="bneMenuButton">Drucken</button></div></div>');
         lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val());
         $('#bokunoeditorMenue').html('<button type="button" class="bokunoeditorMenueButton" id="bokunoeditorDatei">Datei</button><button type="button" class="bokunoeditorMenueButton">Schriftart</button><button type="button" class="bokunoeditorMenueButton">Format</button>');
-        $('#bokunoeditorToolbar').html('<button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button><button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftart"></select><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftgroesse"></select><button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button>');
+        $('#bokunoeditorToolbar').html('<button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button><button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftart"></select><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftgroesse"></select><button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarTabelle" id="bokunoeditorTabelle">Tabelle</button>');
         
         //Speichern als RTF File
         $('#bokuenoeditorMenuDateiContextmenuAbsenden button').click(function(){
@@ -45,7 +45,7 @@
             drucken();
         });
         //wenn nichts importiert wird dann gib DIV vor
-        (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<p><br></p>'):'');
+        (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<div><br></div>'):'');
         //Lade Schriftarten
         $.each(Schriftart,function(index,value){
             $('#bokunoeditorSchriftart').append('<option value="'+value+'">'+value+'</option>');
@@ -85,6 +85,9 @@
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                             Button.toggleClass('bneActive');
                             document.execCommand('justifyRight',false,null);
+                            break;
+                        case 'bokunoeditorTabelle':
+                            document.execCommand('insertHTML',false,'<table><tr><td><td></tr></table>&nbsp;');
                             break;
                     }
                 }, 10);
@@ -159,7 +162,7 @@
             },'keydown':function(e){
                 if (e.keyCode === 13) {
                     e.preventDefault;
-                    document.execCommand("defaultParagraphSeparator", false, "p");
+                    document.execCommand("defaultParagraphSeparator", false, "div");
                 }
             }
         });
