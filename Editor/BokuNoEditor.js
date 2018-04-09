@@ -176,16 +176,28 @@
                             tr.before('<tr>'+td+'</tr>');
                             break;
                         case 'bokuenoeditorFormatZeileDelRowRechts':
-                            
+                            var td= $(sel.anchorNode).closest('td'),
+                                tr=$(sel.anchorNode).closest('tr'),
+                                indexTD=td.index();
+                                $.each(tr.closest('table').find('tr'),function(index,trs){
+                                    $(trs).children().eq(indexTD+1).remove();
+                                });
                             break;
                         case 'bokuenoeditorFormatZeileDelRowLinks':
-                            
+                            var td= $(sel.anchorNode).closest('td'),
+                                tr=$(sel.anchorNode).closest('tr'),
+                                indexTD=td.index();
+                                $.each(tr.closest('table').find('tr'),function(index,trs){
+                                    $(trs).children().eq(indexTD-1).remove();
+                                });
                             break;
                         case 'bokuenoeditorFormatZeileDelRowUnten':
-                            
+                            var tr=$(sel.anchorNode).closest('tr');
+                            tr.next('tr').remove();
                             break;
                         case 'bokuenoeditorFormatZeileDelRowOben':
-                            
+                            var tr=$(sel.anchorNode).closest('tr');
+                            tr.prev('tr').remove();
                             break;
                     }
                 },10);
