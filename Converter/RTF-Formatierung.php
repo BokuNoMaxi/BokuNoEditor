@@ -1,5 +1,4 @@
 <?php
-include('Sonderzeichen.php');
 function makeRTF($Info,$pArr){
     $pArr= makeFormatierungHTML2RTFParagraph($pArr);
     $Content= implode('', $pArr['Content']);
@@ -30,7 +29,7 @@ function setColors($Color){
 }
 function setInformationen($Info){
     if($Info['Datum'] != null)$Info['Datum']=DateTime::createFromFormat('Y.m.d H:i', $Info['Datum']);
-    else $Info['Datum']= new DateTime ();
+    else $Info['Datum']= new DateTime();
     return '{\info{\title '.$Info['Title'].'}{\author '.$Info['Author'].'}{\company '.$Info['Company'].'}{\creatim\yr'.$Info['Datum']->format('Y').'\mo'.$Info['Datum']->format('m').'\dy'.$Info['Datum']->format('d').'\hr'.$Info['Datum']->format('H').'\min'.$Info['Datum']->format('i').'}{\doccomm '.$Info['Kommentar'].'}}';
 }
 function makeFormatierungHTML2RTFParagraph($pArr){
@@ -85,19 +84,28 @@ function makeFormatierungHTML2RTFParagraph($pArr){
 function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten){
     $SpanFormatedContent='';
     $FontFormatedContent='';
+    $TableFormatedContent='';
     $Ausgabe=array('RTF'=>'','Schriftarten'=>array());
     //Fett
-    $HTMLline=preg_replace("/<b>/", "\b ", $HTMLline);
-    $HTMLline=preg_replace("/<\/b>/", "\b0 ", $HTMLline);
+    $HTMLline=str_replace("<b>", "\b ", $HTMLline);
+    $HTMLline=str_replace("</b>", "\b0 ", $HTMLline);
     //Kursiv
-    $HTMLline=preg_replace("/<i>/", "\i ", $HTMLline);
-    $HTMLline=preg_replace("/<\/i>/", "\i0 ", $HTMLline);
+    $HTMLline=str_replace("<i>", "\i ", $HTMLline);
+    $HTMLline=str_replace("</i>", "\i0 ", $HTMLline);
     //Formatierung SPAN tag
-    $HTMLline=preg_replace("/<\/span>/", stopGroup(), $HTMLline);
-    $HTMLline=preg_replace("/<\/font>/", stopGroup(), $HTMLline);
+    $HTMLline=str_replace("</span>", stopGroup(), $HTMLline);
+    $HTMLline=str_replace("</font>", stopGroup(), $HTMLline);
+    //Tabelle
+    $HTMLline=str_replace("</table>", "", $HTMLline);
+    $HTMLline=str_replace("</tbody>", "", $HTMLline);
+    $HTMLline=str_replace("<tbody>", "", $HTMLline);
+    $HTMLline=str_replace("<table>", "", $HTMLline);
+    $HTMLline=str_replace("</tr>", "\\row ", $HTMLline);
+    $HTMLline=str_replace("<td>", "", $HTMLline);
+    $HTMLline=str_replace("</td>", "\cell ", $HTMLline);
     //Sonderzeichen
-    $HTMLline=preg_replace("/<br>/", br, $HTMLline);
-    $HTMLline=preg_replace("/".chr(160)."/", ' ', $HTMLline);
+    $HTMLline=str_replace("<br>", br, $HTMLline);
+    $HTMLline=str_replace(chr(160), ' ', $HTMLline);
     
     //Span-Styles Formatierung
     if(strstr($HTMLline ,'<span')){
@@ -146,7 +154,19 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten){
         }
         $HTMLline=$FontFormatedContent;
     }
-    
+    //Tabelle
+    if(strstr($HTMLline ,'<tr>')){
+        foreach(explode('<tr>',$HTMLline) as $R){
+            if(strstr($R,'\cell')){
+                $TableFormatedContent.= '\trowd\trgaph180';
+                for($i=1;$i<=substr_count($R, '\cell');$i++){
+                    $TableFormatedContent.='\cellx'.$i* Pixel2Twips(200);
+                }
+                $TableFormatedContent.=$R;
+            }
+        }
+        $HTMLline=$TableFormatedContent;
+    }
     //Ende der Formatierung und ausgabe der Line
     $Ausgabe['RTF']=$HTMLline;
     $Ausgabe['Schriftarten']=$Schriftarten;
@@ -154,6 +174,9 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten){
 }
 function Pixel2Point($Pixel){
     return intval($Pixel*0.75);
+}
+function Pixel2Twips($Pixel){
+    return intval($Pixel*15);
 }
 //RTF - Formatierung 
 function setStandardformatierung($Text){

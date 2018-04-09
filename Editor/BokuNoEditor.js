@@ -87,7 +87,7 @@
                             document.execCommand('justifyRight',false,null);
                             break;
                         case 'bokunoeditorTabelle':
-                            document.execCommand('insertHTML',false,'<table><tr><td><td></tr></table>&nbsp;');
+                            document.execCommand('insertHTML',false,'<table><tr><td><td></tr></table><br>');
                             break;
                     }
                 }, 10);
