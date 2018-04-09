@@ -37,6 +37,7 @@ $buttonBorder:#91C9F7;
 #bokunoeditorIframe{
     background:white;
     height:100%;
+    position:relative;
     #bokunoeditorMenue{
         height:30px;
         border-bottom:solid 1px $borderColor;
@@ -61,8 +62,8 @@ $buttonBorder:#91C9F7;
     #bokuenoeditorMenuDateiContextmenu{
         display:none;
         position:absolute;
-        top: 35px;
-        left: 6px;
+        top: 30px;
+        left: 1px;
         background: white;
         font-size: 14px;
         border-right: solid 1px $borderColor;
@@ -137,6 +138,30 @@ $buttonBorder:#91C9F7;
         span{
             display:inline-block;
             height:100%;
+        }
+    }
+    #bokuenoeditorFormatZeileContainer{
+        position: absolute;
+        bottom: -2px;
+        left: 1px;
+        width: calc(100% - 1px);
+        border-top: solid 1px black;
+        .bokuenoeditorFormatZeile{
+            display:inline-block;
+            button{
+                padding: 4px 8px;
+                font-size: 14px;
+                line-height: 20px;
+                cursor: pointer;
+                color: #333;
+                text-align: center;
+                overflow: visible;
+                background: white;
+                border-top: none;
+                border-left: none;
+                border-bottom: none;
+                border-right: solid 1px $borderColor;
+            }
         }
     }
 }

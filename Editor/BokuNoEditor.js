@@ -15,13 +15,29 @@
         'Verdana',
         ],Schriftgroesse=[
             '6','7','8','9','10','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
-        ];
+        ],MenuDatei='<div id="bokuenoeditorMenuDateiContextmenu">\n\
+                        <div id="bokuenoeditorMenuDateiContextmenuNeu"><button type="Button" class="bneMenuButton">Neu</button></div>\n\
+                        <div class="bneMenueTrennlinie"></div>\n\
+                        <div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div>\n\
+                        <div id="bokuenoeditorMenuDateiContextmenuDrucken"><button type="Button" class="bneMenuButton">Drucken</button></div>\n\
+                    </div>'
+        ,FormatierungsZeile='<div id="bokuenoeditorFormatZeileContainer">\n\
+                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowRechts">AddRe</button></div>\n\
+                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowLinks">AddLi</button></div>\n\
+                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowOben">AddOb</button></div>\n\
+                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowUnten">AddUn</button></div>\n\
+                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowRechts">DelRe</button></div>\n\
+                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowLinks">DelLi</button></div>\n\
+                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowOben">DelOb</button></div>\n\
+                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowUnten">DelUn</button></div>\n\
+                    </div>';
     
     $.fn.bokunoeditor=function($Info){//Initialisiere BokuNoEditor
         var Textarea=$(this);
         //Vorbereitung des Editors
         $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContent"></div></div>');
-        $('#bokunoeditorIframe').append('<div id="bokuenoeditorMenuDateiContextmenu"><div id="bokuenoeditorMenuDateiContextmenuNeu"><button type="Button" class="bneMenuButton">Neu</button></div><div class="bneMenueTrennlinie"></div><div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div><div id="bokuenoeditorMenuDateiContextmenuDrucken"><button type="Button" class="bneMenuButton">Drucken</button></div></div>');
+        $('#bokunoeditorIframe').append(MenuDatei);
+        $('#bokunoeditorIframe').append(FormatierungsZeile);
         lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val());
         $('#bokunoeditorMenue').html('<button type="button" class="bokunoeditorMenueButton" id="bokunoeditorDatei">Datei</button><button type="button" class="bokunoeditorMenueButton">Schriftart</button><button type="button" class="bokunoeditorMenueButton">Format</button>');
         $('#bokunoeditorToolbar').html('<button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button><button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftart"></select><select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftgroesse"></select><button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarTabelle" id="bokunoeditorTabelle">Tabelle</button>');
@@ -56,7 +72,8 @@
         });
         //Formatierung bei Knöpfen
         $('.bokunoeditorToolbarButton').click(function(){
-            var Button=$(this);
+            var Button=$(this),
+            sel=window.getSelection();
             if(lastFocus){
                 setTimeout(function() {
                     var sel = window.getSelection(),
@@ -87,7 +104,7 @@
                             document.execCommand('justifyRight',false,null);
                             break;
                         case 'bokunoeditorTabelle':
-                            document.execCommand('insertHTML',false,'<table><tr><td><td></tr></table><br>');
+                            document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr><td><td></tr></table><br>':'<div><table><tr><td><td></tr></table><br>'));
                             break;
                     }
                 }, 10);
@@ -114,6 +131,64 @@
                         break;
                     }
                 }, 10);
+            }
+        });
+        // Extra Formatierungszeile für spezielle Formatierung
+        $('.bokuenoeditorFormatZeileButton').click(function(){
+            var Button=$(this),
+            sel=window.getSelection();
+            if(lastFocus){
+                setTimeout(function() {
+                    var sel = window.getSelection(),
+                        Markierung=sel.getRangeAt(0);
+                    lastFocus.focus();
+                    switch(Button[0].id){
+                        case 'bokuenoeditorFormatZeileAddRowRechts':
+                            var td= $(sel.anchorNode).closest('td'),
+                                tr=$(sel.anchorNode).closest('tr'),
+                                indexTD=td.index();
+                                $.each(tr.closest('table').find('tr'),function(index,trs){
+                                    $(trs).children().eq(indexTD).after('<td>');
+                                });
+                            break;
+                        case 'bokuenoeditorFormatZeileAddRowLinks':
+                            var td= $(sel.anchorNode).closest('td'),
+                                tr=$(sel.anchorNode).closest('tr'),
+                                indexTD=td.index();
+                                $.each(tr.closest('table').find('tr'),function(index,trs){
+                                    $(trs).children().eq(indexTD).before('<td>');
+                                });
+                            break;
+                        case 'bokuenoeditorFormatZeileAddRowUnten':
+                            var tr=$(sel.anchorNode).closest('tr'),
+                                td;
+                            $.each(tr.children('td'),function(){
+                               td+='<td></td>'; 
+                            });
+                            tr.after('<tr>'+td+'</tr>');
+                            break;
+                        case 'bokuenoeditorFormatZeileAddRowOben':
+                            var tr=$(sel.anchorNode).closest('tr'),
+                                td;
+                            $.each(tr.children('td'),function(){
+                               td+='<td></td>'; 
+                            });
+                            tr.before('<tr>'+td+'</tr>');
+                            break;
+                        case 'bokuenoeditorFormatZeileDelRowRechts':
+                            
+                            break;
+                        case 'bokuenoeditorFormatZeileDelRowLinks':
+                            
+                            break;
+                        case 'bokuenoeditorFormatZeileDelRowUnten':
+                            
+                            break;
+                        case 'bokuenoeditorFormatZeileDelRowOben':
+                            
+                            break;
+                    }
+                },10);
             }
         });
         // welche Formatierungen momentan aktiv sind im Dokument
