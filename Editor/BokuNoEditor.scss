@@ -120,11 +120,13 @@ $buttonBorder:#91C9F7;
         border-right:solid 1px $borderColor;
         max-height: calc(100% - 86px);
         overflow:auto;
+        background:grey;
         #bokunoeditorContent{
             overflow: hidden;
             font-size: 11pt;
             font-family: Arial;
             margin:5px auto;
+            background:white;
             table{
                 border-collapse:collapse;
                 td{
