@@ -1,10 +1,11 @@
 <?php
-function makeRTF($Info,$pArr){
+function makeRTF($Info,$pArr,$format){
     $pArr= makeFormatierungHTML2RTFParagraph($pArr);
     $Content= implode('', $pArr['Content']);
     $Schriftarten=$pArr['Schriftarten'];
     $Deff= setDefinition($Info, $Schriftarten, null);
-    $Standards='\deflang1031\plain\fs26\widowctrl\hyphauto\ftnbj';
+    $Seitenformat=setFormat($format);
+    $Standards='\deflang1031\plain\fs26\widowctrl\hyphauto\ftnbj'.$Seitenformat.'\fs22';
     return '{\rtf1\ansi'.$Deff.$Standards.$Content.'}';
 }
 function setDefinition($Info,$Schriftarten,$Color){
@@ -31,6 +32,18 @@ function setInformationen($Info){
     if($Info['Datum'] != null)$Info['Datum']=DateTime::createFromFormat('Y.m.d H:i', $Info['Datum']);
     else $Info['Datum']= new DateTime();
     return '{\info{\title '.$Info['Title'].'}{\author '.$Info['Author'].'}{\company '.$Info['Company'].'}{\creatim\yr'.$Info['Datum']->format('Y').'\mo'.$Info['Datum']->format('m').'\dy'.$Info['Datum']->format('d').'\hr'.$Info['Datum']->format('H').'\min'.$Info['Datum']->format('i').'}{\doccomm '.$Info['Kommentar'].'}}';
+}
+function setFormat($format){
+    $Seitenformat=$format['Seitenformat'];
+    $Seitenverhaeltnis=$format['Seitenverhaeltnis'];
+    $RTFFormat="";
+    switch ($Seitenformat){
+        case 'A4':
+            $RTFFormat.='\paperw11906\paperh16838';
+            break;
+    }
+    $RTFFormat.='\margl'.Pixel2Twips($Seitenverhaeltnis['l']).'\margt'.Pixel2Twips($Seitenverhaeltnis['t']).'\margr'.Pixel2Twips($Seitenverhaeltnis['r']).'\margb'.Pixel2Twips($Seitenverhaeltnis['b']);
+    return $RTFFormat;
 }
 function makeFormatierungHTML2RTFParagraph($pArr){
     $Schriftarten=array('Arial');
@@ -173,10 +186,10 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten){
     return $Ausgabe;
 }
 function Pixel2Point($Pixel){
-    return intval($Pixel*0.75);
+    return intval(round($Pixel*0.75));
 }
 function Pixel2Twips($Pixel){
-    return intval($Pixel*15);
+    return intval(round($Pixel*15));
 }
 //RTF - Formatierung 
 function setStandardformatierung($Text){

@@ -35,7 +35,7 @@
     $.fn.bokunoeditor=function($Info){//Initialisiere BokuNoEditor
         var Textarea=$(this);
         //Vorbereitung des Editors
-        $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContent"></div></div>');
+        $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContainer"><div id="bokunoeditorContent" class="A4" style="border: solid 2cm rgba(0, 0, 0, 0);"></div></div></div>');
         $('#bokunoeditorIframe').append(MenuDatei);
         $('#bokunoeditorIframe').append(FormatierungsZeile);
         lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val());
@@ -48,6 +48,9 @@
             $.post(absolutPath+'/Converter/HTML2RTF-Converter.php',{
                 Content:$('#bokunoeditorContent').html(),
                 Info:JSON.stringify($Info),
+                Format:$('#bokunoeditorContent').attr('class'),
+                Seitenverhaeltnis:{'l':$('#bokunoeditorContent').css('border-left-width'),'r':$('#bokunoeditorContent').css('border-right-width'),'t':$('#bokunoeditorContent').css('border-top-width'),'b':$('#bokunoeditorContent').css('border-bottom-width')},
+                
             },function(){
                 
             });
@@ -105,6 +108,7 @@
                             break;
                         case 'bokunoeditorTabelle':
                             document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr><td><td></tr></table><br>':'<div><table><tr><td><td></tr></table><br>'));
+                            console.log($(sel.anchorNode).find('td').first().focus());
                             break;
                     }
                 }, 10);
