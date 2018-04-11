@@ -98,6 +98,7 @@ $buttonBorder:#91C9F7;
             padding: 5px 8px;
             border-right: solid 1px black;
             font-size: 14px;
+            margin-left:-2px;
         }
         button{
             padding: 4px 8px;
@@ -112,6 +113,10 @@ $buttonBorder:#91C9F7;
             border-left: none;
             border-bottom: none;
             border-right: solid 1px $borderColor;
+            margin-left:-3px;
+            &:first-child{
+                margin-left:0px;
+            }
         }
     }
     #bokunoeditorContainer{
@@ -120,8 +125,9 @@ $buttonBorder:#91C9F7;
         border-right:solid 1px $borderColor;
         max-height: calc(100% - 86px);
         overflow:auto;
-        background:grey;
+        background:lightgrey;
         #bokunoeditorContent{
+            outline: none;
             overflow: hidden;
             font-size: 11pt;
             font-family: Arial;
@@ -168,6 +174,6 @@ $buttonBorder:#91C9F7;
 }
 //Papierformat
 .A4{
-    height:297mm;
+    min-height:297mm;
     width:210mm;
 }

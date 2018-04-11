@@ -3,6 +3,7 @@
         src = scripts[scripts.length-1].src,
         absolutPath=src.slice(0,src.slice(0,src.lastIndexOf('/')).lastIndexOf('/')),
         lastFocus,
+        img,
         Schriftart=[
         'Arial','Arial Black',
         'Book Antiqua',
@@ -65,7 +66,7 @@
                 
             });
         });
-        //Kontextmenü
+        //Kontextmenï¿½
         $('#bokunoeditorDatei').click(function(){
             $('#bokuenoeditorMenuDateiContextmenu').toggleClass('bneOpen');
         });
@@ -83,11 +84,11 @@
         $.each(Schriftart,function(index,value){
             $('#bokunoeditorSchriftart').append('<option value="'+value+'">'+value+'</option>');
         });
-        //Lade Schriftgröße
+        //Lade Schriftgrï¿½ï¿½e
         $.each(Schriftgroesse,function(index,value){
             $('#bokunoeditorSchriftgroesse').append('<option value="'+value+'" '+((value=='11')?'selected="selected"':'')+'>'+value+' pt</option>');
         });
-        //Formatierung bei Knöpfen
+        //Formatierung bei Knï¿½pfen
         $('.bokunoeditorToolbarButton').click(function(){
             var Button=$(this),
             sel=window.getSelection();
@@ -122,7 +123,6 @@
                             break;
                         case 'bokunoeditorTabelle':
                             document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr><td><td></tr></table><br>':'<div><table><tr><td><td></tr></table><br>'));
-                            console.log($(sel.anchorNode).find('td').first().focus());
                             break;
                         case 'bokunoeditorBild':
                             $('#fileUpload').click();
@@ -154,7 +154,7 @@
                 }, 10);
             }
         });
-        // Extra Formatierungszeile für spezielle Formatierung
+        // Extra Formatierungszeile fï¿½r spezielle Formatierung
         $('.bokuenoeditorFormatZeileButton').click(function(){
             var Button=$(this),
             sel=window.getSelection();
@@ -265,31 +265,23 @@
                 $('#bokunoeditorSchriftart option[value="'+$(e.target).css('font-family').replace(/\"/g,'')+'"]').prop('selected',true);
                 $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+'"]').prop('selected',true);
                 
-            },'blur':function(){//Fokus zurück zum Editor
+            },'blur':function(){//Fokus zurï¿½ck zum Editor
                 lastFocus=this;
             },'keydown':function(e){
                 if (e.keyCode === 13) {
                     e.preventDefault;
                     document.execCommand("defaultParagraphSeparator", false, "div");
                 }
+            },'allowDrop':function(e){
+                e.preventDefault();
             },'dragover':function(e){
                 e.stopPropagation();
                 e.preventDefault();
             },'drop':function(e){
                 e.stopPropagation();
                 e.preventDefault();
-                console.log(e);
-                var file = e.dataTransfer.files[0];
-                if (file.type.match('image.*')) {
-                    var reader = new FileReader();
-                    reader.onload = (function(theFile) {
-                        var dataURI = theFile.target.result;
-                        var img = document.createElement("img");
-                        img.src = dataURI;
-                        console.log(img);
-                    });
-                }
-                reader.readAsDataURL(file);
+                var data = e.originalEvent.dataTransfer.getData("image");
+                document.execCommand('insertHTML',false, data);
             }
         });
         
@@ -315,14 +307,14 @@
                 oldContent=$(range.extractContents());
                 var format=setFormatierung($format,oldContent);
                 if(oldContent.children().length>0){//Mehrzeilige Formatierung
-                    oldContent.find('p').wrapInner(format);//umschließe den selected Text mit der Formatierung
+                    oldContent.find('p').wrapInner(format);//umschlieï¿½e den selected Text mit der Formatierung
                     //kombiniere die zeile vorher und nachher 
                     startContent=$('p').eq(range.startOffset-1).html()+oldContent.find('p').first().html();
                     endContent=oldContent.find('p').last().html()+$('p').eq(range.startOffset).html();
                     //Die kombinierte Zeile als erstes und Letztes Objekt im document fragment  
                     oldContent.find('p').first().html(startContent);
                     oldContent.find('p').last().html(endContent);
-                    //entferne nicht benötigte Objekte
+                    //entferne nicht benï¿½tigte Objekte
                     $('p').eq(range.startOffset).prev().remove();
                     $('p').eq(range.startOffset).remove();
                     oldContent.find('p span:empty').remove();
@@ -378,16 +370,20 @@
         w.close();
     }
     function readURL(input) {
-    if (input.files && input.files[0]) {
-      var reader = new FileReader();
-
-      reader.onload = function(e) {
-          var img = document.createElement('img');
-          $(img).attr('src', e.target.result);
-          document.execCommand('insertImage',false, e.target.result);
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+              var img = document.createElement('img');
+              $(img).attr('src', e.target.result).attr('draggable', 'true');
+              document.execCommand('insertHTML',false, $(img)[0].outerHTML);
+              $('img').unbind().on('dragstart',function(e){
+                  drag(e);
+              });
+          }
+          reader.readAsDataURL(input.files[0]);
+        }
       }
-
-      reader.readAsDataURL(input.files[0]);
+    function drag(e){
+        e.originalEvent.dataTransfer.setData("image", $(e.target)[0].outerHTML);
     }
-  }
 }(jQuery));
