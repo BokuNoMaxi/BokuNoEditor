@@ -92,7 +92,6 @@ function makeFormatierungHTML2RTFParagraph($pArr){
         $RTF[]=str_replace(array('$nbsp;','&#65279;','\ufeff'), ' ',iconv('UTF-8//IGNORE', 'CP1252//IGNORE',$RTFParagraph));
     }
     return array('Content'=>$RTF,'Schriftarten'=>$Schriftarten);
-    
 }
 function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten){
     $SpanFormatedContent='';

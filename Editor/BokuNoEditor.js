@@ -3,7 +3,6 @@
         src = scripts[scripts.length-1].src,
         absolutPath=src.slice(0,src.slice(0,src.lastIndexOf('/')).lastIndexOf('/')),
         lastFocus,
-        img,
         Schriftart=[
         'Arial','Arial Black',
         'Book Antiqua',
@@ -16,7 +15,10 @@
         'Verdana',
         ],Schriftgroesse=[
             '6','7','8','9','10','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
-        ],MenuDatei='<div id="bokuenoeditorMenuDateiContextmenu">\n\
+        ],Menu='<button type="button" class="bokunoeditorMenueButton" id="bokunoeditorDatei">Datei</button>\n\
+                <button type="button" class="bokunoeditorMenueButton">Schriftart</button>\n\
+                <button type="button" class="bokunoeditorMenueButton">Format</button>'
+        ,MenuDatei='<div id="bokuenoeditorMenuDateiContextmenu">\n\
                         <div id="bokuenoeditorMenuDateiContextmenuNeu"><button type="Button" class="bneMenuButton">Neu</button></div>\n\
                         <div class="bneMenueTrennlinie"></div>\n\
                         <div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div>\n\
@@ -32,27 +34,33 @@
                     <button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarTabelle" id="bokunoeditorTabelle">Tabelle</button>\n\
                     <button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarBild" id="bokunoeditorBild">Bild</button>'
         ,FormatierungsZeile='<div id="bokuenoeditorFormatZeileContainer">\n\
-                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowRechts">AddRe</button></div>\n\
-                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowLinks">AddLi</button></div>\n\
-                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowOben">AddOb</button></div>\n\
-                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowUnten">AddUn</button></div>\n\
-                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowRechts">DelRe</button></div>\n\
-                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowLinks">DelLi</button></div>\n\
-                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowOben">DelOb</button></div>\n\
-                        <div class="bokuenoeditorFormatZeile"><button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowUnten">DelUn</button></div>\n\
+                        <div class="bokuenoeditorFormatZeile bokunoeditorDokInfos">\n\
+                            <span id="bneAnzZeichen"></span>\n\
+                            <span id="bneAnzWoerter"></span>\n\
+                        </div>\n\
+                        <div class="bokuenoeditorFormatZeile bokunoeditorTableFormats">\n\
+                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowRechts">AddRe</button>\n\
+                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowLinks">AddLi</button>\n\
+                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowOben">AddOb</button>\n\
+                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowUnten">AddUn</button>\n\
+                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowRechts">DelRe</button>\n\
+                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowLinks">DelLi</button>\n\
+                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowOben">DelOb</button>\n\
+                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowUnten">DelUn</button>\n\
+                        </div>\n\
                     </div>';
     
     $.fn.bokunoeditor=function($Info){//Initialisiere BokuNoEditor
         var Textarea=$(this);
         //Vorbereitung des Editors
         $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContainer"><div id="bokunoeditorContent" class="A4" style="border: solid 2cm rgba(0, 0, 0, 0);"></div></div></div>');
-        $('#bokunoeditorIframe').append(MenuDatei);
-        $('#bokunoeditorIframe').append(FormatierungsZeile);
-        $('#bokunoeditorIframe').append('<input type="file" hidden="hidden" id="fileUpload">');
-        lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val());
-        $('#bokunoeditorMenue').html('<button type="button" class="bokunoeditorMenueButton" id="bokunoeditorDatei">Datei</button><button type="button" class="bokunoeditorMenueButton">Schriftart</button><button type="button" class="bokunoeditorMenueButton">Format</button>');
-        $('#bokunoeditorToolbar').html(Toolbar);
-        
+        $('#bokunoeditorIframe').append(MenuDatei).append(FormatierungsZeile).append('<input type="file" hidden="hidden" id="fileUpload">');
+        lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val()).focus();
+        $('#bokunoeditorMenue').html(Menu);//Menüzeile
+        $('#bokunoeditorToolbar').html(Toolbar);//Toolbar
+        //Zeige die Anzahl der Zeichen, Wörter die im Dokument vorhanden sind
+        $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
+        $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' Wörter');
         //Speichern als RTF File
         $('#bokuenoeditorMenuDateiContextmenuAbsenden button').click(function(){
             $('b,i').removeAttr('style');
@@ -62,9 +70,7 @@
                 Format:$('#bokunoeditorContent').attr('class'),
                 Seitenverhaeltnis:{'l':$('#bokunoeditorContent').css('border-left-width'),'r':$('#bokunoeditorContent').css('border-right-width'),'t':$('#bokunoeditorContent').css('border-top-width'),'b':$('#bokunoeditorContent').css('border-bottom-width')},
                 
-            },function(){
-                
-            });
+            },function(){});
         });
         //Kontextmen�
         $('#bokunoeditorDatei').click(function(){
@@ -226,6 +232,7 @@
         });
         // welche Formatierungen momentan aktiv sind im Dokument
         $('#bokunoeditorContent').on({'touchstart':function(e){
+                (($(e.target).closest('td').length>0)?$('.bokunoeditorTableFormats').css('display','inline-block'):$('.bokunoeditorTableFormats').css('display','none'));
                 if($(e.target).closest('p').css('text-align')=='center'){
                     $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarMitte').addClass('bneActive');
@@ -246,6 +253,7 @@
                 $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+']').prop('selected',true);
                 
             },'mousedown':function(e){
+                (($(e.target).closest('td').length>0)?$('.bokunoeditorTableFormats').css('display','inline-block'):$('.bokunoeditorTableFormats').css('display','none'));
                 if($(e.target).closest('p').css('text-align')=='center'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarMitte').addClass('bneActive');
@@ -264,7 +272,6 @@
                 if($(e.target).css('font-weight')=='400')$('#bokunoeditorToolbarFett').removeClass('bneActive');
                 $('#bokunoeditorSchriftart option[value="'+$(e.target).css('font-family').replace(/\"/g,'')+'"]').prop('selected',true);
                 $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+'"]').prop('selected',true);
-                
             },'blur':function(){//Fokus zur�ck zum Editor
                 lastFocus=this;
             },'keydown':function(e){
@@ -272,6 +279,9 @@
                     e.preventDefault;
                     document.execCommand("defaultParagraphSeparator", false, "div");
                 }
+            },'keyup':function(){
+                $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
+                $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' Wörter');
             },'allowDrop':function(e){
                 e.preventDefault();
             },'dragover':function(e){

@@ -153,6 +153,12 @@ $buttonBorder:#91C9F7;
         width: 100%;
         border: solid 1px $borderColor;
         height: 30px;
+        .bokunoeditorDokInfos{
+            font-family: Arial;
+            font-size: 10pt;
+            padding: 7px 5px;
+            border-right: solid 1px black;
+        }
         .bokuenoeditorFormatZeile{
             display:inline-block;
             button{
@@ -169,6 +175,9 @@ $buttonBorder:#91C9F7;
                 border-bottom: none;
                 border-right: solid 1px $borderColor;
             }
+        }
+        .bokunoeditorTableFormats{
+            display:none;
         }
     }
 }
