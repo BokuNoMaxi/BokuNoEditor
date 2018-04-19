@@ -2,7 +2,7 @@
     var scripts = document.getElementsByTagName("script"),
         src = scripts[scripts.length-1].src,
         absolutPath=src.slice(0,src.slice(0,src.lastIndexOf('/')).lastIndexOf('/')),
-        lastFocus,img,
+        lastFocus=null,img=null,
         Schriftart=[
         'Arial','Arial Black',
         'Book Antiqua',
@@ -134,7 +134,7 @@
                             document.execCommand('justifyRight',false,null);
                             break;
                         case 'bokunoeditorTabelle':
-                            document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr><td style=" border:1px solid rgb(0,0,0);"><td style=" border:1px solid rgb(0,0,0);"></td></tr></table><br>':'<div><table><tr><td style="border:1px solid rgb(0,0,0);"></td><td style="border:1px solid rgb(0,0,0);"></td></tr></table><br>'));
+                            document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr><td style=" border:1px solid rgb(0,0,0);">&#65279;</td><td style=" border:1px solid rgb(0,0,0);">&#65279;</td></tr></table><br>':'<div><table><tr><td style="border:1px solid rgb(0,0,0);">&#65279;</td><td style="border:1px solid rgb(0,0,0);">&#65279;</td></tr></table><br>'));
                             break;
                         case 'bokunoeditorBild':
                             $('#fileUpload').click();
@@ -181,7 +181,7 @@
                                 indexTD=td.index(),
                                 color=(td[0].style['border-top-color']);
                                 $.each(tr.closest('table').find('tr'),function(index,trs){
-                                    $(trs).children().eq(indexTD).after('<td style="border:1px solid '+color+';">');
+                                    $(trs).children().eq(indexTD).after('<td style="border:1px solid '+color+';">&#65279;');
                                 });
                             break;
                         case 'bokuenoeditorFormatZeileAddRowLinks':
@@ -190,7 +190,7 @@
                                 indexTD=td.index(),
                                 color=(td[0].style['border-top-color']);
                                 $.each(tr.closest('table').find('tr'),function(index,trs){
-                                    $(trs).children().eq(indexTD).before('<td style="border:1px solid '+color+';">');
+                                    $(trs).children().eq(indexTD).before('<td style="border:1px solid '+color+';">&#65279;');
                                 });
                             break;
                         case 'bokuenoeditorFormatZeileAddRowUnten':
@@ -198,7 +198,7 @@
                                 td=$(sel.anchorNode).closest('td'),
                                 color=(td[0].style['border-top-color']);
                             $.each(tr.children('td'),function(){
-                               td+='<td style="border:1px solid '+color+';"></td>'; 
+                               td+='<td style="border:1px solid '+color+';">&#65279;</td>'; 
                             });
                             tr.after('<tr>'+td+'</tr>');
                             break;
@@ -207,7 +207,7 @@
                                 td=$(sel.anchorNode).closest('td'),
                                 color=(td[0].style['border-top-color']);
                             $.each(tr.children('td'),function(){
-                               td+='<td style="border:1px solid '+color+';"></td>'; 
+                               td+='<td style="border:1px solid '+color+';">&#65279;</td>'; 
                             });
                             tr.before('<tr>'+td+'</tr>');
                             break;
@@ -277,7 +277,7 @@
                     $('#bokuenoeditorFormatZeileIMGBreite').val(parseInt($(e.target).css('width')));
                     $('#bokuenoeditorFormatZeileIMGHoehe').val(parseInt($(e.target).css('height')));
                 }else{
-                    img.removeClass('bneFocus');
+                    if(img!==null)img.removeClass('bneFocus');
                     $('.bokunoeditorIMGFormats').css('display','none')
                 }
                 (($(e.target).closest('td').length>0)?$('.bokunoeditorTableFormats').css('display','inline-block'):$('.bokunoeditorTableFormats').css('display','none'));
@@ -309,7 +309,7 @@
                     $('#bokuenoeditorFormatZeileIMGBreite').val(parseInt(img.css('width')));
                     $('#bokuenoeditorFormatZeileIMGHoehe').val(parseInt(img.css('height')));
                 }else{
-                    img.removeClass('bneFocus');
+                    if(img!==null)img.removeClass('bneFocus');
                     $('.bokunoeditorIMGFormats').css('display','none')
                 }
                 (($(e.target).closest('td').length>0)?$('.bokunoeditorTableFormats').css('display','inline-block'):$('.bokunoeditorTableFormats').css('display','none'));
