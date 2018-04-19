@@ -271,7 +271,6 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
             }
         }
         $HTMLline=$IMGFormatedContent;
-        var_dump($HTMLline);
     }
     //Ende der Formatierung und ausgabe der Line
     $Ausgabe['RTF']=$HTMLline;

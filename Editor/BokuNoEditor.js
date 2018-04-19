@@ -2,7 +2,7 @@
     var scripts = document.getElementsByTagName("script"),
         src = scripts[scripts.length-1].src,
         absolutPath=src.slice(0,src.slice(0,src.lastIndexOf('/')).lastIndexOf('/')),
-        lastFocus,
+        lastFocus,img,
         Schriftart=[
         'Arial','Arial Black',
         'Book Antiqua',
@@ -49,8 +49,13 @@
                             <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowUnten">DelUn</button>\n\
                             <div class="bokuenoeditorFormatZeileInput"><input type="color" class="bokuenoeditorFormatZeileInputColor bokunoeditorColorPicker" id="bokuenoeditorFormatZeileColor"></div>\n\
                         </div>\n\
+                        <div class="bokuenoeditorFormatZeile bokunoeditorIMGFormats">\n\
+                            <div class="bokuenoeditorFormatZeileInput">\n\
+                                <div class="bokuenoeditorFormatZeilePreLabel">B:</div><input type="number" class="bokuenoeditorFormatZeileBreite bokunoeditorFormatZeileInput" id="bokuenoeditorFormatZeileIMGBreite"><div class="bokuenoeditorFormatZeileAppLabel">px</div> x\n\
+                                <div class="bokuenoeditorFormatZeilePreLabel">H:</div><input type="number" class="bokuenoeditorFormatZeileHoehe bokunoeditorFormatZeileInput" id="bokuenoeditorFormatZeileIMGHoehe"><div class="bokuenoeditorFormatZeileAppLabel">px</div>\n\
+                            </div>\n\
+                        </div>\n\
                     </div>';
-    
     $.fn.bokunoeditor=function($Info){//Initialisiere BokuNoEditor
         var Textarea=$(this);
         //Vorbereitung des Editors
@@ -201,7 +206,6 @@
                             var tr=$(sel.anchorNode).closest('tr'),
                                 td=$(sel.anchorNode).closest('td'),
                                 color=(td[0].style['border-top-color']);
-                                console.log(color);
                             $.each(tr.children('td'),function(){
                                td+='<td style="border:1px solid '+color+';"></td>'; 
                             });
@@ -251,8 +255,31 @@
                 },10);
             }
         });
+        //SizeChanger
+        $('.bokunoeditorFormatZeileInput').on('input',function(){
+            var input=$(this);
+            switch (input[0].id) {
+                case 'bokuenoeditorFormatZeileIMGHoehe':
+                    img.css('height',input.val());
+                    break;
+                case 'bokuenoeditorFormatZeileIMGBreite':
+                    img.css('width',input.val());
+                    break;
+            }
+        });
         // welche Formatierungen momentan aktiv sind im Dokument
         $('#bokunoeditorContent').on({'touchstart':function(e){
+                $('#bokuenoeditorMenuDateiContextmenu').removeClass('bneOpen');
+                if(e.target.nodeName=='IMG'){
+                    img=$(e.target);
+                    img.addClass('bneFocus');
+                    $('.bokunoeditorIMGFormats').css('display','inline-block');
+                    $('#bokuenoeditorFormatZeileIMGBreite').val(parseInt($(e.target).css('width')));
+                    $('#bokuenoeditorFormatZeileIMGHoehe').val(parseInt($(e.target).css('height')));
+                }else{
+                    img.removeClass('bneFocus');
+                    $('.bokunoeditorIMGFormats').css('display','none')
+                }
                 (($(e.target).closest('td').length>0)?$('.bokunoeditorTableFormats').css('display','inline-block'):$('.bokunoeditorTableFormats').css('display','none'));
                 if($(e.target).closest('p').css('text-align')=='center'){
                     $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
@@ -274,6 +301,17 @@
                 $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+']').prop('selected',true);
                 
             },'mousedown':function(e){
+                $('#bokuenoeditorMenuDateiContextmenu').removeClass('bneOpen');
+                if(e.target.nodeName=='IMG'){
+                    img=$(e.target);
+                    img.addClass('bneFocus');
+                    $('.bokunoeditorIMGFormats').css('display','inline-block');
+                    $('#bokuenoeditorFormatZeileIMGBreite').val(parseInt(img.css('width')));
+                    $('#bokuenoeditorFormatZeileIMGHoehe').val(parseInt(img.css('height')));
+                }else{
+                    img.removeClass('bneFocus');
+                    $('.bokunoeditorIMGFormats').css('display','none')
+                }
                 (($(e.target).closest('td').length>0)?$('.bokunoeditorTableFormats').css('display','inline-block'):$('.bokunoeditorTableFormats').css('display','none'));
                 if($(e.target).closest('p').css('text-align')=='center'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
@@ -404,7 +442,6 @@
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function(e) {
-                console.log(e);
                 var img = new Image();
                 $(img).attr('src', e.target.result);
                 img.onload=function(ev){
