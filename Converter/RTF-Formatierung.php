@@ -3,7 +3,8 @@ function makeRTF($Info,$pArr,$format){
     $pArr= makeFormatierungHTML2RTFParagraph($pArr);
     $Content= implode('', $pArr['Content']);
     $Schriftarten=$pArr['Schriftarten'];
-    $Deff= setDefinition($Info, $Schriftarten, null);
+    $Farben=$pArr['Farben'];
+    $Deff= setDefinition($Info, $Schriftarten, $Farben);
     $Seitenformat=setFormat($format);
     $Standards='\deflang1031\plain\fs26\widowctrl\hyphauto\ftnbj'.$Seitenformat.'\fs22';
     return '{\rtf1\ansi'.$Deff.$Standards.$Content.'}';
@@ -22,9 +23,9 @@ function setSchriftart($Schriftarten){
     return '{\fonttbl'.$DefinitionSchriftarten.'}';
 }
 function setColors($Color){
-    $Farben='';
-    for($i=0;$i<=count($Color)&&$Color!=null;$i++){
-        $Farben.='{\red'.$Color[$i]['red'].'\blue'.$Color[$i]['blue'].'\green'.$Color[$i]['green'].';}';
+    $Farben="";
+    foreach($Color as $C){
+        $Farben.='\red'.$C['red'].'\blue'.$C['blue'].'\green'.$C['green'].';';
     }
     return '{\colortbl;'.$Farben.'}';
 }
@@ -47,6 +48,7 @@ function setFormat($format){
 }
 function makeFormatierungHTML2RTFParagraph($pArr){
     $Schriftarten=array('Arial');
+    $Farben=array(array('red'=>0,'green'=>0,'blue'=>0));
     $RTF=array();
     foreach ($pArr as $p){//arbeite das Array Paragraph für Paragraph ab
         $RTFPraefix="";
@@ -86,17 +88,19 @@ function makeFormatierungHTML2RTFParagraph($pArr){
             }
         }
         //lass den Content formatieren
-        $RTFContent= makeFormatierungHTML2RTFContent($pContent, $Schriftarten);
+        $RTFContent= makeFormatierungHTML2RTFContent($pContent, $Schriftarten,$Farben);
         $Schriftarten=$RTFContent['Schriftarten'];
+        $Farben=$RTFContent['Farben'];
         $RTFParagraph= makeGroup(makeParagraph($RTFPraefix.$RTFContent['RTF']));
         $RTF[]=str_replace(array('$nbsp;','&#65279;','\ufeff'), ' ',iconv('UTF-8//IGNORE', 'CP1252//IGNORE',$RTFParagraph));
     }
-    return array('Content'=>$RTF,'Schriftarten'=>$Schriftarten);
+    return array('Content'=>$RTF,'Schriftarten'=>$Schriftarten,'Farben'=>$Farben);
 }
-function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten){
+function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
     $SpanFormatedContent='';
     $FontFormatedContent='';
     $TableFormatedContent='';
+    $IMGFormatedContent="";
     $Ausgabe=array('RTF'=>'','Schriftarten'=>array());
     //Fett
     $HTMLline=str_replace("<b>", "\b ", $HTMLline);
@@ -113,17 +117,16 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten){
     $HTMLline=str_replace("<tbody>", "", $HTMLline);
     $HTMLline=str_replace("<table>", "", $HTMLline);
     $HTMLline=str_replace("</tr>", "\\row ", $HTMLline);
-    $HTMLline=str_replace("<td>", "", $HTMLline);
     $HTMLline=str_replace("</td>", "\cell ", $HTMLline);
     //Sonderzeichen
     $HTMLline=str_replace("<br>", br, $HTMLline);
     $HTMLline=str_replace(chr(160), ' ', $HTMLline);
     
     //Span-Styles Formatierung
-    if(strstr($HTMLline ,'<span')){
+    if(strpos($HTMLline ,'<span')!==false){
         $SPAN= array_filter(explode('<span ', $HTMLline));
         foreach ($SPAN as $s) {
-            if(strstr($s, 'style')){
+            if(strpos($s, 'style')!==false){
                 $s= str_replace('style=', '', $s);//strip style attr von span
                 $Styles= explode(';',substr($s, 1, strpos($s, '"',2)-2));//splitter alle Style attribute auf
                 $Endpunkt= strpos($s, '>');//endposition des span tags
@@ -147,10 +150,10 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten){
         $HTMLline=$SpanFormatedContent;
     }
     //Font-Formatierung
-    if(strstr($HTMLline,'<font')){
+    if(strpos($HTMLline,'<font')!==false){
         $FONT= array_filter(explode('<font ',$HTMLline));
         foreach ($FONT as $f){
-            if (strstr($f,'face')){
+            if (strpos($f,'face')!==false){
                 $f= str_replace('face=', '', $f);//strip face attr von font
                 $fontParagraph= substr($f,1, strpos($f, '"',2)-1);//die Schriftart die verwendet wird
                 $Endpunkt=strpos($f,'>');//endposition des Fonts
@@ -167,28 +170,131 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten){
         $HTMLline=$FontFormatedContent;
     }
     //Tabelle
-    if(strstr($HTMLline ,'<tr>')){
+    if(strpos($HTMLline ,'<tr>')!==false){
         foreach(explode('<tr>',$HTMLline) as $R){
+            $TableUnformatedContent="";
+            $TDStylings=array_filter(explode('<td ',$R));
             if(strstr($R,'\cell')){
                 $TableFormatedContent.= '\trowd\trgaph180';
-                for($i=1;$i<=substr_count($R, '\cell');$i++){
-                    $TableFormatedContent.='\cellx'.$i* Pixel2Twips(200);
+                //Formatierung der Zellen
+                foreach($TDStylings as $index=>$ST){
+                    $ST= str_replace('style=', '', $ST);
+                    $Styles= explode(';',substr($ST, 1, strpos($ST, '"',2)-2));
+                    $Endpunkt= strpos($ST, '>');
+                    $TableUnformatedContent.=substr($ST, $Endpunkt+1);
+                    foreach($Styles as $sST){
+                        $sST= explode(':', $sST);
+                        $Tag=trim($sST[0]);
+                        $Value=trim($sST[1]);
+                        Switch($Tag){
+                            case 'border':
+                                $BorderWidth= trim(substr($Value, 0, strpos($Value, ' ')));
+                                $BorderStyle= trim(substr($Value, strpos($Value, ' '),strpos($Value, ' ',strpos($Value, ' ')+1)-2));
+                                $BorderColor= colorHTMLtoRGBArr(trim(substr($Value, strpos($Value, ' ',strpos($Value, ' ')+1))));
+                                //Rahmen Breite
+                                $BorderWidthRTF='\brdrw'.Pixel2Twips(intval($BorderWidth));
+                                //Rahmen Stil
+                                switch ($BorderStyle){
+                                    case 'solid':
+                                        $BorderStyleRTF='\brdrs';
+                                        break;
+                                    case 'dotted':
+                                        $BorderStyleRTF='\brdrdot';
+                                        break;
+                                    case 'dashed':
+                                        $BorderStyleRTF='\brdrdash';
+                                        break;
+                                    case 'double':
+                                        $BorderStyleRTF='\brdrdb';
+                                        break;
+                                }
+                                //Rahmenfarbe
+                                $Farben=FarbenController($BorderColor,$Farben);
+                                $BorderColorRTF='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                $TableFormatedContent.='\clbrdrt\clpadft3\clpadt113'.$BorderWidthRTF.$BorderStyleRTF.$BorderColorRTF;
+                                $TableFormatedContent.='\clbrdrl\clpadfl3\clpadl113'.$BorderWidthRTF.$BorderStyleRTF.$BorderColorRTF;
+                                $TableFormatedContent.='\clbrdrr\clpadrl3\clpadr113'.$BorderWidthRTF.$BorderStyleRTF.$BorderColorRTF;
+                                $TableFormatedContent.='\clbrdrb\clpadfb3\clpadb113'.$BorderWidthRTF.$BorderStyleRTF.$BorderColorRTF;
+                                break;
+                        }
+                        $TableFormatedContent.='\cellx'.$index* Pixel2Twips(200);
+                    }
                 }
-                $TableFormatedContent.=$R;
+                //Ausgabe des Contents der Zellen
+                $TableFormatedContent.=$TableUnformatedContent;
             }
         }
         $HTMLline=$TableFormatedContent;
     }
+    //Bild
+     if(strpos($HTMLline,'<img')!==false){
+        $IMG= array_filter(explode('<img ',$HTMLline));
+        foreach ($IMG as $I){
+            $IMGunformatedContent="";
+            if (strpos($I,'style=')!==false &&strpos($I,'src=')!==false){
+                //Bilddatei
+                $srcPos=strpos($I,'src=')+5;
+                $srcBase64= substr($I, $srcPos, strpos($I,'"',$srcPos)-$srcPos);
+                $Base64=trim(substr($srcBase64, strpos($srcBase64,',')+1));
+                $Filetype=substr($srcBase64, strpos($srcBase64,'/')+1,strpos($srcBase64,';')-strpos($srcBase64,'/')-1);
+                $HexData=bin2hex(base64_decode($Base64));
+                switch ($Filetype){
+                    case 'bmp':
+                        $IMGunformatedContent.='\picbmp';
+                        break;
+                    case 'png':
+                        $IMGunformatedContent.='\pngblip';
+                        break;
+                    case 'jpeg':
+                        $IMGunformatedContent.='\jpegblip';
+                        break;
+                }
+                //Bildformatierungen
+                $stylePos=strpos($I,'style=')+7;
+                $stylesImg= array_filter(explode(';',substr($I, $stylePos,strpos($I, '"',$stylePos)-$stylePos)));
+                foreach ($stylesImg as $SI) {
+                    $thisStyle= array_filter(explode(':',$SI));
+                    $tag=trim($thisStyle[0]);
+                    $value=trim($thisStyle[1]);
+                    switch ($tag){
+                        case 'width':
+                            $IMGunformatedContent.='\picw'.intval($value).'\picwgoal'. Pixel2Twips(intval($value));
+                            break;
+                        case 'height':
+                            $IMGunformatedContent.='\pich'.intval($value).'\pichgoal'. Pixel2Twips(intval($value));
+                            break;
+                    }
+                }
+                $IMGFormatedContent.= '{\pict '.$IMGunformatedContent.' '.$HexData.'}';
+            }else{
+                $IMGFormatedContent.=$I;
+            }
+        }
+        $HTMLline=$IMGFormatedContent;
+        var_dump($HTMLline);
+    }
     //Ende der Formatierung und ausgabe der Line
     $Ausgabe['RTF']=$HTMLline;
     $Ausgabe['Schriftarten']=$Schriftarten;
+    $Ausgabe['Farben']=$Farben;
     return $Ausgabe;
 }
+//Umrechnungen
 function Pixel2Point($Pixel){
     return intval(round($Pixel*0.75));
 }
 function Pixel2Twips($Pixel){
     return intval(round($Pixel*15));
+}
+//Kontrolliert ob die Farbe schon mal vorgekommen ist, wenn nicht füge sie im Array an
+function FarbenController($RGB,$FarbenArr){
+    if(array_search($RGB, $FarbenArr)===false) $FarbenArr[]=$RGB;
+    return $FarbenArr;
+}
+//schlüssle CSS RGB auf und gib es als Array zurück
+function colorHTMLtoRGBArr($HTML){
+    $HTML=explode(',',substr($HTML, strpos($HTML, '(')+1,-1));
+    return array('red'=>intval($HTML[0]),'green'=>intval($HTML[1]),'blue'=>intval($HTML[2]));
 }
 //RTF - Formatierung 
 function setStandardformatierung($Text){

@@ -136,7 +136,6 @@ $buttonBorder:#91C9F7;
             table{
                 border-collapse:collapse;
                 td{
-                    border:solid 1px black;
                     min-width:200px;
                     padding: 0.4rem;
                 }
@@ -144,6 +143,12 @@ $buttonBorder:#91C9F7;
             span{
                 display:inline-block;
                 height:100%;
+            }
+            img{
+                cursor: pointer;
+                &.focus{
+                    border:1px solid black;
+                }
             }
         }
     }
@@ -178,6 +183,14 @@ $buttonBorder:#91C9F7;
         }
         .bokunoeditorTableFormats{
             display:none;
+            .bokuenoeditorFormatZeileInput{
+                display: inline-block;
+                border-right: solid 1px $borderColor;
+                padding: 2.49px 4px;
+                #bokuenoeditorFormatZeileColor{
+                    width:19px;
+                }
+            }
         }
     }
 }

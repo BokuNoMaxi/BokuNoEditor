@@ -47,6 +47,7 @@
                             <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowLinks">DelLi</button>\n\
                             <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowOben">DelOb</button>\n\
                             <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowUnten">DelUn</button>\n\
+                            <div class="bokuenoeditorFormatZeileInput"><input type="color" class="bokuenoeditorFormatZeileInputColor bokunoeditorColorPicker" id="bokuenoeditorFormatZeileColor"></div>\n\
                         </div>\n\
                     </div>';
     
@@ -128,7 +129,7 @@
                             document.execCommand('justifyRight',false,null);
                             break;
                         case 'bokunoeditorTabelle':
-                            document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr><td><td></tr></table><br>':'<div><table><tr><td><td></tr></table><br>'));
+                            document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr><td style=" border:1px solid rgb(0,0,0);"><td style=" border:1px solid rgb(0,0,0);"></td></tr></table><br>':'<div><table><tr><td style="border:1px solid rgb(0,0,0);"></td><td style="border:1px solid rgb(0,0,0);"></td></tr></table><br>'));
                             break;
                         case 'bokunoeditorBild':
                             $('#fileUpload').click();
@@ -162,8 +163,7 @@
         });
         // Extra Formatierungszeile f�r spezielle Formatierung
         $('.bokuenoeditorFormatZeileButton').click(function(){
-            var Button=$(this),
-            sel=window.getSelection();
+            var Button=$(this);
             if(lastFocus){
                 setTimeout(function() {
                     var sel = window.getSelection(),
@@ -173,32 +173,37 @@
                         case 'bokuenoeditorFormatZeileAddRowRechts':
                             var td= $(sel.anchorNode).closest('td'),
                                 tr=$(sel.anchorNode).closest('tr'),
-                                indexTD=td.index();
+                                indexTD=td.index(),
+                                color=(td[0].style['border-top-color']);
                                 $.each(tr.closest('table').find('tr'),function(index,trs){
-                                    $(trs).children().eq(indexTD).after('<td>');
+                                    $(trs).children().eq(indexTD).after('<td style="border:1px solid '+color+';">');
                                 });
                             break;
                         case 'bokuenoeditorFormatZeileAddRowLinks':
                             var td= $(sel.anchorNode).closest('td'),
                                 tr=$(sel.anchorNode).closest('tr'),
-                                indexTD=td.index();
+                                indexTD=td.index(),
+                                color=(td[0].style['border-top-color']);
                                 $.each(tr.closest('table').find('tr'),function(index,trs){
-                                    $(trs).children().eq(indexTD).before('<td>');
+                                    $(trs).children().eq(indexTD).before('<td style="border:1px solid '+color+';">');
                                 });
                             break;
                         case 'bokuenoeditorFormatZeileAddRowUnten':
                             var tr=$(sel.anchorNode).closest('tr'),
-                                td;
+                                td=$(sel.anchorNode).closest('td'),
+                                color=(td[0].style['border-top-color']);
                             $.each(tr.children('td'),function(){
-                               td+='<td></td>'; 
+                               td+='<td style="border:1px solid '+color+';"></td>'; 
                             });
                             tr.after('<tr>'+td+'</tr>');
                             break;
                         case 'bokuenoeditorFormatZeileAddRowOben':
                             var tr=$(sel.anchorNode).closest('tr'),
-                                td;
+                                td=$(sel.anchorNode).closest('td'),
+                                color=(td[0].style['border-top-color']);
+                                console.log(color);
                             $.each(tr.children('td'),function(){
-                               td+='<td></td>'; 
+                               td+='<td style="border:1px solid '+color+';"></td>'; 
                             });
                             tr.before('<tr>'+td+'</tr>');
                             break;
@@ -225,6 +230,22 @@
                         case 'bokuenoeditorFormatZeileDelRowOben':
                             var tr=$(sel.anchorNode).closest('tr');
                             tr.prev('tr').remove();
+                            break;
+                    }
+                },10);
+            }
+        });
+        //Colorpicker
+        $('.bokunoeditorColorPicker').change(function(){
+            var Button = $(this);
+             if(lastFocus){
+                setTimeout(function() {
+                    var sel = window.getSelection(),
+                        Markierung=sel.getRangeAt(0);
+                    lastFocus.focus();
+                    switch(Button[0].id){
+                        case 'bokuenoeditorFormatZeileColor':
+                            $(sel.anchorNode).closest('td').css('border','solid 1px '+"rgb("+Button.val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",")+")");
                             break;
                     }
                 },10);
@@ -283,15 +304,15 @@
                 $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
                 $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' Wörter');
             },'allowDrop':function(e){
-                e.preventDefault();
+//                e.preventDefault();
             },'dragover':function(e){
-                e.stopPropagation();
-                e.preventDefault();
+//                e.stopPropagation();
+//                e.preventDefault();
             },'drop':function(e){
-                e.stopPropagation();
-                e.preventDefault();
-                var data = e.originalEvent.dataTransfer.getData("image");
-                document.execCommand('insertHTML',false, data);
+//                e.stopPropagation();
+//                e.preventDefault();
+//                var data = e.originalEvent.dataTransfer.getData("image");
+//                $(e.target).append(data);
             }
         });
         
@@ -381,19 +402,22 @@
     }
     function readURL(input) {
         if (input.files && input.files[0]) {
-          var reader = new FileReader();
-          reader.onload = function(e) {
-              var img = document.createElement('img');
-              $(img).attr('src', e.target.result).attr('draggable', 'true');
-              document.execCommand('insertHTML',false, $(img)[0].outerHTML);
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                console.log(e);
+                var img = new Image();
+                $(img).attr('src', e.target.result);
+                img.onload=function(ev){
+                    var width=this.width,
+                        height=this.height;
+                    $(this).css({'width':width,'height':height});
+                    document.execCommand('insertHTML',false, $(img)[0].outerHTML);
+                };
               $('img').unbind().on('dragstart',function(e){
-                  drag(e);
+//                  e.originalEvent.dataTransfer.setData("image", $(e.target)[0].outerHTML);
               });
-          }
+            }
           reader.readAsDataURL(input.files[0]);
         }
-      }
-    function drag(e){
-        e.originalEvent.dataTransfer.setData("image", $(e.target)[0].outerHTML);
     }
 }(jQuery));
