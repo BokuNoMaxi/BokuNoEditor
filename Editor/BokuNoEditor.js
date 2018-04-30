@@ -15,24 +15,17 @@
         'Verdana',
         ],Schriftgroesse=[
             '6','7','8','9','10','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
-        ],Menu='<button type="button" class="bokunoeditorMenueButton" id="bokunoeditorDatei">Datei</button>\n\
-                <button type="button" class="bokunoeditorMenueButton">Schriftart</button>\n\
-                <button type="button" class="bokunoeditorMenueButton">Format</button>'
-        ,MenuDatei='<div id="bokuenoeditorMenuDateiContextmenu">\n\
-                        <div id="bokuenoeditorMenuDateiContextmenuNeu"><button type="Button" class="bneMenuButton">Neu</button></div>\n\
-                        <div class="bneMenueTrennlinie"></div>\n\
+        ],Menu='<button type="button" class="bokunoeditorMenueButton" id="bokunoeditorDatei">Datei</button><button type="button" class="bokunoeditorMenueButton" id="bokunoeditorSchrift">Schrift</button><button type="button" class="bokunoeditorMenueButton" id="bokunoeditorFormat">Format</button>'
+        ,MenuContext='<div id="bokuenoeditorMenuDateiContextmenu" class="bokunoeditorContextMenu">\n\
+                        <div id="bokuenoeditorMenuDateiContextmenuNeu" class="bneMenueTrennlinie"><button type="Button" class="bneMenuButton">Neu</button></div>\n\
                         <div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div>\n\
                         <div id="bokuenoeditorMenuDateiContextmenuDrucken"><button type="Button" class="bneMenuButton">Drucken</button></div>\n\
                     </div>'
-        ,Toolbar='  <button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button>\n\
-                    <button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button>\n\
-                    <select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftart"></select>\n\
-                    <select class="bokunoeditorToolbarSelect" id="bokunoeditorSchriftgroesse"></select>\n\
-                    <button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button>\n\
-                    <button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button>\n\
-                    <button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button>\n\
-                    <button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarTabelle" id="bokunoeditorTabelle">Tabelle</button>\n\
-                    <button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarBild" id="bokunoeditorBild">Bild</button>'
+        ,SchriftContext='<div id="bokuenoeditorMenuSchriftContextmenu" class="bokunoeditorContextMenu">\n\
+                        <div id="bokuenoeditorMenuSchriftContextmenuArt"><span>Art:</span><select class="bokunoeditorToolbarSelect bokunoeditorSchriftart" id="bokunoeditorMenuSchriftart"></select></div>\n\
+                        <div id="bokuenoeditorMenuSchriftContextmenuGroesse"><span>Gr\xF6\xDFe</span><select class="bokunoeditorToolbarSelect bokunoeditorSchriftgroesse" id="bokunoeditorMenuSchriftgroesse"></select></div>\n\
+                    </div>'
+        ,Toolbar='  <button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button><button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button><select class="bokunoeditorToolbarSelect bokunoeditorSchriftart" id="bokunoeditorToolbarSchriftart"></select><select class="bokunoeditorToolbarSelect bokunoeditorSchriftgroesse" id="bokunoeditorToolbarSchriftgroesse"></select><button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarTabelle" id="bokunoeditorTabelle">Tabelle</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarBild" id="bokunoeditorBild">Bild</button>'
         ,FormatierungsZeile='<div id="bokuenoeditorFormatZeileContainer">\n\
                         <div class="bokuenoeditorFormatZeile bokunoeditorDokInfos">\n\
                             <span id="bneAnzZeichen"></span>\n\
@@ -56,17 +49,29 @@
                             </div>\n\
                         </div>\n\
                     </div>';
-    $.fn.bokunoeditor=function($Info){//Initialisiere BokuNoEditor
+    $.fn.bokunoeditor=function($Info,$rtfContent){//Initialisiere BokuNoEditor
+        //$Info = Dokumentinformationen
+        //$rtfContent = ist der Inhalt in der Box RTF oder HTML??
         var Textarea=$(this);
         //Vorbereitung des Editors
-        $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContainer"><div id="bokunoeditorContent" class="A4" style="border: solid 2cm rgba(0, 0, 0, 0);"></div></div></div>');
-        $('#bokunoeditorIframe').append(MenuDatei).append(FormatierungsZeile).append('<input type="file" hidden="hidden" id="fileUpload">');
-        lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val()).focus();
+        $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContainer"><div id="bokunoeditorContent" class="A4"></div></div></div>');
+        $('#bokunoeditorIframe').append(MenuContext+SchriftContext+FormatierungsZeile).append('<input type="file" hidden="hidden" id="fileUpload">');
         $('#bokunoeditorMenue').html(Menu);//Menüzeile
         $('#bokunoeditorToolbar').html(Toolbar);//Toolbar
+        if($rtfContent===true){
+            $.post(absolutPath+'/Converter/RTF2HTML-Converter.php',{
+                'RTF':Textarea.val(),
+            },function(data){
+                lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html(data).focus();
+            });
+        }else{
+            lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val()).focus();
+        }
+        
+        
         //Zeige die Anzahl der Zeichen, Wörter die im Dokument vorhanden sind
         $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
-        $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' Wörter');
+        $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' W\xF6rter');
         //Speichern als RTF File
         $('#bokuenoeditorMenuDateiContextmenuAbsenden button').click(function(){
             $('b,i').removeAttr('style');
@@ -79,9 +84,18 @@
             },function(){});
         });
         //Kontextmen�
-        $('#bokunoeditorDatei').click(function(){
-            $('#bokuenoeditorMenuDateiContextmenu').toggleClass('bneOpen');
+        $('.bokunoeditorMenueButton').click(function(){
+            var menu=$(this);
+            switch(menu[0].id){
+                case 'bokunoeditorDatei':
+                    $('#bokuenoeditorMenuDateiContextmenu').toggleClass('bneOpen').siblings().removeClass('bneOpen');
+                    break;
+                case 'bokunoeditorSchrift':
+                    $('#bokuenoeditorMenuSchriftContextmenu').toggleClass('bneOpen').siblings().removeClass('bneOpen');
+                    break;
+            }
         });
+//        
         //Drucken
         $('#bokuenoeditorMenuDateiContextmenuDrucken').click(function(){
             drucken();
@@ -94,11 +108,11 @@
         (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<div><br></div>'):'');
         //Lade Schriftarten
         $.each(Schriftart,function(index,value){
-            $('#bokunoeditorSchriftart').append('<option value="'+value+'">'+value+'</option>');
+            $('.bokunoeditorSchriftart').append('<option value="'+value+'">'+value+'</option>');
         });
         //Lade Schriftgr��e
         $.each(Schriftgroesse,function(index,value){
-            $('#bokunoeditorSchriftgroesse').append('<option value="'+value+'" '+((value=='11')?'selected="selected"':'')+'>'+value+' pt</option>');
+            $('.bokunoeditorSchriftgroesse').append('<option value="'+value+'" '+((value=='11')?'selected="selected"':'')+'>'+value+' pt</option>');
         });
         //Formatierung bei Kn�pfen
         $('.bokunoeditorToolbarButton').click(function(){
@@ -152,17 +166,20 @@
                     var sel = window.getSelection(),
                         Markierung=sel.getRangeAt(0).cloneRange();
                     switch (Select[0].id) {
-                        case 'bokunoeditorSchriftgroesse':
+                        case 'bokunoeditorMenuSchriftgroesse':
+                        case 'bokunoeditorToolbarSchriftgroesse':
                             if(Markierung.startOffset != Markierung.endOffset){
                                 ersetzeSelectedText(getSelectionText(),[{'formatierung':'font-size','value':Select.val()}]);
                             }else{
                                 beginneNeueFormatierung([{'formatierung':'font-size','value':Select.val()}]);
                             }
                         break;
-                        case 'bokunoeditorSchriftart':
+                        case 'bokunoeditorMenuSchriftart':
+                        case 'bokunoeditorToolbarSchriftart':
                             document.execCommand('fontName',false,Select.val());
                         break;
                     }
+                    $('.bokunoeditorContextMenu').removeClass('bneOpen');
                 }, 10);
             }
         });
@@ -269,7 +286,7 @@
         });
         // welche Formatierungen momentan aktiv sind im Dokument
         $('#bokunoeditorContent').on({'touchstart':function(e){
-                $('#bokuenoeditorMenuDateiContextmenu').removeClass('bneOpen');
+                $('.bokunoeditorContextMenu').removeClass('bneOpen');
                 if(e.target.nodeName=='IMG'){
                     img=$(e.target);
                     img.addClass('bneFocus');
@@ -301,7 +318,7 @@
                 $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+']').prop('selected',true);
                 
             },'mousedown':function(e){
-                $('#bokuenoeditorMenuDateiContextmenu').removeClass('bneOpen');
+                $('.bokunoeditorContextMenu').removeClass('bneOpen');
                 if(e.target.nodeName=='IMG'){
                     img=$(e.target);
                     img.addClass('bneFocus');
@@ -340,7 +357,7 @@
                 }
             },'keyup':function(){
                 $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
-                $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' Wörter');
+                $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' W\xF6rter');
             },'allowDrop':function(e){
 //                e.preventDefault();
             },'dragover':function(e){

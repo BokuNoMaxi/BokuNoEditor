@@ -7,6 +7,7 @@ and open the template in the editor.
     Created on : 07.03.2018, 15:59:02
     Author     : Markus
 */
+$borderColorMenu:lightgrey;
 $borderColor:grey;
 $buttonActive:#C2DEF5;
 $buttonBorder:#91C9F7;
@@ -33,7 +34,9 @@ $buttonBorder:#91C9F7;
 .bneActive{
     background:$buttonActive !important;
 }
-
+select{
+    background:white;
+}
 #bokunoeditorIframe{
     background:white;
     height:100%;
@@ -71,6 +74,7 @@ $buttonBorder:#91C9F7;
         line-height: 20px;
         cursor: pointer;
         div {
+            border-bottom:solid 1px $borderColorMenu;
             button{
                 border: none;
                 background: white;
@@ -87,18 +91,65 @@ $buttonBorder:#91C9F7;
             display:block;
         }
     }
+    #bokuenoeditorMenuSchriftContextmenu{
+        display:none;
+        position:absolute;
+        top: 30px;
+        left: 51px;
+        background: white;
+        font-size: 14px;
+        border-left: solid 1px $borderColor;
+        border-right: solid 1px $borderColor;
+        border-bottom: solid 1px $borderColor;
+        line-height: 20px;
+        cursor: pointer;
+        overflow:hidden;
+        div {
+            border-bottom:solid 1px $borderColorMenu;
+            button{
+                border: none;
+                background: white;
+                width: 100%;
+                padding: 4px 8px;
+                cursor: pointer;
+            }
+            span{
+                display:inline-block;
+                width:4em;
+                padding-left:8px;
+            }
+            select{
+                border: none;
+                border-left:solid 1px $borderColorMenu;
+                border-radius: 0px !important;
+                padding: 5px 8px;
+                font-size: 14px;
+                text-align: right;
+                width:13em;
+            }
+        }
+        .bneMenueTrennlinie{
+            border-bottom: solid 1px $borderColor;
+            padding:0px;
+        }
+        &.bneOpen{
+            display:block;
+        }
+    }
     #bokunoeditorToolbar{
         height:29px;
         border-bottom:solid 1px $borderColor;
         border-left:solid 1px $borderColor;
         border-right:solid 1px $borderColor;
+        @media (max-width: 767px){
+            display:none;
+        }
         select{
             border: none;
             border-radius: 0px !important;
             padding: 5px 8px;
             border-right: solid 1px black;
             font-size: 14px;
-            margin-left:-2px;
         }
         button{
             padding: 4px 8px;
@@ -113,10 +164,6 @@ $buttonBorder:#91C9F7;
             border-left: none;
             border-bottom: none;
             border-right: solid 1px $borderColor;
-            margin-left:-3px;
-            &:first-child{
-                margin-left:0px;
-            }
         }
     }
     #bokunoeditorContainer{
@@ -126,6 +173,9 @@ $buttonBorder:#91C9F7;
         max-height: calc(100% - 86px);
         overflow:auto;
         background:lightgrey;
+        @media (max-width: 767px){
+            max-height: calc(100% - 56px);
+        }
         #bokunoeditorContent{
             outline: none;
             overflow: hidden;
@@ -141,7 +191,7 @@ $buttonBorder:#91C9F7;
                 }
             }
             span{
-                display:inline-block;
+                /*display:inline-block;*/
                 height:100%;
             }
             img{
@@ -230,4 +280,8 @@ $buttonBorder:#91C9F7;
 .A4{
     min-height:297mm;
     width:210mm;
+    border: solid 2cm rgba(0, 0, 0, 0);
+    @media(max-width: 767px){
+    border: solid 2mm rgba(0, 0, 0, 0);
+    }
 }

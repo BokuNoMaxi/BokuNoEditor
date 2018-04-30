@@ -1,20 +1,23 @@
 <?php
+//Erzeuge aus HTML Code RTF Code
 function makeRTF($Info,$pArr,$format){
-    $pArr= makeFormatierungHTML2RTFParagraph($pArr);
-    $Content= implode('', $pArr['Content']);
-    $Schriftarten=$pArr['Schriftarten'];
-    $Farben=$pArr['Farben'];
-    $Deff= setDefinition($Info, $Schriftarten, $Farben);
-    $Seitenformat=setFormat($format);
-    $Standards='\deflang1031\plain\fs26\widowctrl\hyphauto\ftnbj'.$Seitenformat.'\fs22';
+    $pArr= makeFormatierungHTML2RTFParagraph($pArr);//wandle HTML Tags zu RTF Tags um
+    $Content= implode('', $pArr['Content']);//Mach das Array mit dem RTF zu einem langen String
+    $Schriftarten=$pArr['Schriftarten'];//Die Schriftarten die im Dokument verwendet werden
+    $Farben=$pArr['Farben'];//Die Farben die im Dokument verwendet werden
+    $Deff= setDefinition($Info, $Schriftarten, $Farben);//Der Header des RTFs Dokuments
+    $Seitenformat=setFormat($format);//Dokumenteigenschaften wie Abstand vom Rand usw
+    $Standards='\deflang1031\plain\fs26\widowctrl\hyphauto\ftnbj'.$Seitenformat.'\fs22';//Standarddokumenteinstellung die empfohlen werden
     return '{\rtf1\ansi'.$Deff.$Standards.$Content.'}';
 }
+//Erzeuge die Kopfzeile des RTF-Dokuments
 function setDefinition($Info,$Schriftarten,$Color){
     $SchriftartenDokument= setSchriftart($Schriftarten);
     $Farben= setColors($Color);
     $Dokumentinfo= setInformationen($Info);
     return '\deff0'.$SchriftartenDokument.$Farben.$Dokumentinfo;
 }
+//erzeuge die Schriftarttabelle
 function setSchriftart($Schriftarten){
     $DefinitionSchriftarten='{\f0 Arial;}';
     for($i=1;$i<count($Schriftarten)&&$Schriftarten!=null;$i++){
@@ -22,6 +25,7 @@ function setSchriftart($Schriftarten){
     }
     return '{\fonttbl'.$DefinitionSchriftarten.'}';
 }
+//erzeuge die Farbtabelle
 function setColors($Color){
     $Farben="";
     foreach($Color as $C){
@@ -29,11 +33,13 @@ function setColors($Color){
     }
     return '{\colortbl;'.$Farben.'}';
 }
+//Setze die Informationen des Dokuments
 function setInformationen($Info){
     if($Info['Datum'] != null)$Info['Datum']=DateTime::createFromFormat('Y.m.d H:i', $Info['Datum']);
     else $Info['Datum']= new DateTime();
     return '{\info{\title '.$Info['Title'].'}{\author '.$Info['Author'].'}{\company '.$Info['Company'].'}{\creatim\yr'.$Info['Datum']->format('Y').'\mo'.$Info['Datum']->format('m').'\dy'.$Info['Datum']->format('d').'\hr'.$Info['Datum']->format('H').'\min'.$Info['Datum']->format('i').'}{\doccomm '.$Info['Kommentar'].'}}';
 }
+//Setze die Seitenverhältnisse des Dokuments
 function setFormat($format){
     $Seitenformat=$format['Seitenformat'];
     $Seitenverhaeltnis=$format['Seitenverhaeltnis'];
@@ -46,6 +52,7 @@ function setFormat($format){
     $RTFFormat.='\margl'.Pixel2Twips($Seitenverhaeltnis['l']).'\margt'.Pixel2Twips($Seitenverhaeltnis['t']).'\margr'.Pixel2Twips($Seitenverhaeltnis['r']).'\margb'.Pixel2Twips($Seitenverhaeltnis['b']);
     return $RTFFormat;
 }
+//Wandle HTML Code zu RTF Code um
 function makeFormatierungHTML2RTFParagraph($pArr){
     $Schriftarten=array('Arial');
     $Farben=array(array('red'=>0,'green'=>0,'blue'=>0));
@@ -278,22 +285,11 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
     $Ausgabe['Farben']=$Farben;
     return $Ausgabe;
 }
-//Umrechnungen
-function Pixel2Point($Pixel){
-    return intval(round($Pixel*0.75));
-}
-function Pixel2Twips($Pixel){
-    return intval(round($Pixel*15));
-}
+
 //Kontrolliert ob die Farbe schon mal vorgekommen ist, wenn nicht füge sie im Array an
 function FarbenController($RGB,$FarbenArr){
     if(array_search($RGB, $FarbenArr)===false) $FarbenArr[]=$RGB;
     return $FarbenArr;
-}
-//schlüssle CSS RGB auf und gib es als Array zurück
-function colorHTMLtoRGBArr($HTML){
-    $HTML=explode(',',substr($HTML, strpos($HTML, '(')+1,-1));
-    return array('red'=>intval($HTML[0]),'green'=>intval($HTML[1]),'blue'=>intval($HTML[2]));
 }
 //RTF - Formatierung 
 function setStandardformatierung($Text){
