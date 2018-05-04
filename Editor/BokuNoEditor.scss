@@ -185,6 +185,7 @@ select{
             background:white;
             table{
                 border-collapse:collapse;
+                table-layout:fixed;
                 td{
                     min-width:200px;
                     padding: 0.4rem;

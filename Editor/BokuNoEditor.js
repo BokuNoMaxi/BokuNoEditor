@@ -25,7 +25,7 @@
                         <div id="bokuenoeditorMenuSchriftContextmenuArt"><span>Art:</span><select class="bokunoeditorToolbarSelect bokunoeditorSchriftart" id="bokunoeditorMenuSchriftart"></select></div>\n\
                         <div id="bokuenoeditorMenuSchriftContextmenuGroesse"><span>Gr\xF6\xDFe</span><select class="bokunoeditorToolbarSelect bokunoeditorSchriftgroesse" id="bokunoeditorMenuSchriftgroesse"></select></div>\n\
                     </div>'
-        ,Toolbar='  <button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button><button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button><select class="bokunoeditorToolbarSelect bokunoeditorSchriftart" id="bokunoeditorToolbarSchriftart"></select><select class="bokunoeditorToolbarSelect bokunoeditorSchriftgroesse" id="bokunoeditorToolbarSchriftgroesse"></select><button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarTabelle" id="bokunoeditorTabelle">Tabelle</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarBild" id="bokunoeditorBild">Bild</button>'
+        ,Toolbar='  <button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button><button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button><select class="bokunoeditorToolbarSelect bokunoeditorSchriftart" id="bokunoeditorToolbarSchriftart"></select><select class="bokunoeditorToolbarSelect bokunoeditorSchriftgroesse" id="bokunoeditorToolbarSchriftgroesse"></select><button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarBlock">Blocksatz</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarTabelle" id="bokunoeditorTabelle">Tabelle</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarBild" id="bokunoeditorBild">Bild</button>'
         ,FormatierungsZeile='<div id="bokuenoeditorFormatZeileContainer">\n\
                         <div class="bokuenoeditorFormatZeile bokunoeditorDokInfos">\n\
                             <span id="bneAnzZeichen"></span>\n\
@@ -146,6 +146,11 @@
                             $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                             Button.toggleClass('bneActive');
                             document.execCommand('justifyRight',false,null);
+                            break;
+                        case 'bokunoeditorToolbarBlock':
+                            $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                            Button.toggleClass('bneActive');
+                            document.execCommand('justifyFull',false,null);
                             break;
                         case 'bokunoeditorTabelle':
                             document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr><td style=" border:1px solid rgb(0,0,0);">&#65279;</td><td style=" border:1px solid rgb(0,0,0);">&#65279;</td></tr></table><br>':'<div><table><tr><td style="border:1px solid rgb(0,0,0);">&#65279;</td><td style="border:1px solid rgb(0,0,0);">&#65279;</td></tr></table><br>'));

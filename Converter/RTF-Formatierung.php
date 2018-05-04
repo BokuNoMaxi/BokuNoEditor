@@ -89,6 +89,9 @@ function makeFormatierungHTML2RTFParagraph($pArr){
                             case 'right':
                                 $RTFPraefix= setRechtssbuendig($RTFPraefix);
                                 break;
+                            case 'justify':
+                                $RTFPraefix= setBlocksatz($RTFPraefix);
+                                break;
                         }
                         break;
                 }
