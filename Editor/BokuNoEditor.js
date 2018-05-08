@@ -48,7 +48,8 @@
                                 <div class="bokuenoeditorFormatZeilePreLabel">H:</div><input type="number" class="bokuenoeditorFormatZeileHoehe bokunoeditorFormatZeileInput" id="bokuenoeditorFormatZeileIMGHoehe"><div class="bokuenoeditorFormatZeileAppLabel">px</div>\n\
                             </div>\n\
                         </div>\n\
-                    </div>';
+                    </div>'
+        ,borderStyles='border-top-style:solid;border-top-width:1px;border-left-style:solid;border-left-width:1px;border-bottom-style:solid;border-bottom-width:1px;border-right-style:solid;border-right-width:1px;';
     $.fn.bokunoeditor=function($Info,$rtfContent){//Initialisiere BokuNoEditor
         //$Info = Dokumentinformationen
         //$rtfContent = ist der Inhalt in der Box RTF oder HTML??
@@ -153,7 +154,7 @@
                             document.execCommand('justifyFull',false,null);
                             break;
                         case 'bokunoeditorTabelle':
-                            document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr><td style=" border:1px solid rgb(0,0,0);">&#65279;</td><td style=" border:1px solid rgb(0,0,0);">&#65279;</td></tr></table><br>':'<div><table><tr><td style="border:1px solid rgb(0,0,0);">&#65279;</td><td style="border:1px solid rgb(0,0,0);">&#65279;</td></tr></table><br>'));
+                            document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr style><td style="'+borderStyles+'">&#65279;</td><td style="'+borderStyles+'">&#65279;</td></tr></table><br>':'<div><table><tr style><td style="border:1px solid rgb(0,0,0);">&#65279;</td><td style="border:1px solid rgb(0,0,0);">&#65279;</td></tr></table><br>'));
                             break;
                         case 'bokunoeditorBild':
                             $('#fileUpload').click();
@@ -203,7 +204,7 @@
                                 indexTD=td.index(),
                                 color=(td[0].style['border-top-color']);
                                 $.each(tr.closest('table').find('tr'),function(index,trs){
-                                    $(trs).children().eq(indexTD).after('<td style="border:1px solid '+color+';">&#65279;');
+                                    $(trs).children().eq(indexTD).after('<td style="'+borderStyles+'border-top-color'+color+';border-left-color'+color+';border-right-color'+color+';border-bottom-color'+color+';">&#65279;');
                                 });
                             break;
                         case 'bokuenoeditorFormatZeileAddRowLinks':
@@ -212,7 +213,7 @@
                                 indexTD=td.index(),
                                 color=(td[0].style['border-top-color']);
                                 $.each(tr.closest('table').find('tr'),function(index,trs){
-                                    $(trs).children().eq(indexTD).before('<td style="border:1px solid '+color+';">&#65279;');
+                                    $(trs).children().eq(indexTD).before('<td style="'+borderStyles+'border-top-color'+color+';border-left-color'+color+';border-right-color'+color+';border-bottom-color'+color+';">&#65279;');
                                 });
                             break;
                         case 'bokuenoeditorFormatZeileAddRowUnten':
@@ -220,7 +221,7 @@
                                 td=$(sel.anchorNode).closest('td'),
                                 color=(td[0].style['border-top-color']);
                             $.each(tr.children('td'),function(){
-                               td+='<td style="border:1px solid '+color+';">&#65279;</td>'; 
+                               td+='<td style="'+borderStyles+'border-top-color'+color+';border-left-color'+color+';border-right-color'+color+';border-bottom-color'+color+';">&#65279;</td>'; 
                             });
                             tr.after('<tr>'+td+'</tr>');
                             break;
@@ -229,7 +230,7 @@
                                 td=$(sel.anchorNode).closest('td'),
                                 color=(td[0].style['border-top-color']);
                             $.each(tr.children('td'),function(){
-                               td+='<td style="border:1px solid '+color+';">&#65279;</td>'; 
+                               td+='<td style="'+borderStyles+'border-top-color'+color+';border-left-color'+color+';border-right-color'+color+';border-bottom-color'+color+';">&#65279;</td>'; 
                             });
                             tr.before('<tr>'+td+'</tr>');
                             break;
@@ -271,7 +272,12 @@
                     lastFocus.focus();
                     switch(Button[0].id){
                         case 'bokuenoeditorFormatZeileColor':
-                            $(sel.anchorNode).closest('td').css('border','solid 1px '+"rgb("+Button.val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",")+")");
+                            $(sel.anchorNode).closest('td').css({
+                                'border-top-color':"rgb("+Button.val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",")+")",
+                                'border-bottom-color':"rgb("+Button.val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",")+")",
+                                'border-left-color':"rgb("+Button.val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",")+")",
+                                'border-right-color':"rgb("+Button.val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",")+")"
+                            });
                             break;
                     }
                 },10);
@@ -300,20 +306,24 @@
                     $('#bokuenoeditorFormatZeileIMGHoehe').val(parseInt($(e.target).css('height')));
                 }else{
                     if(img!==null)img.removeClass('bneFocus');
-                    $('.bokunoeditorIMGFormats').css('display','none')
+                    $('.bokunoeditorIMGFormats').css('display','none');
                 }
                 (($(e.target).closest('td').length>0)?$('.bokunoeditorTableFormats').css('display','inline-block'):$('.bokunoeditorTableFormats').css('display','none'));
-                if($(e.target).closest('p').css('text-align')=='center'){
-                    $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                if($(e.target).closest('p').css('text-align')=='center'||$(e.target).closest('td').css('text-align')=='center'){
+                    $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarMitte').addClass('bneActive');
                 }
-                if($(e.target).closest('p').css('text-align')=='right'){
-                    $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                if($(e.target).closest('p').css('text-align')=='right'||$(e.target).closest('td').css('text-align')=='right'){
+                    $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarRechts').addClass('bneActive');
                 }
-                if($(e.target).closest('p').css('text-align')=='left'||$(e.target).closest('p').css('text-align')=='start'){
-                    $('#bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                if($(e.target).closest('p').css('text-align')=='left'||$(e.target).closest('p').css('text-align')=='start'||$(e.target).closest('td').css('text-align')=='left'||$(e.target).closest('td').css('text-align')=='start'){
+                    $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarLinks').addClass('bneActive');
+                }
+                if($(e.target).closest('p').css('text-align')=='justify'||$(e.target).closest('td').css('text-align')=='justify'){
+                    $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                    $('#bokunoeditorToolbarBlock').addClass('bneActive');
                 }
                 if($(e.target).css('font-style')=='italic')$('#bokunoeditorToolbarKursiv').addClass('bneActive');
                 if($(e.target).css('font-style')=='normal')$('#bokunoeditorToolbarKursiv').removeClass('bneActive');
@@ -335,17 +345,21 @@
                     $('.bokunoeditorIMGFormats').css('display','none')
                 }
                 (($(e.target).closest('td').length>0)?$('.bokunoeditorTableFormats').css('display','inline-block'):$('.bokunoeditorTableFormats').css('display','none'));
-                if($(e.target).closest('p').css('text-align')=='center'){
+                if($(e.target).closest('p').css('text-align')=='center'||$(e.target).closest('td').css('text-align')=='center'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarMitte').addClass('bneActive');
                 }
-                if($(e.target).closest('p').css('text-align')=='right'){
+                if($(e.target).closest('p').css('text-align')=='right'||$(e.target).closest('td').css('text-align')=='right'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarRechts').addClass('bneActive');
                 }
-                if($(e.target).closest('p').css('text-align')=='left'||$(e.target).closest('p').css('text-align')=='start'){
+                if($(e.target).closest('p').css('text-align')=='left'||$(e.target).closest('p').css('text-align')=='start'||$(e.target).closest('td').css('text-align')=='left'||$(e.target).closest('td').css('text-align')=='start'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarLinks').addClass('bneActive');
+                }
+                if($(e.target).closest('p').css('text-align')=='justify'||$(e.target).closest('td').css('text-align')=='justify'){
+                    $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
+                    $('#bokunoeditorToolbarBlock').addClass('bneActive');
                 }
                 if($(e.target).css('font-style')=='italic')$('#bokunoeditorToolbarKursiv').addClass('bneActive');
                 if($(e.target).css('font-style')=='normal')$('#bokunoeditorToolbarKursiv').removeClass('bneActive');

@@ -76,7 +76,7 @@ foreach($Befehle as $B){
         //Paragraphformatierung
         case 'qr'://Rechtsbündig
             if($tableActive==true){
-                $TDActiveStylings.='text-align:right;';
+                $TDStylings[$TDAktiv]=$TDStylings[$TDAktiv].'text-align:right;';
                 $TDContent.=$Content;
             }else{
                 $ParagraphStyles.='text-align:right;';
@@ -85,7 +85,7 @@ foreach($Befehle as $B){
             break;
         case 'qc'://Zentriert
             if($tableActive==true){
-                $TDActiveStylings.='text-align:right;';
+                $TDStylings[$TDAktiv]=$TDStylings[$TDAktiv].'text-align:center;';
                 $TDContent.=$Content;
             }else{
                 $ParagraphStyles.='text-align:center;';
@@ -94,7 +94,7 @@ foreach($Befehle as $B){
             break;
         case 'ql'://Linkssbündig
             if($tableActive==true){
-                $TDActiveStylings.='text-align:right;';
+                $TDStylings[$TDAktiv]=$TDStylings[$TDAktiv].'text-align:left;';
                 $TDContent.=$Content;
             }else{
                 $ParagraphStyles.='text-align:left;';
@@ -103,7 +103,7 @@ foreach($Befehle as $B){
             break;
         case 'qj'://Linkssbündig
             if($tableActive==true){
-                $TDActiveStylings.='text-align:justify;';
+                $TDStylings[$TDAktiv]=$TDStylings[$TDAktiv].'text-align:justify;';
                 $TDContent.=$Content;
             }else{
                 $ParagraphStyles.='text-align:justify;';
@@ -274,7 +274,7 @@ foreach($Befehle as $B){
             break;
         case 'row':
             $tableActive=false;
-            $OutputHTML.='<table style="width:'.$TableBreite.'px;"><tr style="'.$TRStyles.'">'.$TDContentOutput.'</tr></table>';
+            $OutputHTML.='<div><table style="width:'.$TableBreite.'px;"><tr style="'.$TRStyles.'">'.$TDContentOutput.'</tr></table></div>';
             break;
         //Ende des Paragraps
         case 'par':

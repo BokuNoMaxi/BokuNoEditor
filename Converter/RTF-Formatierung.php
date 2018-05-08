@@ -69,8 +69,13 @@ function makeFormatierungHTML2RTFParagraph($pArr){
             $Stylings= array_filter(explode(';', substr($Styles, 1,strpos($Styles, '"',2)-1)));//liefere mir nur die CSS Attribute:value;
             foreach ($Stylings as $S){
                 $a = explode(':', $S);
-                $Tag=trim($a[0]);
-                $Value=trim($a[1]);
+                if(count($a)>1){
+                    $Tag=trim($a[0]);
+                    $Value=trim($a[1]);
+                }else{
+                    $Tag=trim($a[0]);
+                    $Value=null;
+                }
                 switch ($Tag){
                     case 'font-size':
                         if(strstr($Value, 'px')){
@@ -101,7 +106,7 @@ function makeFormatierungHTML2RTFParagraph($pArr){
         $RTFContent= makeFormatierungHTML2RTFContent($pContent, $Schriftarten,$Farben);
         $Schriftarten=$RTFContent['Schriftarten'];
         $Farben=$RTFContent['Farben'];
-        $RTFParagraph= makeGroup(makeParagraph($RTFPraefix.$RTFContent['RTF']));
+        $RTFParagraph= ((strpos($RTFContent['RTF'], '\trowd')!==false)?$RTFPraefix.$RTFContent['RTF']:makeGroup(makeParagraph($RTFPraefix.$RTFContent['RTF'])));
         $RTF[]=str_replace(array('$nbsp;','&#65279;','\ufeff'), ' ',iconv('UTF-8//IGNORE', 'CP1252//IGNORE',$RTFParagraph));
     }
     return array('Content'=>$RTF,'Schriftarten'=>$Schriftarten,'Farben'=>$Farben);
@@ -125,13 +130,252 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
     $HTMLline=str_replace("</table>", "", $HTMLline);
     $HTMLline=str_replace("</tbody>", "", $HTMLline);
     $HTMLline=str_replace("<tbody>", "", $HTMLline);
-    $HTMLline=str_replace("<table>", "", $HTMLline);
     $HTMLline=str_replace("</tr>", "\\row ", $HTMLline);
     $HTMLline=str_replace("</td>", "\cell ", $HTMLline);
     //Sonderzeichen
     $HTMLline=str_replace("<br>", br, $HTMLline);
     $HTMLline=str_replace(chr(160), ' ', $HTMLline);
-    
+    //Tabelle
+    $HTMLline=str_replace("<table>", "", $HTMLline);
+    if(strpos($HTMLline ,'<tr')!==false){
+        foreach(explode('<tr',$HTMLline) as $R){
+            $R= substr($R, strpos($R,'>')+1);
+            $TableUnformatedContent="";
+            $TableUnformatedContentStyles='';//Inhalt der Zelle splitten und speichern
+            $TDStylings=array_filter(explode('<td ',$R));
+            if(strstr($R,'\cell')){
+                $TableFormatedContent.= '\trowd\trgaph180';
+                //Formatierung der Zellen
+                foreach($TDStylings as $index=>$ST){
+                    $BorderTop="\clbrdrt";$BorderLeft="\clbrdrl";$BorderRight="\clbrdrr";$BorderBottom="\clbrdrb";//Rahmen der Zellen vordefinieren
+                    $Endpunkt= strpos($ST, '>');
+                    $TableUnformatedContentActive=substr($ST, $Endpunkt+1);//Inhalt der Zelle splitten und speichern
+                    $ST= str_replace('style=', '', $ST);
+                    $Styles= explode(';',substr($ST, 1, strpos($ST, '"',2)-2));//die einzelnen Stylings
+                    //Umwandlung der einzelnen Style Tags
+                    foreach($Styles as $sST){
+                        $sST= explode(':', $sST);
+                        if(count($sST)>1){
+                            $Tag=trim($sST[0]);
+                            $Value=trim($sST[1]);
+                        }else{
+                            $Tag=trim($sST[0]);
+                            $Value=null;
+                        }
+                        Switch($Tag){
+                            case 'border-top-style':
+                                switch ($Value){
+                                    case 'solid':
+                                        $BorderTop.='\brdrs';
+                                        break;
+                                    case 'dotted':
+                                        $BorderTop.='\brdrdot';
+                                        break;
+                                    case 'dashed':
+                                        $BorderTop.='\brdrdash';
+                                        break;
+                                    case 'double':
+                                        $BorderTop.='\brdrdb';
+                                        break;
+                                }
+                                break;
+                            case 'border-left-style':
+                                switch ($Value){
+                                    case 'solid':
+                                        $BorderLeft.='\brdrs';
+                                        break;
+                                    case 'dotted':
+                                        $BorderLeft.='\brdrdot';
+                                        break;
+                                    case 'dashed':
+                                        $BorderLeft.='\brdrdash';
+                                        break;
+                                    case 'double':
+                                        $BorderLeft.='\brdrdb';
+                                        break;
+                                }
+                                break;
+                            case 'border-right-style':
+                                switch ($Value){
+                                    case 'solid':
+                                        $BorderRight.='\brdrs';
+                                        break;
+                                    case 'dotted':
+                                        $BorderRight.='\brdrdot';
+                                        break;
+                                    case 'dashed':
+                                        $BorderRight.='\brdrdash';
+                                        break;
+                                    case 'double':
+                                        $BorderRight.='\brdrdb';
+                                        break;
+                                }
+                                break;
+                            case 'border-bottom-style':
+                                switch ($Value){
+                                    case 'solid':
+                                        $BorderBottom.='\brdrs';
+                                        break;
+                                    case 'dotted':
+                                        $BorderBottom.='\brdrdot';
+                                        break;
+                                    case 'dashed':
+                                        $BorderBottom.='\brdrdash';
+                                        break;
+                                    case 'double':
+                                        $BorderBottom.='\brdrdb';
+                                        break;
+                                }
+                                break;
+                            case 'border-top-width':
+                                $BorderTop.='\brdrw'.Pixel2Twips(intval($Value));
+                                break;
+                            case 'border-left-width':
+                                $BorderLeft.='\brdrw'.Pixel2Twips(intval($Value));
+                                break;
+                            case 'border-right-width':
+                                $BorderRight.='\brdrw'.Pixel2Twips(intval($Value));
+                                break;
+                            case 'border-bottom-width':
+                                $BorderBottom.='\brdrw'.Pixel2Twips(intval($Value));
+                                break;
+                            case 'border-top-color':
+                                $BorderColor=colorHTMLtoRGBArr($Value);
+                                $Farben=FarbenController($BorderColor,$Farben);
+                                $BorderTop.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                break;
+                            case 'border-left-color':
+                                $BorderColor=colorHTMLtoRGBArr($Value);
+                                $Farben=FarbenController($BorderColor,$Farben);
+                                $BorderLeft.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                break;
+                            case 'border-right-color':
+                                $BorderColor=colorHTMLtoRGBArr($Value);
+                                $Farben=FarbenController($BorderColor,$Farben);
+                                $BorderRight.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                break;
+                            case 'border-bottom-color':
+                                $BorderColor=colorHTMLtoRGBArr($Value);
+                                $Farben=FarbenController($BorderColor,$Farben);
+                                $BorderBottom.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                break;
+                            case 'border-left':
+                                $border= explode(' ', $Value,3);
+                                $BorderLeft.='\brdrw'.Pixel2Twips(intval($border[0]));
+                                switch ($border[1]){
+                                    case 'solid':
+                                        $BorderLeft.='\brdrs';
+                                        break;
+                                    case 'dotted':
+                                        $BorderLeft.='\brdrdot';
+                                        break;
+                                    case 'dashed':
+                                        $BorderLeft.='\brdrdash';
+                                        break;
+                                    case 'double':
+                                        $BorderLeft.='\brdrdb';
+                                        break;
+                                }
+                                $BorderColor=colorHTMLtoRGBArr($border[2]);
+                                $Farben=FarbenController($BorderColor,$Farben);
+                                $BorderLeft.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                break;
+                            case 'border-right':
+                                $border= explode(' ', $Value,3);
+                                $BorderRight.='\brdrw'.Pixel2Twips(intval($border[0]));
+                                switch ($border[1]){
+                                    case 'solid':
+                                        $BorderRight.='\brdrs';
+                                        break;
+                                    case 'dotted':
+                                        $BorderRight.='\brdrdot';
+                                        break;
+                                    case 'dashed':
+                                        $BorderRight.='\brdrdash';
+                                        break;
+                                    case 'double':
+                                        $BorderRight.='\brdrdb';
+                                        break;
+                                }
+                                $BorderColor=colorHTMLtoRGBArr($border[2]);
+                                $Farben=FarbenController($BorderColor,$Farben);
+                                $BorderRight.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                break;
+                            case 'border-top':
+                                $border= explode(' ', $Value,3);
+                                $BorderTop.='\brdrw'.Pixel2Twips(intval($border[0]));
+                                switch ($border[1]){
+                                    case 'solid':
+                                        $BorderTop.='\brdrs';
+                                        break;
+                                    case 'dotted':
+                                        $BorderTop.='\brdrdot';
+                                        break;
+                                    case 'dashed':
+                                        $BorderTop.='\brdrdash';
+                                        break;
+                                    case 'double':
+                                        $BorderTop.='\brdrdb';
+                                        break;
+                                }
+                                $BorderColor=colorHTMLtoRGBArr($border[2]);
+                                $Farben=FarbenController($BorderColor,$Farben);
+                                $BorderTop.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                break;
+                            case 'border-bottom':
+                                $border= explode(' ', $Value,3);
+                                $BorderBottom.='\brdrw'.Pixel2Twips(intval($border[0]));
+                                switch ($border[1]){
+                                    case 'solid':
+                                        $BorderBottom.='\brdrs';
+                                        break;
+                                    case 'dotted':
+                                        $BorderBottom.='\brdrdot';
+                                        break;
+                                    case 'dashed':
+                                        $BorderBottom.='\brdrdash';
+                                        break;
+                                    case 'double':
+                                        $BorderBottom.='\brdrdb';
+                                        break;
+                                }
+                                $BorderColor=colorHTMLtoRGBArr($border[2]);
+                                $Farben=FarbenController($BorderColor,$Farben);
+                                $BorderBottom.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                break;
+                            case 'text-align':
+                                switch (trim($Value)) {
+                                    case 'left':
+                                        $TableUnformatedContentActive= setLinksbuendig($TableUnformatedContentActive);
+                                        break;
+                                    case 'center':
+                                        $TableUnformatedContentActive= setZentriert($TableUnformatedContentActive);
+                                        break;
+                                    case 'right':
+                                        $TableUnformatedContentActive= setRechtssbuendig($TableUnformatedContentActive);
+                                        break;
+                                    case 'justify':
+                                        $TableUnformatedContentActive= setBlocksatz($TableUnformatedContentActive);
+                                        break;
+
+                                }
+                                break;
+                        }
+                        
+                    }
+                    $TableUnformatedContentStyles.=$BorderTop.'\clpadft3\clpadt113';       
+                    $TableUnformatedContentStyles.=$BorderLeft.'\clpadfl3\clpadl113';       
+                    $TableUnformatedContentStyles.=$BorderRight.'\clpadrl3\clpadr113';       
+                    $TableUnformatedContentStyles.=$BorderBottom.'\clpadfb3\clpadb113';       
+                    $TableUnformatedContentStyles.='\cellx'.$index* Pixel2Twips(200);
+                    $TableUnformatedContent.=$TableUnformatedContentActive;
+                }
+                //Ausgabe des Contents der Zellen
+                $TableFormatedContent.=$TableUnformatedContentStyles.$TableUnformatedContent;
+            }
+        }
+        $HTMLline=$TableFormatedContent;
+    }
     //Span-Styles Formatierung
     if(strpos($HTMLline ,'<span')!==false){
         $SPAN= array_filter(explode('<span ', $HTMLline));
@@ -144,8 +388,13 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                 foreach($Styles as $ST){//geh die stylings die am span hängen durch
                     //trenne Tag und Value
                     $a = explode(':', $ST);
-                    $Tag= trim($a[0]);
-                    $Value= trim($a[1]); 
+                    if(count($a)>1){
+                        $Tag=trim($a[0]);
+                        $Value=trim($a[1]);
+                    }else{
+                        $Tag=trim($a[0]);
+                        $Value=null;
+                    }
                     //füge Stylings an
                     switch ($Tag){
                         case 'font-size':
@@ -179,63 +428,7 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
         }
         $HTMLline=$FontFormatedContent;
     }
-    //Tabelle
-    if(strpos($HTMLline ,'<tr>')!==false){
-        foreach(explode('<tr>',$HTMLline) as $R){
-            $TableUnformatedContent="";
-            $TDStylings=array_filter(explode('<td ',$R));
-            if(strstr($R,'\cell')){
-                $TableFormatedContent.= '\trowd\trgaph180';
-                //Formatierung der Zellen
-                foreach($TDStylings as $index=>$ST){
-                    $ST= str_replace('style=', '', $ST);
-                    $Styles= explode(';',substr($ST, 1, strpos($ST, '"',2)-2));
-                    $Endpunkt= strpos($ST, '>');
-                    $TableUnformatedContent.=substr($ST, $Endpunkt+1);
-                    foreach($Styles as $sST){
-                        $sST= explode(':', $sST);
-                        $Tag=trim($sST[0]);
-                        $Value=trim($sST[1]);
-                        Switch($Tag){
-                            case 'border':
-                                $BorderWidth= trim(substr($Value, 0, strpos($Value, ' ')));
-                                $BorderStyle= trim(substr($Value, strpos($Value, ' '),strpos($Value, ' ',strpos($Value, ' ')+1)-2));
-                                $BorderColor= colorHTMLtoRGBArr(trim(substr($Value, strpos($Value, ' ',strpos($Value, ' ')+1))));
-                                //Rahmen Breite
-                                $BorderWidthRTF='\brdrw'.Pixel2Twips(intval($BorderWidth));
-                                //Rahmen Stil
-                                switch ($BorderStyle){
-                                    case 'solid':
-                                        $BorderStyleRTF='\brdrs';
-                                        break;
-                                    case 'dotted':
-                                        $BorderStyleRTF='\brdrdot';
-                                        break;
-                                    case 'dashed':
-                                        $BorderStyleRTF='\brdrdash';
-                                        break;
-                                    case 'double':
-                                        $BorderStyleRTF='\brdrdb';
-                                        break;
-                                }
-                                //Rahmenfarbe
-                                $Farben=FarbenController($BorderColor,$Farben);
-                                $BorderColorRTF='\brdrcf'. (array_search($BorderColor, $Farben)+1);
-                                $TableFormatedContent.='\clbrdrt\clpadft3\clpadt113'.$BorderWidthRTF.$BorderStyleRTF.$BorderColorRTF;
-                                $TableFormatedContent.='\clbrdrl\clpadfl3\clpadl113'.$BorderWidthRTF.$BorderStyleRTF.$BorderColorRTF;
-                                $TableFormatedContent.='\clbrdrr\clpadrl3\clpadr113'.$BorderWidthRTF.$BorderStyleRTF.$BorderColorRTF;
-                                $TableFormatedContent.='\clbrdrb\clpadfb3\clpadb113'.$BorderWidthRTF.$BorderStyleRTF.$BorderColorRTF;
-                                break;
-                        }
-                        $TableFormatedContent.='\cellx'.$index* Pixel2Twips(200);
-                    }
-                }
-                //Ausgabe des Contents der Zellen
-                $TableFormatedContent.=$TableUnformatedContent;
-            }
-        }
-        $HTMLline=$TableFormatedContent;
-    }
+    
     //Bild
      if(strpos($HTMLline,'<img')!==false){
         $IMG= array_filter(explode('<img ',$HTMLline));
