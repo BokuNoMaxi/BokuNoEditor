@@ -20,5 +20,9 @@ function Twips2Pixel($Twips){
 //schlüssle CSS RGB auf und gib es als Array zurück
 function colorHTMLtoRGBArr($HTML){
     $HTML=explode(',',substr($HTML, strpos($HTML, '(')+1,-1));
-    return array('red'=>intval($HTML[0]),'green'=>intval($HTML[1]),'blue'=>intval($HTML[2]));
+    if(count($HTML)===3){
+        return array('red'=>intval($HTML[0]),'green'=>intval($HTML[1]),'blue'=>intval($HTML[2]));
+    }else{
+        return array('red'=>0,'green'=>0,'blue'=>0);
+    }
 }

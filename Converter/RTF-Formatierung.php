@@ -228,40 +228,48 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                                 }
                                 break;
                             case 'border-top-width':
-                                $BorderTop.='\brdrw'.Pixel2Twips(intval($Value));
+                                if($Value != null)$BorderTop.='\brdrw'.Pixel2Twips(intval($Value));
                                 break;
                             case 'border-left-width':
-                                $BorderLeft.='\brdrw'.Pixel2Twips(intval($Value));
+                                if($Value != null)$BorderLeft.='\brdrw'.Pixel2Twips(intval($Value));
                                 break;
                             case 'border-right-width':
-                                $BorderRight.='\brdrw'.Pixel2Twips(intval($Value));
+                                if($Value != null)$BorderRight.='\brdrw'.Pixel2Twips(intval($Value));
                                 break;
                             case 'border-bottom-width':
-                                $BorderBottom.='\brdrw'.Pixel2Twips(intval($Value));
+                                if($Value != null)$BorderBottom.='\brdrw'.Pixel2Twips(intval($Value));
                                 break;
                             case 'border-top-color':
-                                $BorderColor=colorHTMLtoRGBArr($Value);
-                                $Farben=FarbenController($BorderColor,$Farben);
-                                $BorderTop.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                if($Value != null){
+                                    $BorderColor=colorHTMLtoRGBArr($Value);
+                                    $Farben=FarbenController($BorderColor,$Farben);
+                                    $BorderTop.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                }
                                 break;
                             case 'border-left-color':
-                                $BorderColor=colorHTMLtoRGBArr($Value);
-                                $Farben=FarbenController($BorderColor,$Farben);
-                                $BorderLeft.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                if($Value != null){
+                                    $BorderColor=colorHTMLtoRGBArr($Value);
+                                    $Farben=FarbenController($BorderColor,$Farben);
+                                    $BorderLeft.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                }
                                 break;
                             case 'border-right-color':
-                                $BorderColor=colorHTMLtoRGBArr($Value);
-                                $Farben=FarbenController($BorderColor,$Farben);
-                                $BorderRight.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                if($Value != null){
+                                    $BorderColor=colorHTMLtoRGBArr($Value);
+                                    $Farben=FarbenController($BorderColor,$Farben);
+                                    $BorderRight.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                }
                                 break;
                             case 'border-bottom-color':
-                                $BorderColor=colorHTMLtoRGBArr($Value);
-                                $Farben=FarbenController($BorderColor,$Farben);
-                                $BorderBottom.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                if($Value != null){
+                                    $BorderColor=colorHTMLtoRGBArr($Value);
+                                    $Farben=FarbenController($BorderColor,$Farben);
+                                    $BorderBottom.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                }
                                 break;
                             case 'border-left':
                                 $border= explode(' ', $Value,3);
-                                $BorderLeft.='\brdrw'.Pixel2Twips(intval($border[0]));
+                                if($border[0] >= 0)$BorderLeft.='\brdrw'.Pixel2Twips(intval($border[0]));
                                 switch ($border[1]){
                                     case 'solid':
                                         $BorderLeft.='\brdrs';
@@ -282,7 +290,7 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                                 break;
                             case 'border-right':
                                 $border= explode(' ', $Value,3);
-                                $BorderRight.='\brdrw'.Pixel2Twips(intval($border[0]));
+                                if($border[0] >= 0)$BorderRight.='\brdrw'.Pixel2Twips(intval($border[0]));
                                 switch ($border[1]){
                                     case 'solid':
                                         $BorderRight.='\brdrs';
@@ -303,7 +311,7 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                                 break;
                             case 'border-top':
                                 $border= explode(' ', $Value,3);
-                                $BorderTop.='\brdrw'.Pixel2Twips(intval($border[0]));
+                                if($border[0] >= 0)$BorderTop.='\brdrw'.Pixel2Twips(intval($border[0]));
                                 switch ($border[1]){
                                     case 'solid':
                                         $BorderTop.='\brdrs';
@@ -324,7 +332,7 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                                 break;
                             case 'border-bottom':
                                 $border= explode(' ', $Value,3);
-                                $BorderBottom.='\brdrw'.Pixel2Twips(intval($border[0]));
+                                if($border[0] >= 0)$BorderBottom.='\brdrw'.Pixel2Twips(intval($border[0]));
                                 switch ($border[1]){
                                     case 'solid':
                                         $BorderBottom.='\brdrs';

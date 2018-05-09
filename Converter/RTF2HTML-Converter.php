@@ -19,6 +19,7 @@ $tableActive=false;$TDContentOutput;$TDContent="";$TRStyles="";$TableActiveBorde
 $deffMode=false;//DefinitionsModus An/Aus;
 $GroupCounter=0;$deffStart=0;$Schriftarten=array();
 $fontSet=false;//ob schon eine Schrift gesetzt wurde
+$img="";$data="";$style="";//Bildvariablen
 foreach($Befehle as $B){
     $Mixed=false;$Befehl=$B;$Content="";$Wert=-1;//Setze Defaultvariablen
     //Sonderzeichen
@@ -149,9 +150,9 @@ foreach($Befehle as $B){
             break;
         case 'fs'://Schriftgröße
             if($tableActive==true){
-                $TDContent.='<span style="font-size:'.($Wert/2).'pt;">'.$Content;
+                $TDContent.='<span style="font-size:'.(preg_replace("/[^0-9,.]/", "", $Wert )/2).'pt;">'.$Content;
             }else{
-                $ParagraphContent.='<span style="font-size:'.($Wert/2).'pt;">'.$Content;
+                $ParagraphContent.='<span style="font-size:'.(preg_replace("/[^0-9,.]/", "", $Wert )/2).'pt;">'.$Content;
             }
             break;
         //Tabelle
@@ -276,6 +277,46 @@ foreach($Befehle as $B){
             $tableActive=false;
             $OutputHTML.='<div><table style="width:'.$TableBreite.'px;"><tr style="'.$TRStyles.'">'.$TDContentOutput.'</tr></table></div>';
             break;
+        //Bild
+        case 'pict{':
+            $img="<img ";$data="";$style="";
+            if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
+                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
+            }
+            break;
+        case 'sp':
+            break;
+        case 'sn':
+            break;
+        case 'sv':
+            break;
+        case 'picw':
+            
+            if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
+                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
+                echo '<div>'.$img."style='".$style."'".$data.'></div>';
+            }
+            break;
+        case 'pich':
+            if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
+                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
+                echo '<div>'.$img."style='".$style."'".$data.'></div>';
+            }
+            break;
+        case 'picwgoal':
+            $style.="width:".Twips2Pixel($Wert).'px;';
+            if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
+                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
+                echo '<div>'.$img."style='".$style."'".$data.'></div>';
+            }
+            break;
+        case 'pichgoal':
+            $style.="height:".Twips2Pixel($Wert).'px;';
+            if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
+                $data='src="data:image/png;base64,'.base64_encode(hex2bin(preg_replace('/\s+/', '', $Content))).'"';
+                echo '<div>'.$img."style='".$style."'".$data.'></div>';
+            }
+            break;
         //Ende des Paragraps
         case 'par':
             $OutputHTML.=$ParagraphStyles."'>".$ParagraphContent.ParagraphEndTag;
@@ -292,6 +333,7 @@ foreach($Befehle as $B){
             }
             
     }
+    
     //ausschalten des Definitionsmoduses
     if($GroupCounter < $deffStart){
         $deffMode=false;
