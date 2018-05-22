@@ -1,4 +1,5 @@
 <?php
+include('Konstanten.php');
 function createRTFFile($RTFCode){
     $RTF= fopen('../FileOutput/Test.rtf', 'w');
     fwrite($RTF, $RTFCode);
@@ -25,4 +26,18 @@ function colorHTMLtoRGBArr($HTML){
     }else{
         return array('red'=>0,'green'=>0,'blue'=>0);
     }
+}
+function SonderzeichenWandler($format,$zeichenkette){
+    switch ($format){
+        case 'HTML'://Konvertiere HTML Chars zu RTF Chars
+            $zeichenkette= str_replace('ä', Sonderzeichen2RTF['ä'], $zeichenkette);
+            $zeichenkette= str_replace('ö', Sonderzeichen2RTF['ö'], $zeichenkette);
+            $zeichenkette= str_replace('ü', Sonderzeichen2RTF['ü'], $zeichenkette);
+            $zeichenkette= str_replace('Ä', Sonderzeichen2RTF['Ä'], $zeichenkette);
+            $zeichenkette= str_replace('Ö', Sonderzeichen2RTF['Ö'], $zeichenkette);
+            $zeichenkette= str_replace('Ü', Sonderzeichen2RTF['Ü'], $zeichenkette);
+            $zeichenkette= str_replace('ß', Sonderzeichen2RTF['ß'], $zeichenkette);
+            break;
+    }
+    return $zeichenkette;
 }

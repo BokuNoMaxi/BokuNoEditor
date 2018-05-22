@@ -84,6 +84,11 @@
                 
             },function(){});
         });
+        $('#bokuenoeditorMenuDateiContextmenuNeu button').click(function(){
+            $('#bokunoeditorContent').empty().append('<div>&#65279;');
+            $('#bneAnzZeichen').text('0 Zeichen,');
+            $('#bneAnzWoerter').text('0 W\xF6rter');
+        });
         //Kontextmen�
         $('.bokunoeditorMenueButton').click(function(){
             var menu=$(this);

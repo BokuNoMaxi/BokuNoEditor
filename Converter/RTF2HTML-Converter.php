@@ -1,5 +1,4 @@
 <?php
-include('Konstanten.php');
 include('BokuNoEditorFunctions.php');
 $RTF = file_get_contents('../FileImport/'.$_POST['RTF']);//schreibe Inhalt des Dokuments in ein File
 //Strip Problematisches
@@ -11,6 +10,8 @@ $RTF = str_replace('\fswiss', '', $RTF);
 $RTF = str_replace('\froman', '', $RTF);
 $RTF = str_replace('\fprq0', '', $RTF);
 $RTF = str_replace('\fprq2', '', $RTF);
+$RTF = str_replace('\{', '\geschwungeneKlammerAuf', $RTF);
+$RTF = str_replace('\}', '\geschwungeneKlammerZu', $RTF);
 
 $Befehle= explode('\\', $RTF);//splitte das Dokument bei jedem \ 
 $OutputHTML="";//Das wird unsere Ausgabe;
@@ -19,15 +20,19 @@ $tableActive=false;$TDContentOutput;$TDContent="";$TRStyles="";$TableActiveBorde
 $deffMode=false;//DefinitionsModus An/Aus;
 $GroupCounter=0;$deffStart=0;$Schriftarten=array();
 $fontSet=false;//ob schon eine Schrift gesetzt wurde
-$img="";$data="";$style="";//Bildvariablen
-foreach($Befehle as $B){
+$data="";$style="";//Bildvariablen
+foreach($Befehle as $index => $B){
+    if ($index==0) continue;
     $Mixed=false;$Befehl=$B;$Content="";$Wert=-1;//Setze Defaultvariablen
     //Sonderzeichen
     if(strpos($Befehl,"'")!==false){
         $Content=substr($Befehl,3);
         $Befehl=substr($Befehl,1,2);
+        $Content= str_replace('{', '', $Content);
+        $Content= str_replace('}', '', $Content);
+        if($tableActive==true)$TDContent.=utf8_encode(chr(hexdec($Befehl))).$Content;
+        else $ParagraphContent.=utf8_encode(chr(hexdec($Befehl))).$Content;
         
-        $ParagraphContent.=utf8_encode(chr(hexdec($Befehl))).$Content;
         continue;
     }
     //Wenn ein Leerzeichen/Enter vorhanden ist dann gibt es Content bei diesem Befehl
@@ -40,8 +45,9 @@ foreach($Befehle as $B){
             $Mixed=explode(' ', $Befehl, 2);
         }else if($firstSpace<$firstEnter){
             $Mixed=$Mixed=explode(' ', $Befehl, 2);
+        }else if($firstEnter<$firstSpace){
+            $Mixed=explode(chr(13), $Befehl, 2);
         }
-        
         $Befehl=$Mixed[0];
         $Content=$Mixed[1];
     }
@@ -66,13 +72,46 @@ foreach($Befehle as $B){
     if($deffMode==true&&strpos($Befehl, '{')!==false&&$deffStart===0){
         $deffStart=$GroupCounter;
     }
+    $Content= str_replace('{', '', $Content);
+    $Befehl= str_replace('{', '', $Befehl);
     $Content= str_replace('}', '', $Content);
+    $Befehl= str_replace('}', '', $Befehl);
     switch (trim($Befehl)) {
         //Konfiguration
         case 'deff':
             $deffMode=true;
             break;
         case 'generator':
+            break;
+        //Infos
+        case 'title':
+            break;
+        case 'author':
+            break;
+        case 'company':
+            break;
+        case 'creatim':
+            break;
+        case 'yr':
+            break;
+        case 'mo':
+            break;
+        case 'dy':
+            break;
+        case 'hr':
+            break;
+        case 'min':
+            break;
+        case 'doccomm':
+            break;
+        //Escapte Sonderzeichen
+        case 'geschwungeneKlammerAuf':
+            if($tableActive==true)$TDContent.='{';
+            else $ParagraphContent.='{';
+            break;
+        case 'geschwungeneKlammerZu':
+            if($tableActive==true)$TDContent.='}';
+            else $ParagraphContent.='}';
             break;
         //Paragraphformatierung
         case 'qr'://Rechtsbündig
@@ -112,6 +151,13 @@ foreach($Befehle as $B){
             }
             break;
         //Paragraph Contentformatierung
+        case 'line':
+            if($tableActive==true){
+                $TDContent.='<br>'.$Content;                
+            }else{
+                $ParagraphContent.='<br>'.$Content;                
+            }
+            break;
         case 'b'://Fett
             if($tableActive==true){
                 if($Wert>=0) $TDContent.=$Content.'</b>';                
@@ -129,9 +175,9 @@ foreach($Befehle as $B){
                 if($Wert>=0) $ParagraphContent.=$Content.'</i>'; 
                 else $ParagraphContent.='<i>'.$Content;
             }
-           
             break;
         case 'f'://Schriftart
+            if($Content=='')continue;
             if($deffMode==true){
                 $Schriftarten[$Befehl.$Wert]=substr($Content,0, strpos($Content, ';'));
             }else{
@@ -143,8 +189,7 @@ foreach($Befehle as $B){
                     //zur Korrekteren Darstellung der Schriftarten ohne 1000 verschachtelungen
                     if($fontSet==true)$ParagraphContent.='</font>';
                     if($fontSet==false)$fontSet=true;
-
-                    $ParagraphContent.='<font face="'.$Schriftarten[$Befehl.$Wert].'">'.$Content;//Setzen der Schriftart
+                    $ParagraphContent.='<font face="'.$Schriftarten[trim($Befehl.$Wert)].'">'.$Content;//Setzen der Schriftart
                 }
             }
             break;
@@ -154,6 +199,7 @@ foreach($Befehle as $B){
             }else{
                 $ParagraphContent.='<span style="font-size:'.(preg_replace("/[^0-9,.]/", "", $Wert )/2).'pt;">'.$Content;
             }
+            
             break;
         //Tabelle
         case 'trowd'://initialisiere Tabelle
@@ -257,6 +303,7 @@ foreach($Befehle as $B){
             $TDBreite[]=Twips2Pixel($Wert);
             $TDStylings[]=$TDActiveStylings;
             $TDActiveStylings='';
+            $TDContent.=$Content;
             break;
         case 'cell':
             //Breite der Zelle berechnen + gesamtbreite der Tabelle
@@ -270,6 +317,9 @@ foreach($Befehle as $B){
             if($TableFontSet==true)$TDContent.='</font>';
             $TDContentOutput.='<td style="width:'.$Br.'px;'.$TDStylings[$TDAktiv].'">'.$TDContent.'</td>';
             $TDContent="";
+            if($Content!=''){
+                $TDContent.=$Content;
+            }
             $TableFontSet=false;
             $TDAktiv++;
             break;
@@ -279,7 +329,7 @@ foreach($Befehle as $B){
             break;
         //Bild
         case 'pict{':
-            $img="<img ";$data="";$style="";
+            $data="";$style="";
             if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
                 $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
             }
@@ -294,34 +344,41 @@ foreach($Befehle as $B){
             
             if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
                 $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
-                echo '<div>'.$img."style='".$style."'".$data.'></div>';
+                echo '<div><img style="'.$style.'" src="data:image/png;base64,'.$data.'"></div>';
             }
             break;
         case 'pich':
             if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
                 $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
-                echo '<div>'.$img."style='".$style."'".$data.'></div>';
+                echo '<div><img style="'.$style.'" src="data:image/png;base64,'.$data.'"></div>';
             }
             break;
         case 'picwgoal':
             $style.="width:".Twips2Pixel($Wert).'px;';
             if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
                 $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
-                echo '<div>'.$img."style='".$style."'".$data.'></div>';
+                echo '<div><img style="'.$style.'" src="data:image/png;base64,'.$data.'"></div>';
             }
             break;
         case 'pichgoal':
             $style.="height:".Twips2Pixel($Wert).'px;';
             if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
-                $data='src="data:image/png;base64,'.base64_encode(hex2bin(preg_replace('/\s+/', '', $Content))).'"';
-                echo '<div>'.$img."style='".$style."'".$data.'></div>';
+                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content))).'"';
+                echo '<div><img style="'.$style.'" src="data:image/png;base64,'.$data.'"></div>';
             }
             break;
         //Ende des Paragraps
         case 'par':
-            $OutputHTML.=$ParagraphStyles."'>".$ParagraphContent.ParagraphEndTag;
+            if ($ParagraphContent==""){
+                $OutputHTML.=ParagraphStartTag.'><br>'.ParagraphEndTag;
+            }else{
+                $OutputHTML.=$ParagraphStyles."'>".$ParagraphContent.ParagraphEndTag;
+            }
             $ParagraphStyles=ParagraphStartTag." style='";
             $ParagraphContent="";
+            if($Content != ''){
+                $ParagraphContent.=$Content;
+            }
             break;
         default:
             if($deffMode==false){
@@ -332,8 +389,8 @@ foreach($Befehle as $B){
                 }
             }
             
+            
     }
-    
     //ausschalten des Definitionsmoduses
     if($GroupCounter < $deffStart){
         $deffMode=false;
