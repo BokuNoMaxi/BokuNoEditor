@@ -15,66 +15,302 @@
         'Verdana',
         ],Schriftgroesse=[
             '6','7','8','9','10','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
-        ],Menu='<button type="button" class="bokunoeditorMenueButton" id="bokunoeditorDatei">Datei</button><button type="button" class="bokunoeditorMenueButton" id="bokunoeditorSchrift">Schrift</button><button type="button" class="bokunoeditorMenueButton" id="bokunoeditorFormat">Format</button>'
-        ,MenuContext='<div id="bokuenoeditorMenuDateiContextmenu" class="bokunoeditorContextMenu">\n\
-                        <div id="bokuenoeditorMenuDateiContextmenuNeu" class="bneMenueTrennlinie"><button type="Button" class="bneMenuButton">Neu</button></div>\n\
-                        <div id="bokuenoeditorMenuDateiContextmenuAbsenden"><button type="Button" class="bneMenuButton">Absenden</button></div>\n\
-                        <div id="bokuenoeditorMenuDateiContextmenuDrucken"><button type="Button" class="bneMenuButton">Drucken</button></div>\n\
-                    </div>'
-        ,SchriftContext='<div id="bokuenoeditorMenuSchriftContextmenu" class="bokunoeditorContextMenu">\n\
-                        <div id="bokuenoeditorMenuSchriftContextmenuArt"><span>Art:</span><select class="bokunoeditorToolbarSelect bokunoeditorSchriftart" id="bokunoeditorMenuSchriftart"></select></div>\n\
-                        <div id="bokuenoeditorMenuSchriftContextmenuGroesse"><span>Gr\xF6\xDFe</span><select class="bokunoeditorToolbarSelect bokunoeditorSchriftgroesse" id="bokunoeditorMenuSchriftgroesse"></select></div>\n\
-                    </div>'
-        ,Toolbar='  <button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarFett">B</button><button type="button" class="bokunoeditorToolbarButton" id="bokunoeditorToolbarKursiv">I</button><select class="bokunoeditorToolbarSelect bokunoeditorSchriftart" id="bokunoeditorToolbarSchriftart"></select><select class="bokunoeditorToolbarSelect bokunoeditorSchriftgroesse" id="bokunoeditorToolbarSchriftgroesse"></select><button class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive" id="bokunoeditorToolbarLinks" type="button">Links</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarMitte">Mitte</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarRechts">Rechts</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung" id="bokunoeditorToolbarBlock">Blocksatz</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarTabelle" id="bokunoeditorTabelle">Tabelle</button><button type="button" class="bokunoeditorToolbarButton bokunoeditorToolbarBild" id="bokunoeditorBild">Bild</button>'
-        ,FormatierungsZeile='<div id="bokuenoeditorFormatZeileContainer">\n\
-                        <div class="bokuenoeditorFormatZeile bokunoeditorDokInfos">\n\
-                            <span id="bneAnzZeichen"></span>\n\
-                            <span id="bneAnzWoerter"></span>\n\
-                        </div>\n\
-                        <div class="bokuenoeditorFormatZeile bokunoeditorTableFormats">\n\
-                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowRechts">AddRe</button>\n\
-                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowLinks">AddLi</button>\n\
-                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowOben">AddOb</button>\n\
-                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileAddRowUnten">AddUn</button>\n\
-                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowRechts">DelRe</button>\n\
-                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowLinks">DelLi</button>\n\
-                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowOben">DelOb</button>\n\
-                            <button type="Button" class="bokuenoeditorFormatZeileButton" id="bokuenoeditorFormatZeileDelRowUnten">DelUn</button>\n\
-                            <div class="bokuenoeditorFormatZeileInput"><input type="color" class="bokuenoeditorFormatZeileInputColor bokunoeditorColorPicker" id="bokuenoeditorFormatZeileColor"></div>\n\
-                        </div>\n\
-                        <div class="bokuenoeditorFormatZeile bokunoeditorIMGFormats">\n\
-                            <div class="bokuenoeditorFormatZeileInput">\n\
-                                <div class="bokuenoeditorFormatZeilePreLabel">B:</div><input type="number" class="bokuenoeditorFormatZeileBreite bokunoeditorFormatZeileInput" id="bokuenoeditorFormatZeileIMGBreite"><div class="bokuenoeditorFormatZeileAppLabel">px</div> x\n\
-                                <div class="bokuenoeditorFormatZeilePreLabel">H:</div><input type="number" class="bokuenoeditorFormatZeileHoehe bokunoeditorFormatZeileInput" id="bokuenoeditorFormatZeileIMGHoehe"><div class="bokuenoeditorFormatZeileAppLabel">px</div>\n\
-                            </div>\n\
-                        </div>\n\
-                    </div>'
-        ,borderStyles='border-top-style:solid;border-top-width:1px;border-left-style:solid;border-left-width:1px;border-bottom-style:solid;border-bottom-width:1px;border-right-style:solid;border-right-width:1px;';
-    $.fn.bokunoeditor=function($Info,$rtfContent){//Initialisiere BokuNoEditor
+        ],borderStyles='border-top-style:solid;border-top-width:1px;border-left-style:solid;border-left-width:1px;border-bottom-style:solid;border-bottom-width:1px;border-right-style:solid;border-right-width:1px;';
+        
+    //Menüleiste
+        var Menu= document.createDocumentFragment(),
+            DateiButton=document.createElement('Button'),DateiText=document.createTextNode('Datei'),
+            SchriftButton=document.createElement('Button'),SchriftText=document.createTextNode('Schrift'),
+            FormatButton=document.createElement('Button'),FormatText=document.createTextNode('Format');
+        //Datei Button
+        DateiButton.id="bokunoeditorDatei";
+        DateiButton.className+="bokunoeditorMenueButton";
+        Menu.appendChild(DateiButton).appendChild(DateiText);
+        //Schrift Button
+        SchriftButton.id="bokunoeditorSchrift";
+        SchriftButton.className+="bokunoeditorMenueButton";
+        Menu.appendChild(SchriftButton).appendChild(SchriftText);
+        //Format Button
+        FormatButton.id="bokunoeditorFormat";
+        FormatButton.className+="bokunoeditorMenueButton";
+        Menu.appendChild(FormatButton).appendChild(FormatText);
+    //DateiKontextmenü
+        var DateiContext= document.createDocumentFragment(),
+            DateiContainerContextmenu=document.createElement('DIV'),
+            ContainerNeu=document.createElement('DIV'),ButtonNeu=document.createElement('Button'),TextNeu=document.createTextNode('Neu'),
+            ContainerAbsenden=document.createElement('DIV'),ButtonAbsenden=document.createElement('Button'),TextAbsenden=document.createTextNode('Absenden'),
+            ContainerDrucken=document.createElement('DIV'),ButtonDrucken=document.createElement('Button'),TextDrucken=document.createTextNode('Drucken');
+        DateiContainerContextmenu.id='bokunoeditorMenuDateiContextmenu';
+        DateiContainerContextmenu.className+='bokunoeditorContextMenu';
+        //Neu Button
+        ContainerNeu.id='bokunoeditorMenuDateiContextmenuNeu';
+        ContainerNeu.className+='bneMenueTrennlinie';
+        ButtonNeu.className+='bneMenuButton';
+        DateiContainerContextmenu.appendChild(ContainerNeu).appendChild(ButtonNeu).appendChild(TextNeu);
+        //Absenden Button
+        ContainerAbsenden.id='bokunoeditorMenuDateiContextmenuAbsenden';
+        ButtonAbsenden.className+='bneMenuButton';
+        DateiContainerContextmenu.appendChild(ContainerAbsenden).appendChild(ButtonAbsenden).appendChild(TextAbsenden);
+        //Drucken Button
+        ContainerDrucken.id='bokunoeditorMenuDateiContextmenuDrucken';
+        ButtonDrucken.className+='bneMenuButton';
+        DateiContainerContextmenu.appendChild(ContainerDrucken).appendChild(ButtonDrucken).appendChild(TextDrucken);
+        DateiContext.appendChild(DateiContainerContextmenu);
+    //SchriftKontextmenü
+        var SchriftContext= document.createDocumentFragment(),
+            SchriftContainerContextmenu=document.createElement('DIV'),
+            ContainerSchriftart=document.createElement('DIV'),SelectSchriftart=document.createElement('select'),SpanSchriftart=document.createElement('span'),TextSchriftart=document.createTextNode('Art'),
+            ContainerSchriftgroesse=document.createElement('DIV'),SelectSchriftgroesse=document.createElement('select'),SpanSchriftgroesse=document.createElement('span'),TextSchriftgroesse=document.createTextNode('Gr\xF6\xDFe');
+        SchriftContainerContextmenu.id="bokunoeditorMenuSchriftContextmenu";
+        SchriftContainerContextmenu.className+="bokunoeditorContextMenu";
+        //Schriftart
+        ContainerSchriftart.id="bokunoeditorMenuSchriftContextmenuArt";
+        SelectSchriftart.id="bokunoeditorMenuSchriftart";
+        SelectSchriftart.className+="bokunoeditorToolbarSelect bokunoeditorSchriftart";
+        SpanSchriftart.appendChild(TextSchriftart);
+        ContainerSchriftart.appendChild(SpanSchriftart);
+        //Lade Schriftarten
+        $.each(Schriftart,function(index,value){
+            var SchriftArtOption=document.createElement('option');
+            SchriftArtOption.setAttribute('value',value);
+            SchriftArtOption.appendChild(document.createTextNode(value));
+            SelectSchriftart.appendChild(SchriftArtOption);
+        });
+        ContainerSchriftart.appendChild(SelectSchriftart);
+        SchriftContainerContextmenu.appendChild(ContainerSchriftart);
+        //Schriftgröße
+        ContainerSchriftgroesse.id="bokunoeditorMenuSchriftContextmenuGroesse";
+        SelectSchriftgroesse.id="bokunoeditorMenuSchriftgroesse";
+        SelectSchriftart.className+="bokunoeditorToolbarSelect bokunoeditorSchriftgroesse";
+        SpanSchriftgroesse.appendChild(TextSchriftgroesse);
+        ContainerSchriftgroesse.appendChild(SpanSchriftgroesse);
+        //Lade Schriftgröße
+        $.each(Schriftgroesse,function(index,value){
+            var SchriftgroesseOption=document.createElement('option');
+            SchriftgroesseOption.setAttribute('value',value);
+            ((value=='11')?SchriftgroesseOption.setAttribute('selected','selected'):'');
+            SchriftgroesseOption.appendChild(document.createTextNode(value+' pt'));
+            SelectSchriftgroesse.appendChild(SchriftgroesseOption);
+        });
+        ContainerSchriftgroesse.appendChild(SelectSchriftgroesse);
+        SchriftContainerContextmenu.appendChild(ContainerSchriftgroesse);
+        SchriftContext.appendChild(SchriftContainerContextmenu);
+    //Toolbar
+        var Toolbar = document.createDocumentFragment(),   
+            Schriftformatierungscontainer=document.createElement('DIV'),Schriftartcontainer=document.createElement('DIV'),Ausrichtungscontainer=document.createElement('DIV'),Objektcontainer=document.createElement('DIV'),
+            FettButton=document.createElement('button'),FettTag=document.createElement('b'),FettText=document.createTextNode('B'),
+            KursivButton=document.createElement('button'),KursivTag=document.createElement('em'),KursivText=document.createTextNode('I'),
+            AusrichtungLinksButton=document.createElement('button'),AusrichtungLinksSymbol=document.createElement('img'),
+            AusrichtungMitteButton=document.createElement('button'),AusrichtungMitteSymbol=document.createElement('img'),
+            AusrichtungRechtsButton=document.createElement('button'),AusrichtungRechtsSymbol=document.createElement('img'),
+            AusrichtungJustifyButton=document.createElement('button'),AusrichtungJustifySymbol=document.createElement('img'),
+            TabelleButton=document.createElement('button'),TabelleSymbol=document.createElement('img'),
+            ImageButton=document.createElement('button'),ImageSymbol=document.createElement('img');
+            //Fett
+            FettButton.id="bokunoeditorToolbarFett";
+            FettButton.className="bokunoeditorToolbarButton";
+            Schriftformatierungscontainer.appendChild(FettButton).appendChild(FettText);
+            //Kursiv
+            KursivButton.id="bokunoeditorToolbarKursiv";
+            KursivButton.className="bokunoeditorToolbarButton";
+            Schriftformatierungscontainer.appendChild(KursivButton).appendChild(KursivText);
+            //Schriftart
+            Schriftartcontainer.appendChild(SelectSchriftart);
+            //Schriftgröße
+            Schriftartcontainer.appendChild(SelectSchriftgroesse);
+            //Ausrichtung
+            AusrichtungLinksButton.id="bokunoeditorToolbarLinks";
+            AusrichtungLinksButton.className="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive";
+            AusrichtungLinksSymbol.setAttribute('src',absolutPath+'/SVG/left-alignment.svg');
+            Ausrichtungscontainer.appendChild(AusrichtungLinksButton).appendChild(AusrichtungLinksSymbol);
+            AusrichtungMitteButton.id="bokunoeditorToolbarMitte";
+            AusrichtungMitteButton.className="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung";
+            AusrichtungMitteSymbol.setAttribute('src',absolutPath+'/SVG/center-alignment.svg');
+            Ausrichtungscontainer.appendChild(AusrichtungMitteButton).appendChild(AusrichtungMitteSymbol);
+            AusrichtungRechtsButton.id="bokunoeditorToolbarRechts";
+            AusrichtungRechtsButton.className="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive";
+            AusrichtungRechtsSymbol.setAttribute('src',absolutPath+'/SVG/right-alignment.svg');
+            Ausrichtungscontainer.appendChild(AusrichtungRechtsButton).appendChild(AusrichtungRechtsSymbol);
+            AusrichtungJustifyButton.id="bokunoeditorToolbarBlock";
+            AusrichtungJustifyButton.className="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive";
+            AusrichtungJustifySymbol.setAttribute('src',absolutPath+'/SVG/justify.svg');
+            Ausrichtungscontainer.appendChild(AusrichtungJustifyButton).appendChild(AusrichtungJustifySymbol);
+            //Tabelle
+            TabelleButton.id='bokunoeditorTabelle';
+            TabelleButton.className+='bokunoeditorToolbarButton bokunoeditorToolbarTabelle';
+            TabelleSymbol.setAttribute('src',absolutPath+'/SVG/squares.svg');
+            Objektcontainer.appendChild(TabelleButton).appendChild(TabelleSymbol);
+            //Image
+            ImageButton.id='bokunoeditorBild';
+            ImageButton.className+='bokunoeditorToolbarButton bokunoeditorToolbarBild';
+            ImageSymbol.setAttribute('src',absolutPath+'/SVG/art.svg');
+            Objektcontainer.appendChild(ImageButton).appendChild(ImageSymbol);
+            Toolbar.appendChild(Schriftformatierungscontainer);
+            Toolbar.appendChild(Schriftartcontainer);
+            Toolbar.appendChild(Ausrichtungscontainer);
+            Toolbar.appendChild(Objektcontainer);
+        //FußFormatierungszeile
+            var Formatierungszeile=document.createDocumentFragment(),
+                FormatierungszeilenContainer=document.createElement('DIV'),
+                Dokumentinformationen=document.createElement('DIV'),AnzZeichen=document.createElement('span'),AnzWoerter=document.createElement('span'),
+                Tabellenformatierung=document.createElement('DIV'),
+                AddRowRButton=document.createElement('Button'),AddRowRIMG=document.createElement('img'),
+                AddRowLButton=document.createElement('Button'),AddRowLIMG=document.createElement('img'),
+                AddRowOButton=document.createElement('Button'),AddRowOIMG=document.createElement('img'),
+                AddRowUButton=document.createElement('Button'),AddRowUIMG=document.createElement('img'),
+                DelRowRButton=document.createElement('Button'),DelRowRIMG=document.createElement('img'),
+                DelRowLButton=document.createElement('Button'),DelRowLIMG=document.createElement('img'),
+                DelRowOButton=document.createElement('Button'),DelRowOIMG=document.createElement('img'),
+                DelRowUButton=document.createElement('Button'),DelRowUIMG=document.createElement('img'),
+                ColorPickerContainer=document.createElement('DIV'),ColorPickerAktuelleFarbeButton=document.createElement('Button'),ColorPickerAktuelleFarbeCanvas=document.createElement('Canvas'),ColorPickerFarbAuswahlButton=document.createElement('Button'),
+                Bildbearbeitungscontainer=document.createElement('DIV'),BildDimensionsContainer=document.createElement('DIV'),BildDimensionBreiteContainer=document.createElement('DIV'),BildDimensionBreiteLabel=document.createElement('label'),BildDimensionBreiteInput=document.createElement('input'),BildDimensionBreiteAppendix=document.createElement('DIV'),BildDimensionFaktor=document.createElement('span'),BildDimensionHoeheContainer=document.createElement('DIV'),BildDimensionHoeheLabel=document.createElement('label'),BildDimensionHoeheInput=document.createElement('input'),BildDimensionHoeheAppendix=document.createElement('DIV');
+                
+            FormatierungszeilenContainer.id='bokunoeditorFormatZeileContainer';
+            //DokumentenInformationen
+            Dokumentinformationen.className+='bokunoeditorFormatZeile bokunoeditorDokInfos';
+            AnzZeichen.id='bneAnzZeichen';
+            AnzWoerter.id='bneAnzWoerter';
+            Dokumentinformationen.appendChild(AnzZeichen).appendChild(document.createTextNode('0 Zeichen,'));
+            Dokumentinformationen.appendChild(AnzWoerter).appendChild(document.createTextNode('0 W\xF6rter'));
+            //Tabellenformatierung
+            Tabellenformatierung.className+="bokunoeditorFormatZeile bokunoeditorTableFormats";
+            //Add
+            //Rechts
+            AddRowRButton.id='bokunoeditorFormatZeileAddRowRechts';
+            AddRowRButton.className+='bokunoeditorFormatZeileButton';
+            AddRowRIMG.setAttribute('src',absolutPath+'/SVG/insert-column-right-100.svg');
+            //Links
+            AddRowLButton.id='bokunoeditorFormatZeileAddRowLinks';
+            AddRowLButton.className+='bokunoeditorFormatZeileButton';
+            AddRowLIMG.setAttribute('src',absolutPath+'/SVG/insert-column-left-100.svg');
+            //Top
+            AddRowOButton.id='bokunoeditorFormatZeileAddRowOben';
+            AddRowOButton.className+='bokunoeditorFormatZeileButton';
+            AddRowOIMG.setAttribute('src',absolutPath+'/SVG/insert-row-above-100.svg');
+            //Bot
+            AddRowUButton.id='bokunoeditorFormatZeileAddRowUnten';
+            AddRowUButton.className+='bokunoeditorFormatZeileButton';
+            AddRowUIMG.setAttribute('src',absolutPath+'/SVG/insert-row-100.svg');
+            //Del
+            //Rechts
+            DelRowRButton.id='bokunoeditorFormatZeileDelRowRechts';
+            DelRowRButton.className+='bokunoeditorFormatZeileButton';
+            DelRowRIMG.setAttribute('src',absolutPath+'/SVG/delete-column-right-100.svg');
+            //Links
+            DelRowLButton.id='bokunoeditorFormatZeileDelRowLinks';
+            DelRowLButton.className+='bokunoeditorFormatZeileButton';
+            DelRowLIMG.setAttribute('src',absolutPath+'/SVG/delete-column-left-100.svg');
+            //Top
+            DelRowOButton.id='bokunoeditorFormatZeileDelRowOben';
+            DelRowOButton.className+='bokunoeditorFormatZeileButton';
+            DelRowOIMG.setAttribute('src',absolutPath+'/SVG/delete-row-above-100.svg');
+            //Bot
+            DelRowUButton.id='bokunoeditorFormatZeileDelRowUnten';
+            DelRowUButton.className+='bokunoeditorFormatZeileButton';
+            DelRowUIMG.setAttribute('src',absolutPath+'/SVG/delete-row-100.svg');
+            //Anhängen
+            Tabellenformatierung.appendChild(AddRowRButton).appendChild(AddRowRIMG);
+            Tabellenformatierung.appendChild(AddRowLButton).appendChild(AddRowLIMG);
+            Tabellenformatierung.appendChild(AddRowOButton).appendChild(AddRowOIMG);
+            Tabellenformatierung.appendChild(AddRowUButton).appendChild(AddRowUIMG);
+            Tabellenformatierung.appendChild(DelRowRButton).appendChild(DelRowRIMG);
+            Tabellenformatierung.appendChild(DelRowLButton).appendChild(DelRowLIMG);
+            Tabellenformatierung.appendChild(DelRowOButton).appendChild(DelRowOIMG);
+            Tabellenformatierung.appendChild(DelRowUButton).appendChild(DelRowUIMG);
+            //Colorpicker
+            ColorPickerContainer.id="bokunoeditorFormatZeileBorderColor";
+            ColorPickerContainer.className+="bokunoeditorFormatZeileInput";
+            ColorPickerAktuelleFarbeButton.id="bokunoeditorFormatZeileBorderColorButton";
+            ColorPickerAktuelleFarbeButton.className+="bokunoeditorFormatZeileButtonColor";
+            ColorPickerAktuelleFarbeCanvas.id="bokunoeditorFormatZeileBorderColorCanvas";
+            ColorPickerAktuelleFarbeCanvas.setAttribute("style",'background-color:rgb(0,0,0);');
+            ColorPickerContainer.appendChild(ColorPickerAktuelleFarbeButton).appendChild(ColorPickerAktuelleFarbeCanvas);
+            ColorPickerFarbAuswahlButton.id+="bokunoeditorColorBorder";
+            ColorPickerFarbAuswahlButton.className+="bokunoeditorOpenColor";
+            Tabellenformatierung.appendChild(ColorPickerContainer).appendChild(ColorPickerFarbAuswahlButton);
+            //Bildbearbeitung
+            Bildbearbeitungscontainer.className+='bokunoeditorFormatZeile bokunoeditorIMGFormats';
+            BildDimensionsContainer.className+='bokunoeditorFormatZeileInput';
+            //Breite
+            BildDimensionBreiteContainer.className+='bokunoeditorFormatZeilePreLabel';
+            BildDimensionBreiteInput.className+="bokunoeditorFormatZeileBreite bokunoeditorFormatZeileInput";
+            BildDimensionBreiteInput.id="bokunoeditorFormatZeileIMGBreite";
+            BildDimensionBreiteInput.setAttribute('type','number');
+            BildDimensionBreiteAppendix.className+='bokunoeditorFormatZeileAppLabel';
+            BildDimensionBreiteContainer.appendChild(BildDimensionBreiteLabel).appendChild(document.createTextNode('B:'));
+            BildDimensionBreiteAppendix.appendChild(document.createTextNode('px'));
+            BildDimensionFaktor.appendChild(document.createTextNode(' x '));
+            BildDimensionsContainer.appendChild(BildDimensionBreiteContainer);
+            BildDimensionsContainer.appendChild(BildDimensionBreiteInput);
+            BildDimensionsContainer.appendChild(BildDimensionBreiteAppendix);
+            BildDimensionsContainer.appendChild(BildDimensionFaktor);
+            //Höhe
+            BildDimensionHoeheContainer.className+='bokunoeditorFormatZeilePreLabel';
+            BildDimensionHoeheInput.className+="bokunoeditorFormatZeileHoehe bokunoeditorFormatZeileInput";
+            BildDimensionHoeheInput.id="bokunoeditorFormatZeileIMGHoehe";
+            BildDimensionHoeheInput.setAttribute('type','number');
+            BildDimensionHoeheAppendix.className+='bokunoeditorFormatZeileAppLabel';
+            BildDimensionHoeheContainer.appendChild(BildDimensionBreiteLabel).appendChild(document.createTextNode('H:'));
+            BildDimensionHoeheAppendix.appendChild(document.createTextNode('px'));
+            BildDimensionsContainer.appendChild(BildDimensionHoeheContainer);
+            BildDimensionsContainer.appendChild(BildDimensionHoeheInput);
+            BildDimensionsContainer.appendChild(BildDimensionHoeheAppendix);
+            Bildbearbeitungscontainer.appendChild(BildDimensionsContainer);
+            //Ahängen an den Container
+            FormatierungszeilenContainer.appendChild(Dokumentinformationen);
+            FormatierungszeilenContainer.appendChild(Tabellenformatierung);
+            FormatierungszeilenContainer.appendChild(Bildbearbeitungscontainer);
+            Formatierungszeile.appendChild(FormatierungszeilenContainer);
+        //Hidden Inputboxen
+            var HiddenInputs=document.createDocumentFragment(),
+                HiddenInputContainter=document.createElement('DIV'),
+                FileUpload=document.createElement('input'),
+                ColorPicker=document.createElement('input');
+            HiddenInputContainter.id='bneHiddenInputs';
+            //Fileupload
+            FileUpload.id='bokunoeditorFileUpload';   
+            FileUpload.setAttribute('type','file');  
+            HiddenInputContainter.appendChild(FileUpload);
+            //Colorpicker
+            ColorPicker.id='bokunoeditorColorPicker';
+            ColorPicker.className+='bokunoeditorColorPicker';
+            ColorPicker.setAttribute('type','color');
+            HiddenInputContainter.appendChild(ColorPicker);
+            
+            HiddenInputs.appendChild(HiddenInputContainter);
+    //Initialisiere BokuNoEditor       
+    $.fn.bokunoeditor=function($Info,$rtfFile){
         //$Info = Dokumentinformationen
-        //$rtfContent = ist der Inhalt in der Box RTF oder HTML??
+        //$rtfFile = ist der Inhalt in der Box RTF oder HTML??
         var Textarea=$(this);
         //Vorbereitung des Editors
         $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContainer"><div id="bokunoeditorContent" class="A4"></div></div></div>');
-        $('#bokunoeditorIframe').append(MenuContext+SchriftContext+FormatierungsZeile).append('<input type="file" hidden="hidden" id="fileUpload">');
+        $('#bokunoeditorIframe').append(DateiContext).append(SchriftContext).append(Formatierungszeile).append(HiddenInputs);
         $('#bokunoeditorMenue').html(Menu);//Menüzeile
         $('#bokunoeditorToolbar').html(Toolbar);//Toolbar
-        if($rtfContent===true){
+        //Vorbefüllung des Editors
+        if($rtfFile.substring($rtfFile.lastIndexOf('.'))==='.rtf'){//wenn ein File mitgeht überprüfe ob die Endung eh RTF ist
             $.post(absolutPath+'/Converter/RTF2HTML-Converter.php',{
                 'RTF':Textarea.val(),
             },function(data){
                 lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html(data).focus();
+                //Zeige die Anzahl der Zeichen, Wörter die im Dokument vorhanden sind
+                $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
+                $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' W\xF6rter');
             });
-        }else{
+        }else{//Ist es kein RTF Füg es einfach ein
             lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val()).focus();
         }
-        
-        
-        //Zeige die Anzahl der Zeichen, Wörter die im Dokument vorhanden sind
-        $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
-        $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' W\xF6rter');
-        //Speichern als RTF File
-        $('#bokuenoeditorMenuDateiContextmenuAbsenden button').click(function(){
+        //wenn nichts eingefügt wurde dann gib DIV vor
+        (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<div><br></div>'):'');
+        //Datei > Neu -> leere den Editor
+        $('#bokunoeditorMenuDateiContextmenuNeu button').click(function(){
+            $('#bokunoeditorContent').empty().append('<div>&#65279;');
+            $('#bneAnzZeichen').text('0 Zeichen,');
+            $('#bneAnzWoerter').text('0 W\xF6rter');
+        });
+        //Datei > Absenden -> Speichere als RTF File
+        $('#bokunoeditorMenuDateiContextmenuAbsenden button').click(function(){
             $('b,i').removeAttr('style');
             $.post(absolutPath+'/Converter/HTML2RTF-Converter.php',{
                 Content:$('#bokunoeditorContent').html(),
@@ -84,43 +320,23 @@
                 
             },function(){});
         });
-        $('#bokuenoeditorMenuDateiContextmenuNeu button').click(function(){
-            $('#bokunoeditorContent').empty().append('<div>&#65279;');
-            $('#bneAnzZeichen').text('0 Zeichen,');
-            $('#bneAnzWoerter').text('0 W\xF6rter');
-        });
-        //Kontextmen�
+        //Kontextmenü -> nur eines zum selben Moment offen
         $('.bokunoeditorMenueButton').click(function(){
             var menu=$(this);
             switch(menu[0].id){
                 case 'bokunoeditorDatei':
-                    $('#bokuenoeditorMenuDateiContextmenu').toggleClass('bneOpen').siblings().removeClass('bneOpen');
+                    $('#bokunoeditorMenuDateiContextmenu').toggleClass('bneOpen').siblings().removeClass('bneOpen');
                     break;
                 case 'bokunoeditorSchrift':
-                    $('#bokuenoeditorMenuSchriftContextmenu').toggleClass('bneOpen').siblings().removeClass('bneOpen');
+                    $('#bokunoeditorMenuSchriftContextmenu').toggleClass('bneOpen').siblings().removeClass('bneOpen');
                     break;
             }
         });
-//        
         //Drucken
-        $('#bokuenoeditorMenuDateiContextmenuDrucken').click(function(){
-            drucken();
-        });
-        //Bilder
-        $('#fileUpload').change(function(){
-            readURL(this);
-        });
-        //wenn nichts importiert wird dann gib DIV vor
-        (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<div><br></div>'):'');
-        //Lade Schriftarten
-        $.each(Schriftart,function(index,value){
-            $('.bokunoeditorSchriftart').append('<option value="'+value+'">'+value+'</option>');
-        });
-        //Lade Schriftgr��e
-        $.each(Schriftgroesse,function(index,value){
-            $('.bokunoeditorSchriftgroesse').append('<option value="'+value+'" '+((value=='11')?'selected="selected"':'')+'>'+value+' pt</option>');
-        });
-        //Formatierung bei Kn�pfen
+        $('#bokunoeditorMenuDateiContextmenuDrucken').click(function(){drucken();});
+        //Bilder einfügen in den Editor
+        $('#bokunoeditorFileUpload').change(function(){readURL(this);});
+        //Formatierung bei Knöpfen
         $('.bokunoeditorToolbarButton').click(function(){
             var Button=$(this),
             sel=window.getSelection();
@@ -162,7 +378,7 @@
                             document.execCommand('insertHTML',false,((sel.anchorNode.nodeName=='DIV')?'<table><tr style><td style="'+borderStyles+'">&#65279;</td><td style="'+borderStyles+'">&#65279;</td></tr></table><br>':'<div><table><tr style><td style="border:1px solid rgb(0,0,0);">&#65279;</td><td style="border:1px solid rgb(0,0,0);">&#65279;</td></tr></table><br>'));
                             break;
                         case 'bokunoeditorBild':
-                            $('#fileUpload').click();
+                            $('#bokunoeditorFileUpload').click();
                             break;
                     }
                 }, 10);
@@ -194,8 +410,8 @@
                 }, 10);
             }
         });
-        // Extra Formatierungszeile f�r spezielle Formatierung
-        $('.bokuenoeditorFormatZeileButton').click(function(){
+        // Extra Formatierungszeile für spezielle Formatierung
+        $('.bokunoeditorFormatZeileButton').click(function(){
             var Button=$(this);
             if(lastFocus){
                 setTimeout(function() {
@@ -203,7 +419,7 @@
                         Markierung=sel.getRangeAt(0);
                     lastFocus.focus();
                     switch(Button[0].id){
-                        case 'bokuenoeditorFormatZeileAddRowRechts':
+                        case 'bokunoeditorFormatZeileAddRowRechts':
                             var td= $(sel.anchorNode).closest('td'),
                                 tr=$(sel.anchorNode).closest('tr'),
                                 indexTD=td.index(),
@@ -212,7 +428,7 @@
                                     $(trs).children().eq(indexTD).after('<td style="'+borderStyles+'border-top-color'+color+';border-left-color'+color+';border-right-color'+color+';border-bottom-color'+color+';">&#65279;');
                                 });
                             break;
-                        case 'bokuenoeditorFormatZeileAddRowLinks':
+                        case 'bokunoeditorFormatZeileAddRowLinks':
                             var td= $(sel.anchorNode).closest('td'),
                                 tr=$(sel.anchorNode).closest('tr'),
                                 indexTD=td.index(),
@@ -221,7 +437,7 @@
                                     $(trs).children().eq(indexTD).before('<td style="'+borderStyles+'border-top-color'+color+';border-left-color'+color+';border-right-color'+color+';border-bottom-color'+color+';">&#65279;');
                                 });
                             break;
-                        case 'bokuenoeditorFormatZeileAddRowUnten':
+                        case 'bokunoeditorFormatZeileAddRowUnten':
                             var tr=$(sel.anchorNode).closest('tr'),
                                 td=$(sel.anchorNode).closest('td'),
                                 color=(td[0].style['border-top-color']);
@@ -230,7 +446,7 @@
                             });
                             tr.after('<tr>'+td+'</tr>');
                             break;
-                        case 'bokuenoeditorFormatZeileAddRowOben':
+                        case 'bokunoeditorFormatZeileAddRowOben':
                             var tr=$(sel.anchorNode).closest('tr'),
                                 td=$(sel.anchorNode).closest('td'),
                                 color=(td[0].style['border-top-color']);
@@ -239,7 +455,7 @@
                             });
                             tr.before('<tr>'+td+'</tr>');
                             break;
-                        case 'bokuenoeditorFormatZeileDelRowRechts':
+                        case 'bokunoeditorFormatZeileDelRowRechts':
                             var td= $(sel.anchorNode).closest('td'),
                                 tr=$(sel.anchorNode).closest('tr'),
                                 indexTD=td.index();
@@ -247,7 +463,7 @@
                                     $(trs).children().eq(indexTD+1).remove();
                                 });
                             break;
-                        case 'bokuenoeditorFormatZeileDelRowLinks':
+                        case 'bokunoeditorFormatZeileDelRowLinks':
                             var td= $(sel.anchorNode).closest('td'),
                                 tr=$(sel.anchorNode).closest('tr'),
                                 indexTD=td.index();
@@ -255,11 +471,11 @@
                                     $(trs).children().eq(indexTD-1).remove();
                                 });
                             break;
-                        case 'bokuenoeditorFormatZeileDelRowUnten':
+                        case 'bokunoeditorFormatZeileDelRowUnten':
                             var tr=$(sel.anchorNode).closest('tr');
                             tr.next('tr').remove();
                             break;
-                        case 'bokuenoeditorFormatZeileDelRowOben':
+                        case 'bokunoeditorFormatZeileDelRowOben':
                             var tr=$(sel.anchorNode).closest('tr');
                             tr.prev('tr').remove();
                             break;
@@ -268,34 +484,43 @@
             }
         });
         //Colorpicker
-        $('.bokunoeditorColorPicker').change(function(){
-            var Button = $(this);
-             if(lastFocus){
+        //Farbe Wechseln
+        $('.bokunoeditorOpenColor').click(function(){
+            var Button=$(this);
+            console.log(Button[0].id);
+                if(lastFocus){
                 setTimeout(function() {
                     var sel = window.getSelection(),
                         Markierung=sel.getRangeAt(0);
                     lastFocus.focus();
                     switch(Button[0].id){
-                        case 'bokuenoeditorFormatZeileColor':
-                            $(sel.anchorNode).closest('td').css({
-                                'border-top-color':"rgb("+Button.val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",")+")",
-                                'border-bottom-color':"rgb("+Button.val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",")+")",
-                                'border-left-color':"rgb("+Button.val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",")+")",
-                                'border-right-color':"rgb("+Button.val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",")+")"
+                        case 'bokunoeditorColorBorder'://Rahmenfarbe
+                            $('#bokunoeditorColorPicker').click();
+                            $('#bokunoeditorColorPicker').one('change',function(){
+                                var RGB=$('#bokunoeditorColorPicker').val().match(/[A-Za-z0-9]{2}/g).map(function(v) { return parseInt(v, 16)}).join(",");
+                                $(sel.anchorNode).closest('td').css({
+                                    'border-top-color':"rgb("+RGB+")",
+                                    'border-bottom-color':"rgb("+RGB+")",
+                                    'border-left-color':"rgb("+RGB+")",
+                                    'border-right-color':"rgb("+RGB+")"
+                                });
+                                $('#bokunoeditorFormatZeileBorderColorCanvas').css('background-color',"rgb("+RGB+")");
+                                
                             });
                             break;
                     }
                 },10);
             }
         });
+        
         //SizeChanger
         $('.bokunoeditorFormatZeileInput').on('input',function(){
             var input=$(this);
             switch (input[0].id) {
-                case 'bokuenoeditorFormatZeileIMGHoehe':
+                case 'bokunoeditorFormatZeileIMGHoehe':
                     img.css('height',input.val());
                     break;
-                case 'bokuenoeditorFormatZeileIMGBreite':
+                case 'bokunoeditorFormatZeileIMGBreite':
                     img.css('width',input.val());
                     break;
             }
@@ -307,8 +532,8 @@
                     img=$(e.target);
                     img.addClass('bneFocus');
                     $('.bokunoeditorIMGFormats').css('display','inline-block');
-                    $('#bokuenoeditorFormatZeileIMGBreite').val(parseInt($(e.target).css('width')));
-                    $('#bokuenoeditorFormatZeileIMGHoehe').val(parseInt($(e.target).css('height')));
+                    $('#bokunoeditorFormatZeileIMGBreite').val(parseInt($(e.target).css('width')));
+                    $('#bokunoeditorFormatZeileIMGHoehe').val(parseInt($(e.target).css('height')));
                 }else{
                     if(img!==null)img.removeClass('bneFocus');
                     $('.bokunoeditorIMGFormats').css('display','none');
@@ -334,8 +559,8 @@
                 if($(e.target).css('font-style')=='normal')$('#bokunoeditorToolbarKursiv').removeClass('bneActive');
                 if($(e.target).css('font-weight')=='700')$('#bokunoeditorToolbarFett').addClass('bneActive');
                 if($(e.target).css('font-weight')=='400')$('#bokunoeditorToolbarFett').removeClass('bneActive');
-                $('#bokunoeditorSchriftart option[value="'+$(e.target).css('font-family').replace(/\"/g,'')+'"]').prop('selected',true);
-                $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+']').prop('selected',true);
+                $('.bokunoeditorSchriftart option[value="'+$(e.target).css('font-family').replace(/\"/g,'')+'"]').prop('selected',true);
+                $('.bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+']').prop('selected',true);
                 
             },'mousedown':function(e){
                 $('.bokunoeditorContextMenu').removeClass('bneOpen');
@@ -343,8 +568,8 @@
                     img=$(e.target);
                     img.addClass('bneFocus');
                     $('.bokunoeditorIMGFormats').css('display','inline-block');
-                    $('#bokuenoeditorFormatZeileIMGBreite').val(parseInt(img.css('width')));
-                    $('#bokuenoeditorFormatZeileIMGHoehe').val(parseInt(img.css('height')));
+                    $('#bokunoeditorFormatZeileIMGBreite').val(parseInt(img.css('width')));
+                    $('#bokunoeditorFormatZeileIMGHoehe').val(parseInt(img.css('height')));
                 }else{
                     if(img!==null)img.removeClass('bneFocus');
                     $('.bokunoeditorIMGFormats').css('display','none')
@@ -370,9 +595,9 @@
                 if($(e.target).css('font-style')=='normal')$('#bokunoeditorToolbarKursiv').removeClass('bneActive');
                 if($(e.target).css('font-weight')=='700')$('#bokunoeditorToolbarFett').addClass('bneActive');
                 if($(e.target).css('font-weight')=='400')$('#bokunoeditorToolbarFett').removeClass('bneActive');
-                $('#bokunoeditorSchriftart option[value="'+$(e.target).css('font-family').replace(/\"/g,'')+'"]').prop('selected',true);
-                $('#bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+'"]').prop('selected',true);
-            },'blur':function(){//Fokus zur�ck zum Editor
+                $('.bokunoeditorSchriftart option[value="'+$(e.target).css('font-family').replace(/\"/g,'')+'"]').prop('selected',true);
+                $('.bokunoeditorSchriftgroesse option[value="'+Math.round(parseFloat($(e.target).css('font-size'))*72/96,1)+'"]').prop('selected',true);
+            },'blur':function(){//Fokus zurück zum Editor
                 lastFocus=this;
             },'keydown':function(e){
                 if (e.keyCode === 13) {
@@ -380,18 +605,9 @@
                     document.execCommand("defaultParagraphSeparator", false, "div");
                 }
             },'keyup':function(){
+                //verändere den Zeichen und Wörterzähle nach Tastendruck
                 $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
                 $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' W\xF6rter');
-            },'allowDrop':function(e){
-//                e.preventDefault();
-            },'dragover':function(e){
-//                e.stopPropagation();
-//                e.preventDefault();
-            },'drop':function(e){
-//                e.stopPropagation();
-//                e.preventDefault();
-//                var data = e.originalEvent.dataTransfer.getData("image");
-//                $(e.target).append(data);
             }
         });
         
@@ -470,15 +686,18 @@
         });
         return format;
     }
+    //Filter
     function filterArrayCR(text){
         return text !='\n\n';
     }
+    //bereite den Editor zum drucken vor
     function drucken(){
         var w=window.open();
         w.document.write($('#bokunoeditorContent').html());
         w.print();
         w.close();
     }
+    //File einlesen und im editor als Bild anfügen
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
@@ -491,10 +710,7 @@
                     $(this).css({'width':width,'height':height});
                     document.execCommand('insertHTML',false, $(img)[0].outerHTML);
                 };
-              $('img').unbind().on('dragstart',function(e){
-//                  e.originalEvent.dataTransfer.setData("image", $(e.target)[0].outerHTML);
-              });
-            }
+            };
           reader.readAsDataURL(input.files[0]);
         }
     }

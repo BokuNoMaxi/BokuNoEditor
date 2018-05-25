@@ -14,7 +14,7 @@
                'Kommentar':'das ist ein Test',
                'Company':'Maxls',
                'Datum':null
-            },true) ;
+            },$('#editor').val()) ;
                
         });
         </script>

@@ -62,7 +62,7 @@ select{
             border-right: solid 1px $borderColor;
         }
     }
-    #bokuenoeditorMenuDateiContextmenu{
+    #bokunoeditorMenuDateiContextmenu{
         display:none;
         position:absolute;
         top: 30px;
@@ -91,7 +91,7 @@ select{
             display:block;
         }
     }
-    #bokuenoeditorMenuSchriftContextmenu{
+    #bokunoeditorMenuSchriftContextmenu{
         display:none;
         position:absolute;
         top: 30px;
@@ -137,22 +137,32 @@ select{
         }
     }
     #bokunoeditorToolbar{
-        height:29px;
+        height:30px;
         border-bottom:solid 1px $borderColor;
         border-left:solid 1px $borderColor;
         border-right:solid 1px $borderColor;
+        overflow:hidden;
+        vertical-align: top;
         @media (max-width: 767px){
             display:none;
+        }
+        div{
+            height:30px;
+            display:inline-block;
+            vertical-align:inherit;
         }
         select{
             border: none;
             border-radius: 0px !important;
-            padding: 5px 8px;
+            padding: 5.5px 8px;
             border-right: solid 1px black;
             font-size: 14px;
+            height:30px;
+            vertical-align: inherit;
         }
         button{
-            padding: 4px 8px;
+            padding:4px 8px;
+            height:30px;
             font-size: 14px;
             line-height: 20px;
             cursor: pointer;
@@ -164,17 +174,38 @@ select{
             border-left: none;
             border-bottom: none;
             border-right: solid 1px $borderColor;
+            vertical-align: inherit;
+            
+        }
+        #bokunoeditorToolbarFett,#bokunoeditorToolbarKursiv{
+            font-size: 16px;
+        }
+        .bokunoeditorToolbarAusrichtung{
+            img{
+                height:19px;
+            }
+        }
+        .bokunoeditorToolbarTabelle{
+            
+            img{
+                height:21px;
+            }
+        }
+        .bokunoeditorToolbarBild{
+            img{
+                height:21px
+            }
         }
     }
     #bokunoeditorContainer{
         border-bottom:solid 1px $borderColor;
         border-left:solid 1px $borderColor;
         border-right:solid 1px $borderColor;
-        max-height: calc(100% - 86px);
+        max-height: calc(100% - 97px);
         overflow:auto;
         background:lightgrey;
         @media (max-width: 767px){
-            max-height: calc(100% - 56px);
+            max-height: calc(100% - 67px);
         }
         #bokunoeditorContent{
             outline: none;
@@ -204,25 +235,28 @@ select{
             }
         }
     }
-    #bokuenoeditorFormatZeileContainer{
+    #bokunoeditorFormatZeileContainer{
         overflow: hidden;
         position: absolute;
         bottom: -2px;
         width: 100%;
         border: solid 1px $borderColor;
-        height: 30px;
+        height: 40px;
         .bokunoeditorDokInfos{
+            vertical-align: top;
             height:inherit;
             font-family: Arial;
             font-size: 10pt;
             padding: 7px 5px;
             border-right: solid 1px black;
+            span{
+                vertical-align: -webkit-baseline-middle;
+            }
         }
-        .bokuenoeditorFormatZeile{
+        .bokunoeditorFormatZeile{
             height:inherit;
             display:inline-block;
             button{
-                padding: 4px 8px;
                 font-size: 14px;
                 line-height: 20px;
                 cursor: pointer;
@@ -238,18 +272,60 @@ select{
         }
         .bokunoeditorTableFormats{
             display:none;
-            .bokuenoeditorFormatZeileInput{
+            #bokunoeditorFormatZeileBorderColor{
+                padding-right: 10px;
+            }
+            .bokunoeditorFormatZeileInput{
                 display: inline-block;
                 border-right: solid 1px $borderColor;
                 padding: 2.49px 4px;
-                #bokuenoeditorFormatZeileColor{
+                #bokunoeditorFormatZeileColor{
                     width:19px;
+                }
+                #bokunoeditorFormatZeileBorderColorButton{
+                    padding-top:7px;
+                    padding-left:7px;
+                    padding-bottom:7px;
+                    border-right:none;
+                    #bokunoeditorFormatZeileBorderColorCanvas{
+                        height:20px;
+                        width:20px;
+                    }
+                }
+                .bokunoeditorOpenColor::after{
+                    content: ' ';
+                    border-top:1px solid;
+                    width: 20px;
+                    position: absolute;
+                    top: 0px;
+                    left: 0;
+                }
+                .bokunoeditorOpenColor{
+                    vertical-align: top;
+                    padding-right: 3px;
+                    padding-left: 4px;
+                    top: 7px;
+                    height:20px;
+                    width:20px;
+                    position: relative;
+                    border-bottom: 1px solid;
+                    border-right: 1px solid;
+                    -webkit-appearance: menulist-button;
+                }
+            }
+            .bokunoeditorFormatZeileButton{
+                vertical-align: top;
+                padding:0px 8px;
+                height:40px;
+                img{
+                    vertical-align: middle;
+                    height:34px;
                 }
             }
         }
         .bokunoeditorIMGFormats{
             display:none;
-            .bokuenoeditorFormatZeileInput{
+            .bokunoeditorFormatZeileInput{
                 display: inline-block;
                 border-right: solid 1px $borderColor;
                 padding: 2.49px 4px;
@@ -259,14 +335,14 @@ select{
                     padding: 5px 6px;
                     outline:none;
                 }
-                .bokuenoeditorFormatZeilePreLabel{
+                .bokunoeditorFormatZeilePreLabel{
                     display: inline;
                     border: 1px solid $borderColor;
                     padding: 6px;
                     border-top-left-radius: 4px;
                     border-bottom-left-radius: 4px;
                 }
-                .bokuenoeditorFormatZeileAppLabel{
+                .bokunoeditorFormatZeileAppLabel{
                     display: inline;
                     border: 1px solid $borderColor;
                     padding: 6px;
@@ -275,6 +351,9 @@ select{
                 }
             }
         }
+    }
+    #bneHiddenInputs{
+        display:none!important;
     }
 }
 //Papierformat
