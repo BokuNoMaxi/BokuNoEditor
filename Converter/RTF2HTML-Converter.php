@@ -344,29 +344,57 @@ foreach($Befehlsverarbeitung as $BE){
         case 'sv':
             break;
         case 'picw':
-            if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
-                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
-                echo '<div><img style="'.$style.'" src="data:image/png;base64,'.$data.'"></div>';
+            if(strpos($Content, ' ')){
+                $Hex=substr($Content, 0, strpos($Content, ' '));
+                $Content= substr($Content, strpos($Content, ' '));
+            }else{
+                $Hex=trim($Content);
+                $Content="";
+            }
+            if(ctype_xdigit(preg_replace('/\s+/', '', $Hex))){
+                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Hex))).'"';
+                $ParagraphContent= '<img style="'.$style.'" src="data:image/png;base64,'.$data.'">'.$Content;
             }
             break;
         case 'pich':
-            if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
-                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
-                echo '<div><img style="'.$style.'" src="data:image/png;base64,'.$data.'"></div>';
+            if(strpos($Content, ' ')){
+                $Hex=substr($Content, 0, strpos($Content, ' '));
+                $Content= substr($Content, strpos($Content, ' '));
+            }else{
+                $Hex=trim($Content);
+                $Content="";
+            }
+            if(ctype_xdigit(preg_replace('/\s+/', '', $Hex))){
+                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Hex))).'"';
+                $ParagraphContent= '<img style="'.$style.'" src="data:image/png;base64,'.$data.'">'.$Content;
             }
             break;
         case 'picwgoal':
             $style.="width:".Twips2Pixel($Wert).'px;';
-            if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
-                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
-                echo '<div><img style="'.$style.'" src="data:image/png;base64,'.$data.'"></div>';
+            if(strpos($Content, ' ')){
+                $Hex=substr($Content, 0, strpos($Content, ' '));
+                $Content= substr($Content, strpos($Content, ' '));
+            }else{
+                $Hex=trim($Content);
+                $Content="";
+            }
+            if(ctype_xdigit(preg_replace('/\s+/', '', $Hex))){
+                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Hex))).'"';
+                $ParagraphContent= '<img style="'.$style.'" src="data:image/png;base64,'.$data.'">'.$Content;
             }
             break;
         case 'pichgoal':
             $style.="height:".Twips2Pixel($Wert).'px;';
-            if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
-                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content))).'"';
-                echo '<div><img style="'.$style.'" src="data:image/png;base64,'.$data.'"></div>';
+            if(strpos($Content, ' ')){
+                $Hex=substr($Content, 0, strpos($Content, ' '));
+                $Content= substr($Content, strpos($Content, ' '));
+            }else{
+                $Hex=trim($Content);
+                $Content="";
+            }
+            if(ctype_xdigit(preg_replace('/\s+/', '', $Hex))){
+                $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Hex))).'"';
+                $ParagraphContent= '<img style="'.$style.'" src="data:image/png;base64,'.$data.'">'.$Content;
             }
             break;
         //Ende des Paragraps

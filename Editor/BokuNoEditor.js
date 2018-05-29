@@ -109,11 +109,11 @@
             //Fett
             FettButton.id="bokunoeditorToolbarFett";
             FettButton.className="bokunoeditorToolbarButton";
-            Schriftformatierungscontainer.appendChild(FettButton).appendChild(FettText);
+            Schriftformatierungscontainer.appendChild(FettButton).appendChild(FettTag).appendChild(FettText);
             //Kursiv
             KursivButton.id="bokunoeditorToolbarKursiv";
             KursivButton.className="bokunoeditorToolbarButton";
-            Schriftformatierungscontainer.appendChild(KursivButton).appendChild(KursivText);
+            Schriftformatierungscontainer.appendChild(KursivButton).appendChild(KursivTag).appendChild(KursivText);
             //Schriftart
             Schriftartcontainer.appendChild(SelectSchriftart.cloneNode(true));
             //Schriftgröße

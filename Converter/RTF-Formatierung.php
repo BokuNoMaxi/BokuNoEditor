@@ -497,8 +497,10 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
             $IMG= array_filter(explode('<img ',$HTMLline));
             foreach ($IMG as $I){
                 $IMGunformatedContent="";
+                $Anhang="";
                 if (strpos($I,'style=')!==false &&strpos($I,'src=')!==false){
                     //Bilddatei
+                    $Anhang= substr($I, strpos($I,'>')+1);
                     $srcPos=strpos($I,'src=')+5;
                     $srcBase64= substr($I, $srcPos, strpos($I,'"',$srcPos)-$srcPos);
                     $Base64=trim(substr($srcBase64, strpos($srcBase64,',')+1));
@@ -531,7 +533,7 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                                 break;
                         }
                     }
-                    $IMGFormatedContent.= '{\pict '.$IMGunformatedContent.' '.$HexData.'}';
+                    $IMGFormatedContent.= '{\pict '.$IMGunformatedContent.' '.$HexData.'}'.$Anhang;
                 }else{
                     $IMGFormatedContent.=$I;
                 }
