@@ -119,6 +119,7 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
     $Ausgabe=array('RTF'=>'','Schriftarten'=>array());
     if($HTMLline!='<br>'){
         //Fett
+        $HTMLline=str_replace('<br class="bneLineFeed">', "", $HTMLline);
         $HTMLline=str_replace("<b>", "\b ", $HTMLline);
         $HTMLline=str_replace("</b>", "\b0 ", $HTMLline);
         //Kursiv
@@ -166,6 +167,34 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                                 $Value=null;
                             }
                             Switch($Tag){
+                                case 'border-style':
+                                    switch ($Value){
+                                        case 'solid':
+                                            $BorderTop.='\brdrs';
+                                            $BorderLeft.='\brdrs';
+                                            $BorderRight.='\brdrs';
+                                            $BorderBottom.='\brdrs';
+                                            break;
+                                        case 'dotted':
+                                            $BorderTop.='\brdrdot';
+                                            $BorderLeft.='\brdrdot';
+                                            $BorderRight.='\brdrdot';
+                                            $BorderBottom.='\brdrdot';
+                                            break;
+                                        case 'dashed':
+                                            $BorderTop.='\brdrdash';
+                                            $BorderLeft.='\brdrdash';
+                                            $BorderRight.='\brdrdash';
+                                            $BorderBottom.='\brdrdash';
+                                            break;
+                                        case 'double':
+                                            $BorderTop.='\brdrdb';
+                                            $BorderLeft.='\brdrdb';
+                                            $BorderRight.='\brdrdb';
+                                            $BorderBottom.='\brdrdb';
+                                            break;
+                                    }
+                                    break;
                                 case 'border-top-style':
                                     switch ($Value){
                                         case 'solid':
@@ -230,6 +259,14 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                                             break;
                                     }
                                     break;
+                                case 'border-width':
+                                    if($Value != null){
+                                        $BorderTop.='\brdrw'.Pixel2Twips(intval($Value));
+                                        $BorderLeft.='\brdrw'.Pixel2Twips(intval($Value));
+                                        $BorderRight.='\brdrw'.Pixel2Twips(intval($Value));
+                                        $BorderBottom.='\brdrw'.Pixel2Twips(intval($Value));
+                                    };
+                                    break;
                                 case 'border-top-width':
                                     if($Value != null)$BorderTop.='\brdrw'.Pixel2Twips(intval($Value));
                                     break;
@@ -267,6 +304,16 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                                     if($Value != null){
                                         $BorderColor=colorHTMLtoRGBArr($Value);
                                         $Farben=FarbenController($BorderColor,$Farben);
+                                        $BorderBottom.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                    }
+                                    break;
+                                case 'border-color':
+                                    if($Value != null){
+                                        $BorderColor=colorHTMLtoRGBArr($Value);
+                                        $Farben=FarbenController($BorderColor,$Farben);
+                                        $BorderTop.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                        $BorderLeft.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
+                                        $BorderRight.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
                                         $BorderBottom.='\brdrcf'. (array_search($BorderColor, $Farben)+1);
                                     }
                                     break;
@@ -389,17 +436,16 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
         }
         //Span-Styles Formatierung
         if(strpos($HTMLline ,'<span')!==false){
+            
             $SPAN= array_filter(explode('<span ', $HTMLline));
             foreach ($SPAN as $s) {
                 if(strpos($s, 'style')!==false){
                     $s= str_replace('style=', '', $s);//strip style attr von span
                     $Styles= explode(';',substr($s, 1, strpos($s, '"',2)-2));//splitter alle Style attribute auf
                     $Endpunkt= strpos($s, '>');//endposition des span tags
+                    
                     $SpanUnformatedContent= substr($s, $Endpunkt+1);//restlicher content innerhalb des spans
-                    if(substr($SpanUnformatedContent,0, strpos($SpanUnformatedContent, '</span>'))=='<br>'){
-                        $SpanUnformatedContent= stopGroup();
-                    }
-                    $SpanUnformatedContent=str_replace("</span>", stopGroup(), $SpanUnformatedContent);
+                    $SpanUnformatedContent=str_replace("</span>",'', $SpanUnformatedContent);
                     foreach($Styles as $ST){//geh die stylings die am span hängen durch
                         //trenne Tag und Value
                         $a = explode(':', $ST);
@@ -413,13 +459,14 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                         //füge Stylings an
                         switch ($Tag){
                             case 'font-size':
-                                    $SpanFormatedContent.= startGroup().setFontSize(trim(str_replace('pt', '', $Value))*2).SonderzeichenWandler('HTML',$SpanUnformatedContent);
+                                    $SpanFormatedContent.= setFontSize(trim(str_replace('pt', '', $Value))*2).SonderzeichenWandler('HTML',$SpanUnformatedContent);
                             break;
                         }
                     }
                 }else{
                     $SpanFormatedContent.=$s;
                 }
+            
             }
             $HTMLline=$SpanFormatedContent;
         }
@@ -432,15 +479,12 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                     $fontParagraph= substr($f,1, strpos($f, '"',2)-1);//die Schriftart die verwendet wird
                     $Endpunkt=strpos($f,'>');//endposition des Fonts
                     $FontUnformatedContent= substr($f, $Endpunkt+1);//restlicher content innerhalb des fonts
-                    if(substr($FontUnformatedContent,0, strpos($FontUnformatedContent, '</font>'))=='<br>'){
-                        $FontUnformatedContent= stopGroup();
-                    }
-                    $FontUnformatedContent=str_replace("</font>", stopGroup(), $FontUnformatedContent);
+                    $FontUnformatedContent=str_replace("</font>", '', $FontUnformatedContent);
                     //wenn die Schriftart nicht gefunden wurde dann Trag sie in das array ein
                     if(array_search($fontParagraph, $Schriftarten)===false){
                         $Schriftarten[]=$fontParagraph;
                     }
-                    $FontFormatedContent.= startGroup().setFontFamily(array_search($fontParagraph, $Schriftarten)).SonderzeichenWandler('HTML',$FontUnformatedContent);
+                    $FontFormatedContent.= setFontFamily(array_search($fontParagraph, $Schriftarten)).SonderzeichenWandler('HTML',$FontUnformatedContent);
                 }else{
                     $FontFormatedContent.=$f;
                 }
@@ -499,7 +543,6 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
         //leere p ohne br noch ausfiltern
         $HTMLline='';
     }
-    
     //Ende der Formatierung und ausgabe der Line
     $Ausgabe['RTF']=$HTMLline;
     $Ausgabe['Schriftarten']=$Schriftarten;

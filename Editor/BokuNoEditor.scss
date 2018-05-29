@@ -220,6 +220,7 @@ select{
                 td{
                     min-width:200px;
                     padding: 0.4rem;
+                    vertical-align:top;
                 }
             }
             span{
@@ -287,6 +288,7 @@ select{
                     padding-left:7px;
                     padding-bottom:7px;
                     border-right:none;
+                    outline:none;
                     #bokunoeditorFormatZeileBorderColorCanvas{
                         height:20px;
                         width:20px;

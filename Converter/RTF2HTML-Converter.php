@@ -15,10 +15,11 @@ $RTF = str_replace('\}', '\geschwungeneKlammerZu', $RTF);
 
 $Befehle= explode('\\', $RTF);//splitte das Dokument bei jedem \ 
 $OutputHTML="";//Das wird unsere Ausgabe;
-$ParagraphStyles=ParagraphStartTag." style='";$ParagraphContent="";//Dies ist der jeweilige Paragraph unserer Ausgabe;
+$Befehlsverarbeitung=array();//Da sortier ich mir alle Befehle mit Content und Werten;
+$ParagraphStyles="";$ParagraphContent="";//Dies ist der jeweilige Paragraph unserer Ausgabe;
 $tableActive=false;$TDContentOutput;$TDContent="";$TRStyles="";$TableActiveBorder="";$TDStylings=array();$TDActiveStylings="";$TableFontSet=false;$TDBreite=array();$TableBreite=0;$TDAktiv=0;//Tabellenstyling
 $deffMode=false;//DefinitionsModus An/Aus;
-$GroupCounter=0;$deffStart=0;$Schriftarten=array();
+$GroupCounter=0;$deffStart=0;$Schriftarten=array();$ContentLength=0;$AnzPard=0;
 $fontSet=false;//ob schon eine Schrift gesetzt wurde
 $data="";$style="";//Bildvariablen
 foreach($Befehle as $index => $B){
@@ -26,13 +27,9 @@ foreach($Befehle as $index => $B){
     $Mixed=false;$Befehl=$B;$Content="";$Wert=-1;//Setze Defaultvariablen
     //Sonderzeichen
     if(strpos($Befehl,"'")!==false){
-        $Content=substr($Befehl,3);
-        $Befehl=substr($Befehl,1,2);
-        $Content= str_replace('{', '', $Content);
-        $Content= str_replace('}', '', $Content);
-        if($tableActive==true)$TDContent.=utf8_encode(chr(hexdec($Befehl))).$Content;
-        else $ParagraphContent.=utf8_encode(chr(hexdec($Befehl))).$Content;
-        
+        $Content=utf8_encode(chr(hexdec(substr($Befehl,1,2)))).substr($Befehl,3);
+        $Befehl='Sonderzeichen';
+        $Befehlsverarbeitung[]=array('Befehl'=>trim($Befehl),'Content'=>$Content,'Wert'=>$Wert);
         continue;
     }
     //Wenn ein Leerzeichen/Enter vorhanden ist dann gibt es Content bei diesem Befehl
@@ -60,6 +57,10 @@ foreach($Befehle as $index => $B){
             $Wert= substr($Wert, 0, strpos($Wert,' '));
         }
     }
+    $Befehlsverarbeitung[]=array('Befehl'=>trim($Befehl),'Content'=>$Content,'Wert'=>$Wert);
+}
+foreach($Befehlsverarbeitung as $BE){
+    $Befehl=$BE['Befehl'];$Content=$BE['Content'];$Wert=$BE['Wert'];
     //Definition was passiert wenn ein Gruppenzeichen gefunden wurde
     $anzGroup=0;$anzEndGroup=0;
     if(strpos($Befehl, '{')!==false||strpos($Content, '{')!==false|| strpos($Wert, '}')){
@@ -76,7 +77,7 @@ foreach($Befehle as $index => $B){
     $Befehl= str_replace('{', '', $Befehl);
     $Content= str_replace('}', '', $Content);
     $Befehl= str_replace('}', '', $Befehl);
-    switch (trim($Befehl)) {
+    switch ($Befehl) {
         //Konfiguration
         case 'deff':
             $deffMode=true;
@@ -160,24 +161,25 @@ foreach($Befehle as $index => $B){
             break;
         case 'b'://Fett
             if($tableActive==true){
-                if($Wert>=0) $TDContent.=$Content.'</b>';                
+                if($Wert>=0) $TDContent.='</b>'.$Content;                
                 else $TDContent.='<b>'.$Content;
             }else{
-                if($Wert>=0) $ParagraphContent.=$Content.'</b>';                
+                if($Wert>=0) $ParagraphContent.='</b>'.$Content;                
                 else $ParagraphContent.='<b>'.$Content;
             }
+            $ContentLength+=strlen(trim($Content));
             break;
         case 'i'://Kursiv
             if($tableActive==true){
-                if($Wert>=0) $TDContent.=$Content.'</i>'; 
+                if($Wert>=0) $TDContent.='</i>'.$Content; 
                 else $TDContent.='<i>'.$Content;
             }else{
-                if($Wert>=0) $ParagraphContent.=$Content.'</i>'; 
+                if($Wert>=0) $ParagraphContent.='</i>'.$Content; 
                 else $ParagraphContent.='<i>'.$Content;
             }
+            $ContentLength+=strlen(trim($Content));
             break;
         case 'f'://Schriftart
-            if($Content=='')continue;
             if($deffMode==true){
                 $Schriftarten[$Befehl.$Wert]=substr($Content,0, strpos($Content, ';'));
             }else{
@@ -191,6 +193,7 @@ foreach($Befehle as $index => $B){
                     if($fontSet==false)$fontSet=true;
                     $ParagraphContent.='<font face="'.$Schriftarten[trim($Befehl.$Wert)].'">'.$Content;//Setzen der Schriftart
                 }
+                $ContentLength+=strlen(trim($Content));
             }
             break;
         case 'fs'://Schriftgröße
@@ -199,7 +202,7 @@ foreach($Befehle as $index => $B){
             }else{
                 $ParagraphContent.='<span style="font-size:'.(preg_replace("/[^0-9,.]/", "", $Wert )/2).'pt;">'.$Content;
             }
-            
+            $ContentLength+=strlen(trim($Content));
             break;
         //Tabelle
         case 'trowd'://initialisiere Tabelle
@@ -341,7 +344,6 @@ foreach($Befehle as $index => $B){
         case 'sv':
             break;
         case 'picw':
-            
             if(ctype_xdigit(preg_replace('/\s+/', '', $Content))){
                 $data=base64_encode(hex2bin(preg_replace('/\s+/', '', $Content)));
                 echo '<div><img style="'.$style.'" src="data:image/png;base64,'.$data.'"></div>';
@@ -368,17 +370,16 @@ foreach($Befehle as $index => $B){
             }
             break;
         //Ende des Paragraps
+        case 'pard':
+//            (($AnzPard==0)?'':$OutputHTML.=ParagraphStartTag.(($ParagraphStyles!='')?' style="'.$ParagraphStyles.'"':'').'>'.$ParagraphContent.ParagraphEndTag);
+            $ParagraphStyles="";
+            $ContentLength=0;
+            $AnzPard++;
+            break;
         case 'par':
-            if ($ParagraphContent==""){
-                $OutputHTML.=ParagraphStartTag.'><br>'.ParagraphEndTag;
-            }else{
-                $OutputHTML.=$ParagraphStyles."'>".$ParagraphContent.ParagraphEndTag;
-            }
-            $ParagraphStyles=ParagraphStartTag." style='";
-            $ParagraphContent="";
-            if($Content != ''){
-                $ParagraphContent.=$Content;
-            }
+                $OutputHTML.=ParagraphStartTag.(($ParagraphStyles!='')?' style="'.$ParagraphStyles.'"':'').'>'.(($ContentLength!=0)?$ParagraphContent:'<br class="bneLineFeed">'.$ParagraphContent).ParagraphEndTag;
+                $ParagraphContent=$Content;
+                $ContentLength= strlen($Content);
             break;
         default:
             if($deffMode==false){
@@ -397,4 +398,4 @@ foreach($Befehle as $index => $B){
     }
     
 }
-echo $OutputHTML;
+echo $OutputHTML.=ParagraphEndTag;

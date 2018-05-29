@@ -15,7 +15,7 @@
         'Verdana',
         ],Schriftgroesse=[
             '6','7','8','9','10','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
-        ],borderStyles='border-top-style:solid;border-top-width:1px;border-left-style:solid;border-left-width:1px;border-bottom-style:solid;border-bottom-width:1px;border-right-style:solid;border-right-width:1px;';
+        ],borderStyles='width:200px;border-top-style:solid;border-top-width:1px;border-left-style:solid;border-left-width:1px;border-bottom-style:solid;border-bottom-width:1px;border-right-style:solid;border-right-width:1px;';
         
     //Menüleiste
         var Menu= document.createDocumentFragment(),
@@ -81,7 +81,7 @@
         //Schriftgröße
         ContainerSchriftgroesse.id="bokunoeditorMenuSchriftContextmenuGroesse";
         SelectSchriftgroesse.id="bokunoeditorMenuSchriftgroesse";
-        SelectSchriftart.className+="bokunoeditorToolbarSelect bokunoeditorSchriftgroesse";
+        SelectSchriftgroesse.className+="bokunoeditorToolbarSelect bokunoeditorSchriftgroesse";
         SpanSchriftgroesse.appendChild(TextSchriftgroesse);
         ContainerSchriftgroesse.appendChild(SpanSchriftgroesse);
         //Lade Schriftgröße
@@ -115,9 +115,9 @@
             KursivButton.className="bokunoeditorToolbarButton";
             Schriftformatierungscontainer.appendChild(KursivButton).appendChild(KursivText);
             //Schriftart
-            Schriftartcontainer.appendChild(SelectSchriftart);
+            Schriftartcontainer.appendChild(SelectSchriftart.cloneNode(true));
             //Schriftgröße
-            Schriftartcontainer.appendChild(SelectSchriftgroesse);
+            Schriftartcontainer.appendChild(SelectSchriftgroesse.cloneNode(true));
             //Ausrichtung
             AusrichtungLinksButton.id="bokunoeditorToolbarLinks";
             AusrichtungLinksButton.className="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive";
@@ -128,11 +128,11 @@
             AusrichtungMitteSymbol.setAttribute('src',absolutPath+'/SVG/center-alignment.svg');
             Ausrichtungscontainer.appendChild(AusrichtungMitteButton).appendChild(AusrichtungMitteSymbol);
             AusrichtungRechtsButton.id="bokunoeditorToolbarRechts";
-            AusrichtungRechtsButton.className="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive";
+            AusrichtungRechtsButton.className="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung";
             AusrichtungRechtsSymbol.setAttribute('src',absolutPath+'/SVG/right-alignment.svg');
             Ausrichtungscontainer.appendChild(AusrichtungRechtsButton).appendChild(AusrichtungRechtsSymbol);
             AusrichtungJustifyButton.id="bokunoeditorToolbarBlock";
-            AusrichtungJustifyButton.className="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung bneActive";
+            AusrichtungJustifyButton.className="bokunoeditorToolbarButton bokunoeditorToolbarAusrichtung";
             AusrichtungJustifySymbol.setAttribute('src',absolutPath+'/SVG/justify.svg');
             Ausrichtungscontainer.appendChild(AusrichtungJustifyButton).appendChild(AusrichtungJustifySymbol);
             //Tabelle
@@ -221,7 +221,7 @@
             ColorPickerContainer.id="bokunoeditorFormatZeileBorderColor";
             ColorPickerContainer.className+="bokunoeditorFormatZeileInput";
             ColorPickerAktuelleFarbeButton.id="bokunoeditorFormatZeileBorderColorButton";
-            ColorPickerAktuelleFarbeButton.className+="bokunoeditorFormatZeileButtonColor";
+            ColorPickerAktuelleFarbeButton.className+="bokunoeditorFormatZeileButtonColor bokunoeditorAktuelleFarbe";
             ColorPickerAktuelleFarbeCanvas.id="bokunoeditorFormatZeileBorderColorCanvas";
             ColorPickerAktuelleFarbeCanvas.setAttribute("style",'background-color:rgb(0,0,0);');
             ColorPickerContainer.appendChild(ColorPickerAktuelleFarbeButton).appendChild(ColorPickerAktuelleFarbeCanvas);
@@ -484,11 +484,32 @@
             }
         });
         //Colorpicker
+        $('.bokunoeditorAktuelleFarbe').click(function(){
+            var Button=$(this),
+                Farbe =Button.find('canvas').css('background-color');
+            if(lastFocus){
+                setTimeout(function() {
+                    var sel = window.getSelection(),
+                        Markierung=sel.getRangeAt(0);
+                    lastFocus.focus();
+                    switch(Button[0].id){
+                        case 'bokunoeditorFormatZeileBorderColorButton'://Rahmenfarbe
+                            $(sel.anchorNode).closest('td').css({
+                                'border-top-color':Farbe,
+                                'border-bottom-color':Farbe,
+                                'border-left-color':Farbe,
+                                'border-right-color':Farbe
+                            });
+                            break;
+                    }
+                },10);
+            }
+            
+        });
         //Farbe Wechseln
         $('.bokunoeditorOpenColor').click(function(){
             var Button=$(this);
-            console.log(Button[0].id);
-                if(lastFocus){
+            if(lastFocus){
                 setTimeout(function() {
                     var sel = window.getSelection(),
                         Markierung=sel.getRangeAt(0);
@@ -505,7 +526,7 @@
                                     'border-right-color':"rgb("+RGB+")"
                                 });
                                 $('#bokunoeditorFormatZeileBorderColorCanvas').css('background-color',"rgb("+RGB+")");
-                                
+
                             });
                             break;
                     }
@@ -539,19 +560,19 @@
                     $('.bokunoeditorIMGFormats').css('display','none');
                 }
                 (($(e.target).closest('td').length>0)?$('.bokunoeditorTableFormats').css('display','inline-block'):$('.bokunoeditorTableFormats').css('display','none'));
-                if($(e.target).closest('p').css('text-align')=='center'||$(e.target).closest('td').css('text-align')=='center'){
+                if($(e.target).closest('div').css('text-align')=='center'||$(e.target).closest('td').css('text-align')=='center'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarMitte').addClass('bneActive');
                 }
-                if($(e.target).closest('p').css('text-align')=='right'||$(e.target).closest('td').css('text-align')=='right'){
+                if($(e.target).closest('div').css('text-align')=='right'||$(e.target).closest('td').css('text-align')=='right'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarRechts').addClass('bneActive');
                 }
-                if($(e.target).closest('p').css('text-align')=='left'||$(e.target).closest('p').css('text-align')=='start'||$(e.target).closest('td').css('text-align')=='left'||$(e.target).closest('td').css('text-align')=='start'){
+                if($(e.target).closest('div').css('text-align')=='left'||$(e.target).closest('p').css('text-align')=='start'||$(e.target).closest('td').css('text-align')=='left'||$(e.target).closest('td').css('text-align')=='start'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarLinks').addClass('bneActive');
                 }
-                if($(e.target).closest('p').css('text-align')=='justify'||$(e.target).closest('td').css('text-align')=='justify'){
+                if($(e.target).closest('div').css('text-align')=='justify'||$(e.target).closest('td').css('text-align')=='justify'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarBlock').addClass('bneActive');
                 }
@@ -575,19 +596,19 @@
                     $('.bokunoeditorIMGFormats').css('display','none')
                 }
                 (($(e.target).closest('td').length>0)?$('.bokunoeditorTableFormats').css('display','inline-block'):$('.bokunoeditorTableFormats').css('display','none'));
-                if($(e.target).closest('p').css('text-align')=='center'||$(e.target).closest('td').css('text-align')=='center'){
+                if($(e.target).closest('div').css('text-align')=='center'||$(e.target).closest('td').css('text-align')=='center'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarMitte').addClass('bneActive');
                 }
-                if($(e.target).closest('p').css('text-align')=='right'||$(e.target).closest('td').css('text-align')=='right'){
+                if($(e.target).closest('div').css('text-align')=='right'||$(e.target).closest('td').css('text-align')=='right'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarRechts').addClass('bneActive');
                 }
-                if($(e.target).closest('p').css('text-align')=='left'||$(e.target).closest('p').css('text-align')=='start'||$(e.target).closest('td').css('text-align')=='left'||$(e.target).closest('td').css('text-align')=='start'){
+                if($(e.target).closest('div').css('text-align')=='left'||$(e.target).closest('p').css('text-align')=='start'||$(e.target).closest('td').css('text-align')=='left'||$(e.target).closest('td').css('text-align')=='start'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarLinks').addClass('bneActive');
                 }
-                if($(e.target).closest('p').css('text-align')=='justify'||$(e.target).closest('td').css('text-align')=='justify'){
+                if($(e.target).closest('div').css('text-align')=='justify'||$(e.target).closest('td').css('text-align')=='justify'){
                     $('.bokunoeditorToolbarAusrichtung').removeClass('bneActive');
                     $('#bokunoeditorToolbarBlock').addClass('bneActive');
                 }
