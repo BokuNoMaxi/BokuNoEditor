@@ -75,12 +75,14 @@ select{
         cursor: pointer;
         div {
             border-bottom:solid 1px $borderColorMenu;
+            height:29px;
             button{
                 border: none;
                 background: white;
                 width: 100%;
                 padding: 4px 8px;
                 cursor: pointer;
+                vertical-align: -webkit-baseline-middle;
             }
         }
         .bneMenueTrennlinie{
@@ -109,29 +111,25 @@ select{
         }
         .bokunoeditorToolbarButtonContainer{
             border-bottom:solid 1px $borderColorMenu;
-            .bokunoeditorKontextButtonContainer{
+            cursor:default;
+            .bokunoeditorKontextButton {
                 border: none;
                 background: white;
-                width: 100%;
+                border-left:solid 1px $borderColorMenu;
+                height:28px;
+                width:173px;
                 cursor: pointer;
-                text-align:left;
-                .bokunoeditorKontextButton {
-                    border: none;
-                    background: white;
-                    border-left:solid 1px $borderColorMenu;
-                    height:28px;
-                    width:13.65em;
-                    cursor: pointer;
-                }
-                span{
-                    display:inline-block;
-                    width:4.2em;
-                    padding-left:8px;
-                }
+            }
+            span{
+                display:inline-block;
+                width:4em;
+                padding-left:8px;
+                cursor: default;
             }
         }
         .bokunoeditorToolbarSelectContainer{
             border-bottom:solid 1px $borderColorMenu;
+            cursor:default;
             span{
                 display:inline-block;
                 width:4em;
@@ -145,7 +143,7 @@ select{
                 padding: 5px 8px;
                 font-size: 14px;
                 text-align: right;
-                width:13em;
+                width:173px;
                 height:28px;
                 cursor: pointer;
                 text-align: center;
@@ -176,11 +174,11 @@ select{
         }
         .bokunoeditorToolbarButtonContainer{
             border-bottom:solid 1px $borderColorMenu;
+            cursor:default;
             span{
                 display:inline-block;
                 width:5.5em;
                 padding-left:8px;
-                vertical-align: text-bottom;
             }
             button{
                 border: none;
@@ -351,6 +349,9 @@ select{
                     #bokunoeditorFormatZeileBorderColorCanvas{
                         height:20px;
                         width:20px;
+                        border-top: solid 1px;
+                        border-left: solid 1px;
+                        border-bottom: solid 1px;
                     }
                 }
                 .bokunoeditorOpenColor::after{

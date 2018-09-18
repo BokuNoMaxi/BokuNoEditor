@@ -8,13 +8,16 @@
         <script src="../Editor/BokuNoEditor.js" type="text/javascript"></script>
         <script>
         $(document).ready(function(){
-            $('#editor').bokunoeditor({
-               'Title':'Nur zum Testen',
-               'Author':'Maxl',
-               'Kommentar':'das ist ein Test',
-               'Company':'Maxls',
-               'Datum':null
-            },$('#editor').val()) ;
+            $('#editor').bokunoeditor('init',
+                {   'info':{
+                        'Titel':'Nur zum Testen',
+                        'Author':'Maxl',
+                        'Kommentar':'das ist ein Test',
+                        'Organisation':'Maxls',
+                        'Datum':null
+                    },
+                    'rtfFile':$('#editor').val()
+                }) ;
                
         });
         </script>

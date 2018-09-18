@@ -1,9 +1,12 @@
 <?php
 include('Konstanten.php');
 function createRTFFile($RTFCode){
-    $RTF= fopen('../FileOutput/Test.rtf', 'w');
+    $filename=RandomString(6).'.rtf';
+    $file='../FileOutput/'. $filename;
+    $RTF= fopen($file, 'w',1);
     fwrite($RTF, $RTFCode);
     fclose($RTF);
+    return($filename);
 }
 //Umrechnungen
 function Pixel2Point($Pixel){
@@ -40,4 +43,18 @@ function SonderzeichenWandler($format,$zeichenkette){
             break;
     }
     return $zeichenkette;
+}
+
+function RandomString($length = 32) {
+    $randstr="";
+    $chars = array(
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'p',
+        'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 
+        'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+
+    for ($rand = 0; $rand <= $length; $rand++) {
+        $randstr .= $chars[rand(0, count($chars) - 1)];
+    }
+    return $randstr;
 }

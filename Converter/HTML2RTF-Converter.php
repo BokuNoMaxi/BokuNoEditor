@@ -7,4 +7,7 @@ $HTML=trim(html_entity_decode ($_POST['Content']));//hole Content des Texteditor
 $Format=array('Seitenformat'=>trim($_POST['Format']),'Seitenverhaeltnis'=>$_POST['Seitenverhaeltnis']);
 $RTF= makeRTF($Info,array_filter(explode(ParagraphEndTag, $HTML)),$Format);
     
-createRTFFile($RTF);
+$file=createRTFFile($RTF);
+$output=array('Status'=>0,'Ergebnis'=>$file);
+
+echo json_encode($output);
