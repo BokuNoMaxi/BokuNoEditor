@@ -6,7 +6,7 @@ function createRTFFile($RTFCode){
     $RTF= fopen($file, 'w',1);
     fwrite($RTF, $RTFCode);
     fclose($RTF);
-    return($filename);
+    return(array('Status'=>0,'Ergebnis'=>$filename));
 }
 //Umrechnungen
 function Pixel2Point($Pixel){

@@ -1,6 +1,6 @@
 <?php
 include('BokuNoEditorFunctions.php');
-$RTF = file_get_contents('../FileImport/'.$_POST['RTF']);//schreibe Inhalt des Dokuments in ein File
+$RTF = @file_get_contents('../FileImport/'.$_POST['RTF']);//schreibe Inhalt des Dokuments in ein File
 //Strip Problematisches
 $RTF = str_replace('\fnil', '', $RTF);
 $RTF = str_replace('\fcharset0', '', $RTF);

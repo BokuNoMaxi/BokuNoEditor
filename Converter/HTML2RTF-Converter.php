@@ -8,6 +8,5 @@ $Format=array('Seitenformat'=>trim($_POST['Format']),'Seitenverhaeltnis'=>$_POST
 $RTF= makeRTF($Info,array_filter(explode(ParagraphEndTag, $HTML)),$Format);
     
 $file=createRTFFile($RTF);
-$output=array('Status'=>0,'Ergebnis'=>$file);
 
-echo json_encode($output);
+echo json_encode($file);

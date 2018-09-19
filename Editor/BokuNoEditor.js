@@ -23,9 +23,10 @@
     var BokuNoEditor = function($Option,$Value){
         if($Option==='init'){
             Info=$Value['info'];
-            BokuNoEditor.prototype.initiate($(this),$Value['rtfFile']);
+            return BokuNoEditor.prototype.initiate($(this),$Value['rtfFile']);
         }else if($Option==='speichern'){
-            BokuNoEditor.prototype.speicherDokument();
+            var callback=$Value;
+            return BokuNoEditor.prototype.speicherDokument(callback);
         }
     };
     //Menüfunktionen
@@ -36,14 +37,22 @@
             $('#bneAnzZeichen').text('0 Zeichen,');
             $('#bneAnzWoerter').text('0 W\xF6rter');
         },
-        speicherDokument:function(){
+        speicherDokument:function(callback){
             $('b,i').removeAttr('style');
-            $.post(absolutPath+'/Converter/HTML2RTF-Converter.php',{
+            return $.ajax({type: "POST", url: absolutPath+'/Converter/HTML2RTF-Converter.php',data:{
                 Content:$('#bokunoeditorContent').html(),
                 Info:JSON.stringify(Info),
                 Format:$('#bokunoeditorContent').attr('class'),
                 Seitenverhaeltnis:{'l':$('#bokunoeditorContent').css('border-left-width'),'r':$('#bokunoeditorContent').css('border-right-width'),'t':$('#bokunoeditorContent').css('border-top-width'),'b':$('#bokunoeditorContent').css('border-bottom-width')},
-            },function(data){return data;});
+            }}).done(function(data){
+                //data > Status:Ergebnis
+                // Status = der Statuscodes des Ergebnisses
+                //Ergebnis = der Dateiname
+                callback($.parseJSON(data));
+            });
+        },
+        returnDokument:function($Dokument){
+            return $Dokument;
         },
         druckeDokument:function(){
             var w=window.open();
@@ -551,7 +560,7 @@
             //Vorbefüllung des Editors
             if(($rtfFile!='' && $rtfFile != null)&&$rtfFile.indexOf('.')>0&&$rtfFile.substring($rtfFile.lastIndexOf('.'))==='.rtf'){//wenn ein File mitgeht überprüfe ob die Endung eh RTF ist
                 $.post(absolutPath+'/Converter/RTF2HTML-Converter.php',{
-                    'RTF':Textarea.val(),
+                    'RTF':$rtfFile,
                 },function(data){
                     lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html(data).focus();
                     //Zeige die Anzahl der Zeichen, Wörter die im Dokument vorhanden sind

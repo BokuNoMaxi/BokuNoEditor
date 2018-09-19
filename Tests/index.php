@@ -16,15 +16,14 @@
                         'Organisation':'Maxls',
                         'Datum':null
                     },
-                    'rtfFile':$('#editor').val()
+                    'rtfFile':$('#editor').data('value')
                 }) ;
                
         });
         </script>
     </head>
     <body style="height: 100vh;margin: 5px;overflow:hidden;">
-        <div style="height: calc(100% - 30px);">
-            <input type="text" id="editor" value='test.rtf'>
+        <div style="height: calc(100% - 30px);" id="editor" data-value='test.rtf'>
         </div>
     </body>
 </html>
