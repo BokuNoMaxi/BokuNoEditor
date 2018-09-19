@@ -546,7 +546,7 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
         $HTMLline='';
     }
     //Ende der Formatierung und ausgabe der Line
-    $Ausgabe['RTF']=$HTMLline;
+    $Ausgabe['RTF']='{'.$HTMLline.'}';
     $Ausgabe['Schriftarten']=$Schriftarten;
     $Ausgabe['Farben']=$Farben;
     return $Ausgabe;
