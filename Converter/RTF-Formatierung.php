@@ -445,7 +445,7 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                     $Endpunkt= strpos($s, '>');//endposition des span tags
                     
                     $SpanUnformatedContent= substr($s, $Endpunkt+1);//restlicher content innerhalb des spans
-                    $SpanUnformatedContent=str_replace("</span>",'', $SpanUnformatedContent);
+                    $SpanUnformatedContent=str_replace("</span>",setFontSize(22), $SpanUnformatedContent);
                     foreach($Styles as $ST){//geh die stylings die am span hängen durch
                         //trenne Tag und Value
                         $a = explode(':', $ST);
@@ -479,7 +479,7 @@ function makeFormatierungHTML2RTFContent($HTMLline,$Schriftarten,$Farben){
                     $fontParagraph= substr($f,1, strpos($f, '"',2)-1);//die Schriftart die verwendet wird
                     $Endpunkt=strpos($f,'>');//endposition des Fonts
                     $FontUnformatedContent= substr($f, $Endpunkt+1);//restlicher content innerhalb des fonts
-                    $FontUnformatedContent=str_replace("</font>", '', $FontUnformatedContent);
+                    $FontUnformatedContent=str_replace("</font>", setFontFamily(0), $FontUnformatedContent);
                     //wenn die Schriftart nicht gefunden wurde dann Trag sie in das array ein
                     if(array_search($fontParagraph, $Schriftarten)===false){
                         $Schriftarten[]=$fontParagraph;
