@@ -1,6 +1,6 @@
 <?php
 include('BokuNoEditorFunctions.php');
-$RTF = @file_get_contents('../FileImport/'.$_POST['RTF']);//schreibe Inhalt des Dokuments in ein File
+$RTF = @file_get_contents($_POST['RTF']);//schreibe Inhalt des Dokuments in ein File
 //Strip Problematisches
 $RTF = str_replace('\fnil', '', $RTF);
 $RTF = str_replace('\fcharset0', '', $RTF);
@@ -13,7 +13,7 @@ $RTF = str_replace('\fprq2', '', $RTF);
 $RTF = str_replace('\{', '\geschwungeneKlammerAuf', $RTF);
 $RTF = str_replace('\}', '\geschwungeneKlammerZu', $RTF);
 
-$Befehle= explode('\\', $RTF);//splitte das Dokument bei jedem \ 
+$Befehle= explode('\\', $RTF);//splitte das Dokument bei jedem \
 $OutputHTML="";//Das wird unsere Ausgabe;
 $Befehlsverarbeitung=array();//Da sortier ich mir alle Befehle mit Content und Werten;
 $ParagraphStyles="";$ParagraphContent="";//Dies ist der jeweilige Paragraph unserer Ausgabe;
@@ -154,27 +154,27 @@ foreach($Befehlsverarbeitung as $BE){
         //Paragraph Contentformatierung
         case 'line':
             if($tableActive==true){
-                $TDContent.='<br>'.$Content;                
+                $TDContent.='<br>'.$Content;
             }else{
-                $ParagraphContent.='<br>'.$Content;                
+                $ParagraphContent.='<br>'.$Content;
             }
             break;
         case 'b'://Fett
             if($tableActive==true){
-                if($Wert>=0) $TDContent.='</b>'.$Content;                
+                if($Wert>=0) $TDContent.='</b>'.$Content;
                 else $TDContent.='<b>'.$Content;
             }else{
-                if($Wert>=0) $ParagraphContent.='</b>'.$Content;                
+                if($Wert>=0) $ParagraphContent.='</b>'.$Content;
                 else $ParagraphContent.='<b>'.$Content;
             }
             $ContentLength+=strlen(trim($Content));
             break;
         case 'i'://Kursiv
             if($tableActive==true){
-                if($Wert>=0) $TDContent.='</i>'.$Content; 
+                if($Wert>=0) $TDContent.='</i>'.$Content;
                 else $TDContent.='<i>'.$Content;
             }else{
-                if($Wert>=0) $ParagraphContent.='</i>'.$Content; 
+                if($Wert>=0) $ParagraphContent.='</i>'.$Content;
                 else $ParagraphContent.='<i>'.$Content;
             }
             $ContentLength+=strlen(trim($Content));
@@ -417,13 +417,13 @@ foreach($Befehlsverarbeitung as $BE){
                     $ParagraphContent.=$Content;
                 }
             }
-            
-            
+
+
     }
     //ausschalten des Definitionsmoduses
     if($GroupCounter < $deffStart){
         $deffMode=false;
     }
-    
+
 }
 echo $OutputHTML.=ParagraphEndTag;

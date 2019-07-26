@@ -1,5 +1,6 @@
 (function($){
     var scripts = document.getElementsByTagName("script"),
+        Editor=null,
         src = scripts[scripts.length-1].src,
         absolutPath=src.slice(0,src.slice(0,src.lastIndexOf('/')).lastIndexOf('/')),
         lastFocus=null,img=null,Info=null,
@@ -16,18 +17,51 @@
         ],Schriftgroesse=[
             '6','7','8','9','10','11','12','13','14','15','16','18','20','22','24','26','28','32','36','40','44','48','54','60','66','72',
         ],borderStyles='width:200px;border-top-style:solid;border-top-width:1px;border-left-style:solid;border-left-width:1px;border-bottom-style:solid;border-bottom-width:1px;border-right-style:solid;border-right-width:1px;';
-   
+
     //$Info = Dokumentinformationen
     //$rtfFile = ist der Inhalt in der Box RTF oder HTML??
     //Menüleiste
     var BokuNoEditor = function($Option,$Value){
-        if($Option==='init'){
-            Info=$Value['info'];
-            return BokuNoEditor.prototype.initiate($(this),$Value['rtfFile']);
-        }else if($Option==='speichern'){
-            var callback=$Value;
-            return BokuNoEditor.prototype.speicherDokument(callback);
+        switch($Option){
+            case 'init':
+                Editor=$(this);
+                Info=$Value['info'];
+                return BokuNoEditor.prototype.initiate($Value['rtfFile']);
+                break;
+            case 'speichern':
+                var callback=$Value;
+                return BokuNoEditor.prototype.speicherDokument(callback);
+                break;
+            case 'laden':
+                var File=$Value;
+                return BokuNoEditor.prototype.ladeDokument(File);
+                break;
         }
+    };
+
+    function setDokumentzaehler(){//Zeige die Anzahl der Zeichen, Wörter die im Dokument vorhanden sind
+        $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
+        $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' W\xF6rter');
+    }
+
+    function getHTML($file){
+        var $rtfFile=$file;
+        //wenn ein File mitgeht überprüfe ob die Endung RTF ist
+        if(($rtfFile!='' && $rtfFile != null)&&$rtfFile.indexOf('.')>0&&$rtfFile.substring($rtfFile.lastIndexOf('.'))==='.rtf'){
+            $.post(absolutPath+'/Converter/RTF2HTML-Converter.php',{
+                'RTF':$rtfFile
+            },function(data){
+                return initContent(data);
+            });
+        //Ist es kein RTF gib den HTML Code zurück
+        }else{
+
+        }
+    };
+    function initContent($HTML){
+        lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($HTML).focus();
+        setDokumentzaehler();
+        return lastFocus;
     };
     //Menüfunktionen
     BokuNoEditor.prototype={
@@ -50,6 +84,10 @@
                 //Ergebnis = der Dateiname
                 callback($.parseJSON(data));
             });
+        },
+
+        ladeDokument:function(file){
+            return getHTML(file);
         },
         returnDokument:function($Dokument){
             return $Dokument;
@@ -140,7 +178,7 @@
                 td=$($Cursor.anchorNode).closest('td'),
                 color=(td[0].style['border-top-color']);
             $.each(tr.children('td'),function(){
-               td+='<td style="'+borderStyles+'border-top-color'+color+';border-left-color'+color+';border-right-color'+color+';border-bottom-color'+color+';">&#65279;</td>'; 
+               td+='<td style="'+borderStyles+'border-top-color'+color+';border-left-color'+color+';border-right-color'+color+';border-bottom-color'+color+';">&#65279;</td>';
             });
             tr.after('<tr>'+td+'</tr>');
             return;
@@ -150,7 +188,7 @@
                 td=$($Cursor.anchorNode).closest('td'),
                 color=(td[0].style['border-top-color']);
             $.each(tr.children('td'),function(){
-               td+='<td style="'+borderStyles+'border-top-color'+color+';border-left-color'+color+';border-right-color'+color+';border-bottom-color'+color+';">&#65279;</td>'; 
+               td+='<td style="'+borderStyles+'border-top-color'+color+';border-left-color'+color+';border-right-color'+color+';border-bottom-color'+color+';">&#65279;</td>';
             });
             tr.before('<tr>'+td+'</tr>');
             return;
@@ -192,7 +230,7 @@
             });
             return;
         },
-        
+
         //Events für Bilder
         //File einlesen und im editor als Bild anfügen
         insertIMG :function(input) {
@@ -221,7 +259,7 @@
             return;
         },
         //Erstellung des Texteditors
-        initiate:function($element, $rtfFile){
+        initiate:function($rtfFile){
             var Menu= document.createDocumentFragment(),
                 DateiButton=document.createElement('Button'),DateiText=document.createTextNode('Datei'),
                 SchriftButton=document.createElement('Button'),SchriftText=document.createTextNode('Schrift'),
@@ -379,7 +417,7 @@
             FormatContainerContextmenu.appendChild(AusrichtungJustifyContainer);
             FormatContext.appendChild(FormatContainerContextmenu);
         //Toolbar
-            var Toolbar = document.createDocumentFragment(),   
+            var Toolbar = document.createDocumentFragment(),
                 Schriftformatierungscontainer=document.createElement('DIV'),Schriftartcontainer=document.createElement('DIV'),Ausrichtungscontainer=document.createElement('DIV'),Objektcontainer=document.createElement('DIV'),
                 TabelleButton=document.createElement('button'),TabelleSymbol=document.createElement('img'),
                 ImageButton=document.createElement('button'),ImageSymbol=document.createElement('img');
@@ -541,8 +579,8 @@
                 ColorPicker=document.createElement('input');
             HiddenInputContainter.id='bneHiddenInputs';
             //Fileupload
-            FileUpload.id='bokunoeditorFileUpload';   
-            FileUpload.setAttribute('type','file');  
+            FileUpload.id='bokunoeditorFileUpload';
+            FileUpload.setAttribute('type','file');
             HiddenInputContainter.appendChild(FileUpload);
             //Colorpicker
             ColorPicker.id='bokunoeditorColorPicker';
@@ -551,25 +589,14 @@
             HiddenInputContainter.appendChild(ColorPicker);
 
             HiddenInputs.appendChild(HiddenInputContainter);
-            var Textarea=$element;
+            var Textarea=Editor;
             //Vorbereitung des Editors
             $(Textarea).hide().parent().append('<div id="bokunoeditorIframe"><div id="bokunoeditorMenue"></div><div id="bokunoeditorToolbar"></div><div id="bokunoeditorContainer"><div id="bokunoeditorContent" class="A4"></div></div></div>');
             $('#bokunoeditorIframe').append(DateiContext).append(SchriftContext).append(FormatContext).append(Formatierungszeile).append(HiddenInputs);
             $('#bokunoeditorMenue').html(Menu);//Menüzeile
             $('#bokunoeditorToolbar').html(Toolbar);//Toolbar
             //Vorbefüllung des Editors
-            if(($rtfFile!='' && $rtfFile != null)&&$rtfFile.indexOf('.')>0&&$rtfFile.substring($rtfFile.lastIndexOf('.'))==='.rtf'){//wenn ein File mitgeht überprüfe ob die Endung eh RTF ist
-                $.post(absolutPath+'/Converter/RTF2HTML-Converter.php',{
-                    'RTF':$rtfFile,
-                },function(data){
-                    lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html(data).focus();
-                    //Zeige die Anzahl der Zeichen, Wörter die im Dokument vorhanden sind
-                    $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
-                    $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' W\xF6rter');
-                });
-            }else{//Ist es kein RTF Füg es einfach ein
-                lastFocus=$('#bokunoeditorContent').attr('contentEditable','true').html($(Textarea).val()).focus();
-            }
+            this.ladeDokument($rtfFile);
             //wenn nichts eingefügt wurde dann gib DIV vor
             (($('#bokunoeditorContent div').length===0)?$('#bokunoeditorContent').append('<div><br></div>'):'');
             this.texteditorEvents();
@@ -817,17 +844,13 @@
                     e.preventDefault;
                     document.execCommand("defaultParagraphSeparator", false, "div");
                 }
-            },'keyup':function(){
-                //verändere den Zeichen und Wörterzähle nach Tastendruck
-                $('#bneAnzZeichen').text($('#bokunoeditorContent').text().length+' Zeichen,');
-                $('#bneAnzWoerter').text($('#bokunoeditorContent')[0].innerText.split( /\s+/ ).filter(function(v){return v!==''}).length+' W\xF6rter');
-            }
+            },'keyup':setDokumentzaehler
         });
         return this;
-        }    
-        
-    };    
-        
+        }
+
+    };
+
     //Text ersetzungs Funktion
     function getSelectionText() {//return den selected text
         var text = "";
@@ -848,17 +871,17 @@
                 var format=setFormatierung($format,oldContent);
                 if(oldContent.children().length>0){//Mehrzeilige Formatierung
                     oldContent.find('p').wrapInner(format);//umschlie�e den selected Text mit der Formatierung
-                    //kombiniere die zeile vorher und nachher 
+                    //kombiniere die zeile vorher und nachher
                     startContent=$('p').eq(range.startOffset-1).html()+oldContent.find('p').first().html();
                     endContent=oldContent.find('p').last().html()+$('p').eq(range.startOffset).html();
-                    //Die kombinierte Zeile als erstes und Letztes Objekt im document fragment  
+                    //Die kombinierte Zeile als erstes und Letztes Objekt im document fragment
                     oldContent.find('p').first().html(startContent);
                     oldContent.find('p').last().html(endContent);
                     //entferne nicht ben�tigte Objekte
                     $('p').eq(range.startOffset).prev().remove();
                     $('p').eq(range.startOffset).remove();
                     oldContent.find('p span:empty').remove();
-                    
+
                     range.insertNode(oldContent[0]);
                 }
                 //Single Line Formatierung
@@ -905,7 +928,7 @@
     function filterArrayCR(text){
         return text !='\n\n';
     }
-    
+
     $.fn.bokunoeditor=BokuNoEditor;
-//Initialisiere BokuNoEditor       
+//Initialisiere BokuNoEditor
 }(jQuery));
